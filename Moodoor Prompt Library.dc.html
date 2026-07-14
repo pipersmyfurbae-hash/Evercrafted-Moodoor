@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <title>Moodoor Studio — Render Prompt Library</title>
+  <meta name="description" content="Compose and archive EC_WR_V2 render prompts: paste a blueprint, generate expressive language layers, compile the locked 7-layer machine prompt and a paste-ready Midjourney version.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,300;1,400&family=Inter:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root{--ec-white:#FFFFFF;--ec-off-white:#F9F7F4;--ec-paper:#F2EFE9;--ec-black:#1A1A1A;--ec-ink:#4A4A4A;--ec-green:#4A6741;--ec-green-light:#6B8F67;--ec-green-pale:#EEF2ED;--ec-green-dim:rgba(74,103,65,.12);--ec-gray-100:#F5F5F5;--ec-gray-200:#E8E8E8;--ec-gray-300:#D0D0D0;--ec-gray-400:#A8A8A8;--ec-gray-500:#787878;--ec-warning:#C4922A;--ec-border:#E8E8E8;--ink-panel:#20241F;--serif:'Cormorant Garamond',Georgia,serif;--sans:'Inter',system-ui,sans-serif;--mono:'DM Mono',monospace;--r-sm:6px;--r-md:10px;--r-lg:14px;--r-full:9999px;--tr:180ms ease}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{font-family:var(--sans);font-size:14px;color:var(--ec-black);background:var(--ec-off-white);-webkit-font-smoothing:antialiased;overflow:hidden}
+    ::selection{background:var(--ec-green-dim);color:var(--ec-green)}
+    button{font-family:inherit;cursor:pointer}
+    input,select,textarea{font-family:inherit}
+    .app{display:flex;flex-direction:column;height:100vh}
+
+    .topbar{display:flex;align-items:center;gap:20px;padding:0 24px;height:58px;background:var(--ec-white);border-bottom:1px solid var(--ec-border);flex-shrink:0;z-index:20}
+    .brand{display:flex;align-items:center;gap:12px}
+    .brand .wm{font-family:var(--serif);font-size:22px;font-weight:600}
+    .brand .wm span{color:var(--ec-green)}
+    .brand .badge{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ec-green);background:var(--ec-green-pale);border:1px solid rgba(107,143,103,.3);padding:4px 9px;border-radius:var(--r-full)}
+    .topbar-mid{font-family:var(--mono);font-size:11px;color:var(--ec-gray-400);flex:1}
+    .topnav{display:flex;gap:8px}
+    .navbtn{padding:7px 16px;border-radius:5px;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--ec-border);background:transparent;color:var(--ec-gray-500);transition:all var(--tr)}
+    .navbtn.active{border-color:var(--ec-green);background:var(--ec-green-pale);color:var(--ec-green)}
+    .link-back{font-size:12.5px;color:var(--ec-gray-500);text-decoration:none;transition:color var(--tr)}
+    .link-back:hover{color:var(--ec-green)}
+
+    .workspace{flex:1;display:flex;min-height:0}
+    .filters{width:250px;flex-shrink:0;background:var(--ec-white);border-right:1px solid var(--ec-border);overflow-y:auto}
+    .filters-inner{padding:20px 18px 40px;display:flex;flex-direction:column;gap:20px}
+    .flabel{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ec-gray-500);margin-bottom:8px;display:block}
+    .finput{width:100%;padding:9px 11px;border:1px solid var(--ec-border);border-radius:var(--r-sm);font-size:13px;outline:none}
+    .finput:focus{border-color:var(--ec-green-light)}
+    .fsel{width:100%;padding:9px 11px;border:1px solid var(--ec-border);border-radius:var(--r-sm);font-size:13px}
+    .chips{display:flex;flex-wrap:wrap;gap:6px}
+    .chip{padding:4px 11px;border-radius:var(--r-full);font-size:11px;border:1px solid var(--ec-border);background:transparent;color:var(--ec-gray-500);transition:all var(--tr)}
+    .chip.active{border-color:var(--ec-green);background:var(--ec-green-pale);color:var(--ec-green)}
+    .clearbtn{font-size:11px;color:var(--ec-gray-500);background:none;border:none;text-align:left;padding:0}
+    .clearbtn:hover{color:var(--ec-green)}
+
+    .main{flex:1;overflow-y:auto;min-height:0;padding:26px 30px 50px}
+
+    .stats{display:flex;gap:28px;padding-bottom:20px;border-bottom:1px solid var(--ec-gray-100);margin-bottom:22px}
+    .stat-n{font-family:var(--serif);font-size:26px;color:var(--ec-green);line-height:1}
+    .stat-l{font-family:var(--mono);font-size:9.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--ec-gray-400);margin-top:2px}
+
+    .pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+    .pcard{background:var(--ec-white);border:1px solid var(--ec-border);border-radius:var(--r-lg);padding:20px;cursor:pointer;transition:border-color var(--tr),box-shadow var(--tr)}
+    .pcard:hover{border-color:var(--ec-green-light);box-shadow:0 6px 20px rgba(0,0,0,.06)}
+    .pcard-id{font-family:var(--mono);font-size:9px;color:var(--ec-warning);letter-spacing:.1em;margin-bottom:8px}
+    .pcard-title{font-family:var(--serif);font-size:21px;line-height:1.15;margin-bottom:3px}
+    .pcard-sub{font-size:11px;color:var(--ec-gray-500);letter-spacing:.05em;margin-bottom:12px}
+    .badges{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+    .badge2{padding:2px 9px;border-radius:var(--r-sm);font-size:10px;font-weight:600;background:var(--ec-green-pale);color:var(--ec-green);border:1px solid rgba(74,103,65,.22)}
+    .badge2.sage{background:#EEF2ED;color:#6B8F67;border-color:rgba(107,143,103,.3)}
+    .pcard-flor{font-size:11px;color:var(--ec-gray-500);line-height:1.6}
+    .pcard-sil{margin-top:8px;font-family:var(--mono);font-size:10px;color:var(--ec-gray-400)}
+    .pcard-date{font-size:10px;color:var(--ec-gray-400);margin-top:10px}
+    .empty-state{text-align:center;padding:60px 20px}
+    .empty-state h4{font-family:var(--serif);font-size:22px;color:var(--ec-gray-400);margin-bottom:6px}
+    .empty-state p{font-size:13px;color:var(--ec-gray-500)}
+
+    .backbtn{padding:6px 14px;border-radius:var(--r-sm);font-size:11px;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--ec-border);background:transparent;color:var(--ec-gray-500);margin-bottom:20px}
+    .backbtn:hover{border-color:var(--ec-green-light);color:var(--ec-green)}
+    .detail{max-width:820px}
+    .detail-id{font-family:var(--mono);font-size:9px;color:var(--ec-warning);letter-spacing:.12em;margin-bottom:8px}
+    .detail-title{font-family:var(--serif);font-size:34px;line-height:1.05;margin-bottom:4px}
+    .detail-sub{font-size:12px;color:var(--ec-gray-500);letter-spacing:.08em;margin-bottom:22px}
+    .meta-row{display:flex;flex-wrap:wrap;gap:26px;padding-bottom:20px;border-bottom:1px solid var(--ec-gray-100);margin-bottom:22px}
+    .meta-item .ml{font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--ec-warning);margin-bottom:3px}
+    .meta-item .mv{font-family:var(--mono);font-size:13px;color:var(--ec-black)}
+    .tagpills{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px}
+    .tagpill{padding:3px 10px;border-radius:var(--r-full);font-size:11px;border:1px solid var(--ec-border);color:var(--ec-ink)}
+    .tabrow{display:flex;border-bottom:1px solid var(--ec-border);margin-bottom:16px}
+    .tab{padding:9px 18px;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;color:var(--ec-gray-500)}
+    .tab.active{color:var(--ec-green);border-color:var(--ec-green)}
+    .pbox{position:relative;background:var(--ink-panel);border-radius:var(--r-md);padding:18px}
+    .pbox pre{font-family:var(--mono);font-size:11px;line-height:1.75;color:#C6D0BE;white-space:pre-wrap;word-break:break-word;padding-right:64px}
+    .copybtn-abs{position:absolute;top:12px;right:12px;padding:4px 13px;border-radius:5px;font-size:10px;font-weight:600;letter-spacing:.06em;border:1px solid rgba(107,143,103,.4);background:rgba(107,143,103,.15);color:#9BC49B}
+    .copybtn-abs.copied{background:rgba(107,143,103,.3);color:#C6E4C6}
+    .copybtn{padding:4px 13px;border-radius:5px;font-size:10px;font-weight:600;letter-spacing:.06em;border:1px solid var(--ec-border);background:transparent;color:var(--ec-gray-500)}
+    .copybtn.copied{border-color:rgba(74,103,65,.3);background:var(--ec-green-pale);color:var(--ec-green)}
+    .params-row{display:flex;align-items:center;gap:10px;margin-top:14px}
+    .params-row span{font-family:var(--mono);font-size:11px;color:var(--ec-gray-500)}
+
+    .composer{max-width:740px}
+    .composer h2{font-family:var(--serif);font-size:28px;margin-bottom:6px}
+    .composer > p{font-size:13px;color:var(--ec-gray-500);line-height:1.65;margin-bottom:22px}
+    .steplabel{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ec-gray-500);margin-bottom:6px}
+    .composer textarea{width:100%;min-height:190px;padding:14px 16px;border:1px solid var(--ec-border);border-radius:var(--r-md);font-family:var(--mono);font-size:11px;line-height:1.65;resize:vertical;outline:none;background:var(--ec-off-white)}
+    .composer textarea:focus{border-color:var(--ec-green-light)}
+    .gen-row{display:flex;gap:12px;align-items:center;margin-top:14px}
+    .btn-gen{padding:10px 22px;border-radius:var(--r-sm);font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--ec-green);background:var(--ec-green-dim);color:var(--ec-green)}
+    .btn-gen:disabled{opacity:.5;cursor:default}
+    .status-ok{font-size:11px;color:var(--ec-green-light)}
+    .status-ready{font-size:11px;color:var(--ec-warning)}
+    .err-box{margin-top:12px;padding:10px 14px;background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.25);border-radius:var(--r-sm);font-size:12px;color:#c0392b}
+    .layer-box{margin-top:24px}
+    .layer-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+    .ailayer{background:var(--ec-off-white);border:1px solid var(--ec-border);border-radius:var(--r-md);padding:14px 16px}
+    .ailayer pre{font-family:var(--mono);font-size:11px;color:var(--ec-ink);white-space:pre-wrap;word-break:break-word}
+    .step2{margin-top:20px}
+    .step2-h{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ec-green-light);margin-bottom:6px}
+    .step2-p{font-size:12px;color:var(--ec-gray-500);line-height:1.6;margin-bottom:10px}
+    .btn-compile{padding:10px 22px;border-radius:var(--r-sm);font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--ec-green-light);background:var(--ec-green-pale);color:var(--ec-green)}
+    .compiled-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+    .compiled-head h3{font-family:var(--serif);font-size:19px}
+    .savebtn{padding:5px 15px;border-radius:5px;font-size:10.5px;font-weight:600;letter-spacing:.05em;border:1px solid var(--ec-green);background:var(--ec-green-dim);color:var(--ec-green)}
+    .backlink{margin-top:14px;padding:5px 0;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;background:none;border:none;color:var(--ec-gray-500)}
+    .backlink:hover{color:var(--ec-green)}
+
+    .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);z-index:80;background:var(--ec-black);color:#fff;font-size:13px;padding:12px 22px;border-radius:var(--r-full);box-shadow:0 12px 32px rgba(0,0,0,.2);display:flex;align-items:center;gap:9px;opacity:0;animation:tin .3s ease forwards}
+    @keyframes tin{to{transform:translateX(-50%) translateY(0);opacity:1}}
+  </style>
+</helmet>
+
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <span class="wm">Mood<span>oor</span></span>
+      <span class="badge">Studio · Prompt Library</span>
+    </div>
+    <div class="topbar-mid">blueprint json → language layers → 7-layer render prompt → library</div>
+    <nav class="topnav">
+      <button class="navbtn {{ navLibClass }}" onClick="{{ goLibrary }}">Library</button>
+      <button class="navbtn {{ navComposeClass }}" onClick="{{ goComposer }}">Compose +</button>
+    </nav>
+    <a class="link-back" href="Moodoor.dc.html">Storefront →</a>
+  </header>
+
+  <div class="workspace">
+    <sc-if value="{{ isLib }}" hint-placeholder-val="{{ true }}">
+      <aside class="filters">
+        <div class="filters-inner">
+          <div>
+            <span class="flabel">Search</span>
+            <input class="finput" placeholder="ID or title…" value="{{ search }}" onInput="{{ onSearch }}">
+          </div>
+          <div>
+            <span class="flabel">Formula</span>
+            <select class="fsel" value="{{ fFormula }}" onChange="{{ onFormula }}">
+              <sc-for list="{{ formulaOptions }}" as="o" hint-placeholder-count="4"><option value="{{ o }}">{{ o }}</option></sc-for>
+            </select>
+          </div>
+          <div>
+            <span class="flabel">Season</span>
+            <select class="fsel" value="{{ fSeason }}" onChange="{{ onSeason }}">
+              <sc-for list="{{ seasonOptions }}" as="o" hint-placeholder-count="5"><option value="{{ o }}">{{ o }}</option></sc-for>
+            </select>
+          </div>
+          <div>
+            <span class="flabel">Tags</span>
+            <div class="chips">
+              <sc-for list="{{ tagChips }}" as="t" hint-placeholder-count="8">
+                <button class="chip {{ t.activeClass }}" onClick="{{ t.toggle }}">{{ t.label }}</button>
+              </sc-for>
+            </div>
+          </div>
+          <sc-if value="{{ hasFilters }}" hint-placeholder-val="{{ false }}">
+            <button class="clearbtn" onClick="{{ clearFilters }}">✕ Clear filters</button>
+          </sc-if>
+        </div>
+      </aside>
+    </sc-if>
+
+    <main class="main">
+      <sc-if value="{{ isLibraryList }}" hint-placeholder-val="{{ true }}">
+        <div>
+          <div class="stats">
+            <div><div class="stat-n">{{ statTotal }}</div><div class="stat-l">Prompts</div></div>
+            <div><div class="stat-n">{{ statFormulas }}</div><div class="stat-l">Formulas</div></div>
+            <div><div class="stat-n">{{ statSeasons }}</div><div class="stat-l">Seasons</div></div>
+          </div>
+          <sc-if value="{{ hasResults }}" hint-placeholder-val="{{ true }}">
+            <div class="pgrid">
+              <sc-for list="{{ filtered }}" as="p" hint-placeholder-count="3">
+                <div class="pcard" onClick="{{ p.open }}">
+                  <div class="pcard-id">{{ p.id }} · Seed {{ p.seed }}</div>
+                  <div class="pcard-title">{{ p.title }}</div>
+                  <div class="pcard-sub">{{ p.subtitle }}</div>
+                  <div class="badges">
+                    <span class="badge2">{{ p.formula }}</span><span class="badge2">{{ p.season }}</span>
+                    <span class="badge2">{{ p.size }}</span><span class="badge2 sage">{{ p.substrate }}</span>
+                  </div>
+                  <div class="pcard-flor">{{ p.florText }}</div>
+                  <sc-if value="{{ p.hasSilence }}" hint-placeholder-val="{{ false }}"><div class="pcard-sil">∅ {{ p.silenceArc }}</div></sc-if>
+                  <div class="pcard-date">{{ p.createdAt }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+          <sc-if value="{{ noResults }}" hint-placeholder-val="{{ false }}">
+            <div class="empty-state">
+              <h4>No prompts match</h4>
+              <p>Adjust filters or compose a new prompt.</p>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isDetail }}" hint-placeholder-val="{{ false }}">
+        <div class="detail">
+          <button class="backbtn" onClick="{{ goLibrary }}">← Library</button>
+          <div class="detail-id">{{ sel.id }}</div>
+          <div class="detail-title">{{ sel.title }}</div>
+          <div class="detail-sub">{{ sel.subtitle }}</div>
+          <div class="meta-row">
+            <sc-for list="{{ selMeta }}" as="m" hint-placeholder-count="6">
+              <div class="meta-item"><div class="ml">{{ m.l }}</div><div class="mv">{{ m.v }}</div></div>
+            </sc-for>
+          </div>
+          <div class="flabel">Florals &amp; foliage</div>
+          <div class="tagpills">
+            <sc-for list="{{ selTags }}" as="t" hint-placeholder-count="5"><span class="tagpill">{{ t }}</span></sc-for>
+          </div>
+          <div class="tabrow">
+            <button class="tab {{ machineTabClass }}" onClick="{{ showMachine }}">Machine-Facing</button>
+            <button class="tab {{ humanTabClass }}" onClick="{{ showHuman }}">Paste-Ready</button>
+          </div>
+          <div class="pbox">
+            <button class="copybtn-abs {{ detailCopiedClass }}" onClick="{{ copyDetailPrompt }}">{{ detailCopyText }}</button>
+            <pre>{{ activeDetailPrompt }}</pre>
+          </div>
+          <div class="params-row">
+            <span>{{ sel.params }}</span>
+            <button class="copybtn {{ paramsCopiedClass }}" onClick="{{ copyParams }}">{{ paramsCopyText }}</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isComposer }}" hint-placeholder-val="{{ false }}">
+        <div class="composer">
+          <h2>Compose render prompt</h2>
+          <p>Paste an EC_WR_V2 blueprint JSON. Step 1 drafts the expressive language layers. Step 2 compiles them with structural data and locked Style DNA into a full 7-layer machine-facing prompt and a paste-ready version — both ready to save.</p>
+
+          <div class="steplabel">Step 1 — Blueprint JSON</div>
+          <textarea placeholder="{ &quot;blueprint_id&quot;: &quot;EC_WR_V2_XXXX&quot;, &quot;formula&quot;: &quot;Crescent&quot;, &quot;seed&quot;: 42, &quot;emotional_tags&quot;: [&quot;airy&quot;,&quot;calm&quot;], &quot;canvas&quot;: {&quot;diameter_in&quot;:24}, &quot;silence_arcs&quot;: [{&quot;from_deg&quot;:82,&quot;to_deg&quot;:168}], &quot;clusters&quot;: [], &quot;foliage_sweeps&quot;: [] }" value="{{ jsonInput }}" onInput="{{ onJsonInput }}"></textarea>
+          <div class="gen-row">
+            <button class="btn-gen" disabled="{{ genDisabled }}" onClick="{{ generate }}">{{ genLabel }}</button>
+            <sc-if value="{{ showLayersReady }}" hint-placeholder-val="{{ false }}"><span class="status-ok">✓ Language layers ready</span></sc-if>
+            <sc-if value="{{ showCompiledReady }}" hint-placeholder-val="{{ false }}"><span class="status-ready">✓ Render prompt compiled</span></sc-if>
+          </div>
+          <sc-if value="{{ hasAiError }}" hint-placeholder-val="{{ false }}"><div class="err-box">{{ aiError }}</div></sc-if>
+
+          <sc-if value="{{ showLayers }}" hint-placeholder-val="{{ false }}">
+            <div class="layer-box">
+              <div class="layer-head">
+                <span class="flabel" style="margin:0">Language layers (AI draft)</span>
+                <button class="copybtn {{ aiCopiedClass }}" onClick="{{ copyAiResult }}">{{ aiCopyText }}</button>
+              </div>
+              <div class="ailayer"><pre>{{ aiResult }}</pre></div>
+
+              <div class="step2">
+                <div class="step2-h">Step 2 — Compile</div>
+                <div class="step2-p">Slots the language layers into the 7-layer scaffold with structural blueprint data and locked Style DNA. Outputs both machine-facing and paste-ready formats.</div>
+                <button class="btn-compile" onClick="{{ compile }}">⬡ Compile to render prompt →</button>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ showCompiled }}" hint-placeholder-val="{{ false }}">
+            <div class="layer-box">
+              <div class="compiled-head">
+                <h3>Render prompt</h3>
+                <div style="display:flex;gap:8px">
+                  <button class="copybtn {{ compiledCopiedClass }}" onClick="{{ copyCompiled }}">{{ compiledCopyText }}</button>
+                  <button class="savebtn" onClick="{{ saveToLibrary }}">Save to library →</button>
+                </div>
+              </div>
+              <div class="tabrow">
+                <button class="tab {{ cMachineTabClass }}" onClick="{{ showCMachine }}">Machine-Facing</button>
+                <button class="tab {{ cHumanTabClass }}" onClick="{{ showCHuman }}">Paste-Ready</button>
+              </div>
+              <div class="pbox"><pre style="padding-right:0">{{ activeCompiledPrompt }}</pre></div>
+              <button class="backlink" onClick="{{ clearCompiled }}">← Back to language layers</button>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+    </main>
+  </div>
+</div>
+
+<sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+  <div class="toast"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6B8F67" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>{{ toastText }}</div>
+</sc-if>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;100%&quot;,&quot;height&quot;:&quot;100%&quot;}}">
+const FORMULAS=['All','Crescent','Side Sweep','Bottom Heavy','Diagonal Flow','Twin Cluster','Corner Cluster','Wild Asymmetry','Half Ring','Top Cluster','Spiral Flow','Classic Balanced','Garden Scatter'];
+const SEASONS=['All','Spring','Summer','Autumn','Winter'];
+const TAGS=['airy','calm','fresh','moody','romantic','editorial','architectural','lush','restrained','wild','nostalgic','melancholic'];
+
+function degToClock(deg){
+  const d=((deg%360)+360)%360;const totalMins=d/360*720;
+  const h=Math.floor(totalMins/60)%12||12;const m=Math.round(totalMins%60/5)*5%60;
+  return h+':'+m.toString().padStart(2,'0');
+}
+function parseSections(text){
+  const out={};const keys=['ATMOSPHERE','MATERIAL LANGUAGE','EDITORIAL VOICE','ANTI-PATTERNS'];
+  keys.forEach((key,i)=>{
+    const tag='['+key+']';const start=text.indexOf(tag);if(start===-1)return;
+    const from=start+tag.length;const next=keys[i+1]?text.indexOf('['+keys[i+1]+']'):-1;
+    out[key]=text.slice(from,next>-1?next:text.length).trim();
+  });
+  return out;
+}
+function buildMachinePrompt(bp,s){
+  const formula=bp.formula||'Custom';
+  const size=bp.canvas&&bp.canvas.diameter_in?bp.canvas.diameter_in+'"':'24"';
+  const seed=bp.seed||'—';
+  const sil=(bp.silence_arcs||[])[0];
+  const silStr=sil?('HARD ENFORCED '+sil.from_deg+'°–'+sil.to_deg+'° ('+degToClock(sil.from_deg)+'–'+degToClock(sil.to_deg)+" o'clock)\n                      Raw exposed grapevine only. Zero botanicals. Zero foliage."):'None defined';
+  const clLines=(bp.clusters||[]).map(c=>{
+    const type=(c.type||'cluster').charAt(0).toUpperCase()+(c.type||'cluster').slice(1);
+    const id=c.cluster_id||'—';const clock=c.angle_deg!=null?degToClock(c.angle_deg):'—';
+    const stems=(c.stems||[]).map(s=>(s.name||s.item_id)+' ×'+s.qty).join(', ');
+    const r=c.radius_norm?(', r'+c.radius_norm):'';
+    return ('  '+type+' '+id+':').padEnd(22)+stems+' at '+clock+' ('+c.angle_deg+'°)'+r;
+  }).join('\n');
+  const folLines=(bp.foliage_sweeps||[]).map((f,i)=>{
+    const name=f.name||f.item_id||('Foliage '+(i+1));
+    const from=f.arc_from!=null?degToClock(f.arc_from):'—';
+    const stop=f.arc_hard_stop_deg||f.arc_to;const to=stop!=null?degToClock(stop):'—';
+    const r=f.radius_norm?(', radius '+f.radius_norm):'';
+    const hs=f.arc_hard_stop_deg?(', hard stop '+f.arc_hard_stop_deg+'°'):'';
+    return ('  Foliage F'+(i+1)+':').padEnd(22)+name+' — '+from+' to '+to+r+hs;
+  }).join('\n');
+  const focal=(bp.clusters||[]).filter(c=>c.type==='focal');
+  const second=(bp.clusters||[]).filter(c=>c.type==='secondary');
+  const fill=(bp.clusters||[]).filter(c=>c.type==='filler'||c.type==='accent');
+  const gn=c=>((c.stems||[])[0]&&((c.stems[0].name)||(c.stems[0].item_id)))||c.cluster_id||'—';
+  const fg=focal.map(gn).join(' + ')||'—';
+  const mg=[...second,...fill].map(gn).join(', ')||'—';
+  const bgFol=(bp.foliage_sweeps||[]).map(f=>f.name||f.item_id).join(' + ');
+  const bg=bgFol?(bgFol+' sweeps, substrate in silence arc'):'foliage sweeps, substrate';
+  const ind=txt=>(txt||'—').split('\n').map(l=>'  '+l).join('\n');
+  return [
+    '[LAYER 1 — EMOTIONAL CORE]',ind(s['ATMOSPHERE']),'',
+    '[LAYER 2 — STYLE DNA]',
+    '  Identity:           Luxury faux botanical wreath, '+size+' '+formula+' composition',
+    '  Asymmetry:          Controlled irregularity — '+formula.toLowerCase()+' form refuses all symmetry',
+    '  Editorial Pressure: HIGH — Anthropologie window, interior design editorial',
+    '  Forbidden:          No craft-store aesthetic, no fake farmhouse styling,',
+    '                      no artificial plastic shine, no DIY faux florals','',
+    '[LAYER 3 — STRUCTURAL BLUEPRINT LOGIC]',
+    '  Form:               '+formula+' — '+size+' polar canvas, seed '+seed,
+    '  Silence Arc:        '+silStr,
+    clLines,folLines,'',
+    '[LAYER 4 — MATERIAL INTELLIGENCE]',ind(s['MATERIAL LANGUAGE']),'',
+    '[LAYER 5 — SPATIAL DEPTH]',
+    '  Foreground:         '+fg,
+    '  Midground:          '+mg,
+    '  Background:         '+bg,
+    '  Silhouette:         Irregular outer boundary — non-uniform radial expansion, organic edge variation','',
+    '[LAYER 6 — LIGHTING + PHOTOGRAPHY]',
+    '  Surface:            Cool gray plaster — smooth, neutral, slight texture',
+    '  Angle:              Wall-mounted, slight downward editorial angle (5–10°)',
+    '  Light:              Soft diffused studio, cool neutral, primary upper-left',
+    '  Shadow:             Shallow directional — anchoring to wall, no dramatic cast',
+    '  Law:                No hotspots, no overexposed petals, no plastic bloom highlights','',
+    '[LAYER 7 — ANTI-PATTERN SUPPRESSION]',ind(s['ANTI-PATTERNS']),'',
+    '[PARAMS]              --ar 5:4 --style raw --s 150 --q 2 --v 6.1',
+  ].join('\n');
+}
+function buildHumanPrompt(bp,s){
+  const formula=bp.formula||'Custom';
+  const size=bp.canvas&&bp.canvas.diameter_in?(bp.canvas.diameter_in+'-inch'):'24-inch';
+  const sil=(bp.silence_arcs||[])[0];
+  const silStr=sil?('From '+degToClock(sil.from_deg)+' to '+degToClock(sil.to_deg)+" o'clock, a hard-enforced bare zone exposes the raw dark grapevine in full — no botanicals, no foliage, no filler; a designed architectural feature equal in compositional weight to the botanical mass itself."):'';
+  const clDesc=(bp.clusters||[]).map(c=>{
+    const stems=(c.stems||[]).map(s=>(s.name||s.item_id)+' ×'+s.qty).join(', ');
+    return stems+' at '+(c.angle_deg!=null?degToClock(c.angle_deg):'—')+" o'clock";
+  }).join('; ');
+  const folDesc=(bp.foliage_sweeps||[]).map(f=>{
+    const stop=f.arc_hard_stop_deg||f.arc_to;
+    return (f.name||f.item_id)+' ('+(f.arc_from!=null?degToClock(f.arc_from):'—')+' to '+(stop!=null?degToClock(stop):'—')+')';
+  }).join(' and ');
+  const ev=s['EDITORIAL VOICE']||'';const atm=s['ATMOSPHERE']||'';const mat=s['MATERIAL LANGUAGE']||'';const ant=s['ANTI-PATTERNS']||'';
+  return [
+    ('Photorealistic professional product photograph of a '+size+' luxury faux botanical wreath on a natural grapevine base — '+formula.toLowerCase()+' composition. '+ev).trim(),'',
+    atm,'',
+    ('Botanical arrangement: '+clDesc+'. Foliage: '+folDesc+'. '+silStr).trim(),'',
+    mat,'',
+    'Soft diffused cool-neutral studio illumination from upper-left; gentle directional shadow; cool gray plaster background; wall-mounted perspective, slight editorial angle (5–10°). Entire wreath visible in frame. True-to-life scale accuracy. Gallery-quality product documentation — not creative art, not illustration, not romanticized.','',
+    ant,'',
+    '--ar 5:4 --style raw --s 150 --q 2 --v 6.1',
+  ].join('\n');
+}
+
+const MP_4217='[LAYER 1 — EMOTIONAL CORE]\n  Atmosphere:         Airy spring restraint — quiet, unhurried, emotionally cool\n  Tension Type:       Still expansion — the breath held just before something blooms\n  Season Register:    Early spring morning — cool ambient light, no heat\n  Mood Law:           Serene and meditative; never busy, cluttered, or lush-maximalist\n\n[LAYER 2 — STYLE DNA]\n  Identity:           Luxury faux botanical wreath, 24" Crescent composition\n  Asymmetry:          Controlled irregularity — crescent arc refuses all symmetry\n  Editorial Pressure: HIGH — Anthropologie window, interior design editorial\n  Forbidden:          No craft-store aesthetic, no fake farmhouse styling,\n                      no artificial plastic shine, no DIY faux florals\n\n[LAYER 3 — STRUCTURAL BLUEPRINT LOGIC]\n  Form:               Crescent — 24" polar canvas, seed 42\n  Silence Arc:        HARD ENFORCED 82°–168° (2:45–5:30 o\'clock)\n                      Raw exposed grapevine only. Zero botanicals. Zero foliage.\n  Focal C1:           Blue Hydrangea ×1 at 10:10 (305°), r0.78\n  Secondary C2:       White Ranunculus ×3 at 11:05 (332°), r0.80\n\n[LAYER 4 — MATERIAL INTELLIGENCE]\n  Substrate:          Natural grapevine — dark twisted vine, visible in silence arc\n  Dominant:           Blue silk hydrangea — mophead layered florets, cool matte surface\n\n[LAYER 5 — SPATIAL DEPTH]\n  Foreground:         Blue Hydrangea\n  Midground:          White Ranunculus\n  Background:         Sage + Eucalyptus sweeps, substrate in silence arc\n\n[LAYER 6 — LIGHTING + PHOTOGRAPHY]\n  Surface:            Cool gray plaster — smooth, neutral, slight texture\n  Angle:              Wall-mounted, slight downward editorial angle (5–10°)\n\n[LAYER 7 — ANTI-PATTERN SUPPRESSION]\n  Blocked:            No bouquet arrangement, no central stem collision,\n                      no symmetrical bloom mirroring, no botanicals in silence zone\n\n[PARAMS]              --ar 5:4 --style raw --s 150 --q 2 --v 6.1';
+const HP_4217='Photorealistic professional product photograph of a 24-inch luxury faux botanical wreath on a natural grapevine base — crescent composition of airy spring restraint, designed with quiet editorial calm, never lush or maximalist.\n\nFrom 2:45 o\'clock to 5:30 o\'clock, a hard-enforced bare zone reveals the raw dark twisted grapevine in full — no botanicals, no foliage, no filler; a designed architectural feature equal in compositional value to the botanical mass itself.\n\nBotanical arrangement: Blue Hydrangea ×1 at 10:10 o\'clock; White Ranunculus ×3 at 11:05 o\'clock. Foliage: Sage (6:15 to 12:20) and Eucalyptus (7:10 to 11:50).\n\nAll materials high-end faux silk, indistinguishable from real blooms — soft matte petals, complete absence of plastic sheen, structured petal memory.\n\nSoft diffused cool-neutral studio illumination from upper-left; gentle directional shadow; cool gray plaster background; wall-mounted perspective, slight editorial angle (5–10°). Entire wreath visible in frame. True-to-life scale accuracy. Gallery-quality product documentation — not creative art, not illustration, not romanticized.\n\nNo bouquet arrangement, no central stem collision, no symmetrical mirroring, no botanicals in bare zone, no foliage past 12:20, no perfect circular perimeter, no craft-store fullness, no fresh flowers.\n\n--ar 5:4 --style raw --s 150 --q 2 --v 6.1';
+
+const SEED=[{
+  id:'EC_WR_V2_4217',title:'Spring Crescent',subtitle:'Airy · Calm · Fresh',
+  formula:'Crescent',season:'Spring',size:'24"',seed:42,
+  emotionalTags:['airy','calm','fresh'],substrate:'Natural Grapevine',
+  florals:['Blue Hydrangea','White Ranunculus','Ivory Lisianthus','White Waxflower'],
+  foliage:['Sage','Eucalyptus'],silenceArc:'82°–168°',
+  machinePrompt:MP_4217,humanPrompt:HP_4217,
+  params:'--ar 5:4 --style raw --s 150 --q 2 --v 6.1',createdAt:'2025-07-04',
+}];
+
+const STORAGE_KEY='moodoor_prompt_library';
+
+class Component extends DCLogic {
+  state={
+    prompts:null,view:'library',selId:null,pTab:'machine',
+    fFormula:'All',fSeason:'All',fTags:[],search:'',ck:null,
+    jsonInput:'',aiLoading:false,aiError:'',aiResult:'',compiled:null,cTab:'machine',
+    toast:'',
+  };
+
+  componentDidMount(){
+    try{const raw=localStorage.getItem(STORAGE_KEY);this.setState({prompts:raw?JSON.parse(raw):SEED});}
+    catch(e){this.setState({prompts:SEED});}
+  }
+  persist(prompts){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(prompts));}catch(e){this.toast('Storage full — remove an entry.');}}
+  toast(m){this.setState({toast:m});clearTimeout(this._t);this._t=setTimeout(()=>this.setState({toast:''}),2600);}
+
+  copy(text,key){
+    try{navigator.clipboard&&navigator.clipboard.writeText(text);}catch(e){}
+    this.setState({ck:key});clearTimeout(this._ck);this._ck=setTimeout(()=>this.setState({ck:null}),2000);
+  }
+
+  goLibrary=()=>this.setState({view:'library',selId:null});
+  goComposer=()=>this.setState({view:'composer'});
+  openDetail(id){this.setState({selId:id,pTab:'machine',view:'detail'});}
+  showMachine=()=>this.setState({pTab:'machine'});
+  showHuman=()=>this.setState({pTab:'human'});
+  showCMachine=()=>this.setState({cTab:'machine'});
+  showCHuman=()=>this.setState({cTab:'human'});
+
+  onSearch=(e)=>this.setState({search:e.target.value});
+  onFormula=(e)=>this.setState({fFormula:e.target.value});
+  onSeason=(e)=>this.setState({fSeason:e.target.value});
+  toggleTag(t){const cur=this.state.fTags;this.setState({fTags:cur.includes(t)?cur.filter(x=>x!==t):[...cur,t]});}
+  clearFilters=()=>this.setState({fFormula:'All',fSeason:'All',fTags:[],search:''});
+
+  onJsonInput=(e)=>this.setState({jsonInput:e.target.value,compiled:null,aiResult:'',aiError:''});
+
+  generate=async()=>{
+    const s=this.state;
+    if(!s.jsonInput.trim())return;
+    this.setState({aiLoading:true,aiError:'',aiResult:'',compiled:null});
+    let bp;
+    try{bp=JSON.parse(s.jsonInput);}
+    catch(e){this.setState({aiError:'Invalid JSON — check syntax.',aiLoading:false});return;}
+
+    const formula=bp.formula||'—';
+    const size=bp.canvas&&bp.canvas.diameter_in?(bp.canvas.diameter_in+'"'):'—';
+    const tags=(bp.emotional_tags||[]).join(', ');
+    const sil=(bp.silence_arcs||[])[0];
+    const silence=sil?(sil.from_deg+'°–'+sil.to_deg+'°'):'None';
+    const clusters=(bp.clusters||[]).map(c=>c.type+' at '+c.angle_deg+'°: '+(c.stems||[]).map(st=>(st.name||st.item_id)+' ×'+st.qty).join(', ')).join('\n  ');
+    const foliage=(bp.foliage_sweeps||[]).map(f=>(f.name||f.item_id)+': '+f.arc_from+'°–'+(f.arc_hard_stop_deg||f.arc_to)+'°').join(' | ');
+
+    const system=`You are the Evercrafted Render Language Engine. Generate premium expressive language layers for a luxury faux botanical wreath render prompt. Never output coordinates or placement data.
+
+WREATH_STYLE_DNA:
+• luxury faux botanical wreath
+• high-end faux silk, indistinguishable from real blooms
+• soft matte petals, complete absence of plastic sheen
+• photorealistic professional product photograph
+• gallery-quality documentation, not creative art, not illustration
+
+Output ONLY these four labeled sections — no preamble:
+
+[ATMOSPHERE]
+Atmosphere archetype, emotional tension type (quiet restraint / still expansion / kinetic expansion / melancholic stillness), season and light quality, mood law — what this composition explicitly never feels like.
+
+[MATERIAL LANGUAGE]
+Premium material description for each floral element: humanized species name, material type (silk/velvet/parchment), surface quality, structural behavior, editorial distinction. Vocabulary: structured petal memory, wired stem flexibility, matte surface. Never: artificial, fake, plastic, fresh.
+
+[EDITORIAL VOICE]
+Two luxury editorial caption sentences — compositional distinction, silence arc treatment, formula emotional logic, palette character.
+
+[ANTI-PATTERNS]
+One sentence listing the 6 most specific render failures to suppress for this formula and floral combination.`;
+
+    const userMsg='Formula: '+formula+'\nSize: '+size+'\nEmotional Tags: '+tags+'\nSilence Arc: '+silence+'\nClusters:\n  '+clusters+'\nFoliage: '+foliage;
+
+    try{
+      const text=await window.claude.complete({system,messages:[{role:'user',content:userMsg}],max_tokens:1000});
+      if(!text||!text.trim())throw new Error('empty');
+      this.setState({aiResult:text,aiLoading:false});
+    }catch(e){
+      this.setState({aiError:'Generation failed — verify the JSON is a valid EC_WR_V2 blueprint and try again.',aiLoading:false});
+    }
+  };
+
+  compile=()=>{
+    let bp;try{bp=JSON.parse(this.state.jsonInput);}catch(e){return;}
+    const secs=parseSections(this.state.aiResult);
+    this.setState({compiled:{machine:buildMachinePrompt(bp,secs),human:buildHumanPrompt(bp,secs)},cTab:'machine'});
+  };
+  clearCompiled=()=>this.setState({compiled:null});
+
+  saveToLibrary=()=>{
+    const s=this.state;if(!s.compiled)return;
+    let bp;try{bp=JSON.parse(s.jsonInput);}catch(e){return;}
+    const id=bp.blueprint_id||('EC_WR_V2_DRAFT_'+Date.now());
+    const entry={
+      id,title:(bp.formula||'Draft')+' Blueprint',
+      subtitle:(bp.emotional_tags||[]).join(' · ')||'No tags',
+      formula:bp.formula||'Unknown',season:'Draft',
+      size:bp.canvas&&bp.canvas.diameter_in?(bp.canvas.diameter_in+'"'):'—',seed:bp.seed||0,
+      emotionalTags:bp.emotional_tags||[],substrate:'Grapevine',
+      florals:(bp.clusters||[]).flatMap(c=>(c.stems||[]).map(st=>st.name||st.item_id)).filter(Boolean),
+      foliage:(bp.foliage_sweeps||[]).map(f=>f.name||f.item_id).filter(Boolean),
+      silenceArc:(bp.silence_arcs&&bp.silence_arcs[0])?(bp.silence_arcs[0].from_deg+'°–'+bp.silence_arcs[0].to_deg+'°'):'—',
+      machinePrompt:s.compiled.machine,humanPrompt:s.compiled.human,
+      params:'--ar 5:4 --style raw --s 150 --q 2 --v 6.1',
+      createdAt:new Date().toISOString().slice(0,10),
+    };
+    const prompts=[entry,...(s.prompts||[])];
+    this.persist(prompts);
+    this.setState({prompts,jsonInput:'',aiResult:'',compiled:null,view:'library'});
+    this.toast('Saved to library');
+  };
+
+  renderVals(){
+    const s=this.state;
+    const prompts=s.prompts||[];
+    const filtered=prompts.filter(p=>{
+      if(s.fFormula!=='All'&&p.formula!==s.fFormula)return false;
+      if(s.fSeason!=='All'&&p.season!==s.fSeason)return false;
+      if(s.fTags.length&&!s.fTags.some(t=>p.emotionalTags.includes(t)))return false;
+      if(s.search&&!p.title.toLowerCase().includes(s.search.toLowerCase())&&!p.id.toLowerCase().includes(s.search.toLowerCase()))return false;
+      return true;
+    });
+    const sel=prompts.find(p=>p.id===s.selId);
+
+    const tagChips=TAGS.map(t=>({label:t,activeClass:s.fTags.includes(t)?'active':'',toggle:()=>this.toggleTag(t)}));
+    const hasFilters=s.fFormula!=='All'||s.fSeason!=='All'||s.fTags.length>0||s.search!=='';
+
+    let selMeta=[],selTags=[],activeDetailPrompt='';
+    if(sel){
+      selMeta=[['Formula',sel.formula],['Season',sel.season],['Size',sel.size],['Seed',sel.seed],['Silence Arc',sel.silenceArc],['Substrate',sel.substrate]].map(([l,v])=>({l,v}));
+      selTags=[...sel.florals,...(sel.foliage||[])];
+      activeDetailPrompt=s.pTab==='machine'?sel.machinePrompt:sel.humanPrompt;
+    }
+
+    let activeCompiledPrompt='';
+    if(s.compiled)activeCompiledPrompt=s.cTab==='machine'?s.compiled.machine:s.compiled.human;
+
+    const isLib=s.view==='library'||s.view==='detail';
+
+    return {
+      navLibClass:isLib?'active':'',navComposeClass:s.view==='composer'?'active':'',
+      goLibrary:this.goLibrary,goComposer:this.goComposer,
+      isLib,isLibraryList:s.view==='library',isDetail:s.view==='detail',isComposer:s.view==='composer',
+
+      search:s.search,onSearch:this.onSearch,
+      fFormula:s.fFormula,onFormula:this.onFormula,formulaOptions:FORMULAS,
+      fSeason:s.fSeason,onSeason:this.onSeason,seasonOptions:SEASONS,
+      tagChips,hasFilters,clearFilters:this.clearFilters,
+
+      statTotal:prompts.length,
+      statFormulas:new Set(prompts.map(p=>p.formula)).size,
+      statSeasons:new Set(prompts.map(p=>p.season)).size,
+      hasResults:filtered.length>0,noResults:filtered.length===0,
+      filtered:filtered.map(p=>({
+        id:p.id,seed:p.seed,title:p.title,subtitle:p.subtitle,formula:p.formula,season:p.season,size:p.size,substrate:p.substrate,
+        florText:p.florals.join(' · '),hasSilence:p.silenceArc!=='—',silenceArc:p.silenceArc,createdAt:p.createdAt,
+        open:()=>this.openDetail(p.id),
+      })),
+
+      sel:sel||{},selMeta,selTags,
+      machineTabClass:s.pTab==='machine'?'active':'',humanTabClass:s.pTab==='human'?'active':'',
+      showMachine:this.showMachine,showHuman:this.showHuman,
+      activeDetailPrompt,
+      detailCopiedClass:sel&&s.ck===(sel.id+'-'+s.pTab)?'copied':'',
+      detailCopyText:sel&&s.ck===(sel.id+'-'+s.pTab)?'✓ Copied':'Copy',
+      copyDetailPrompt:()=>sel&&this.copy(activeDetailPrompt,sel.id+'-'+s.pTab),
+      paramsCopiedClass:sel&&s.ck===(sel.id+'-params')?'copied':'',
+      paramsCopyText:sel&&s.ck===(sel.id+'-params')?'✓ Copied':'Copy',
+      copyParams:()=>sel&&this.copy(sel.params,sel.id+'-params'),
+
+      jsonInput:s.jsonInput,onJsonInput:this.onJsonInput,
+      genDisabled:s.aiLoading||!s.jsonInput.trim()?true:null,
+      genLabel:s.aiLoading?'⟡ Generating…':'⟡ Generate language layers',
+      generate:this.generate,
+      showLayersReady:!!s.aiResult&&!s.compiled,showCompiledReady:!!s.compiled,
+      hasAiError:!!s.aiError,aiError:s.aiError,
+      showLayers:!!s.aiResult&&!s.compiled,aiResult:s.aiResult,
+      aiCopiedClass:s.ck==='ai-raw'?'copied':'',aiCopyText:s.ck==='ai-raw'?'✓ Copied':'Copy',
+      copyAiResult:()=>this.copy(s.aiResult,'ai-raw'),
+      compile:this.compile,
+
+      showCompiled:!!s.compiled,
+      cMachineTabClass:s.cTab==='machine'?'active':'',cHumanTabClass:s.cTab==='human'?'active':'',
+      showCMachine:this.showCMachine,showCHuman:this.showCHuman,
+      activeCompiledPrompt,
+      compiledCopiedClass:s.ck==='compiled'?'copied':'',compiledCopyText:s.ck==='compiled'?'✓ Copied':'Copy',
+      copyCompiled:()=>this.copy(activeCompiledPrompt,'compiled'),
+      saveToLibrary:this.saveToLibrary,clearCompiled:this.clearCompiled,
+
+      hasToast:!!s.toast,toastText:s.toast,
+    };
+  }
+}
+
+</script>
+</body>
+</html>

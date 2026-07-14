@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <title>Moodoor Studio — Client Design Intake Engine (CDIE-1.0)</title>
+  <meta name="description" content="The first module in the Evercrafted design pipeline. Normalizes raw client input into a structured brief, sizing spec, and resolved color palette — with ambiguity flagging.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root{--ec-white:#FFFFFF;--ec-off-white:#F9F7F4;--ec-paper:#F2EFE9;--ec-black:#1A1A1A;--ec-ink:#4A4A4A;--ec-green:#4A6741;--ec-green-light:#6B8F67;--ec-green-pale:#EEF2ED;--ec-green-dim:rgba(74,103,65,.12);--ec-gray-100:#F5F5F5;--ec-gray-200:#E8E8E8;--ec-gray-300:#D0D0D0;--ec-gray-400:#A8A8A8;--ec-gray-500:#787878;--ec-warning:#C4922A;--ec-error:#B94040;--ec-info:#4A6785;--ec-border:#E8E8E8;--ink-panel:#20241F;--serif:'Cormorant Garamond',Georgia,serif;--sans:'Inter',system-ui,sans-serif;--mono:'DM Mono',monospace;--r-sm:6px;--r-md:10px;--r-lg:14px;--r-full:9999px;--tr:180ms ease}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{font-family:var(--sans);font-size:14px;color:var(--ec-black);background:var(--ec-off-white);-webkit-font-smoothing:antialiased;overflow:hidden}
+    ::selection{background:var(--ec-green-dim);color:var(--ec-green)}
+    button{font-family:inherit;cursor:pointer}
+    textarea{font-family:inherit}
+    .app{display:flex;flex-direction:column;height:100vh}
+
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:0 24px;height:58px;background:var(--ec-white);border-bottom:1px solid var(--ec-border);flex-shrink:0;z-index:20}
+    .brand{display:flex;align-items:center;gap:12px}
+    .brand .wm{font-family:var(--serif);font-size:22px;font-weight:600}
+    .brand .wm span{color:var(--ec-green)}
+    .brand .badge{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ec-green);background:var(--ec-green-pale);border:1px solid rgba(107,143,103,.3);padding:4px 9px;border-radius:var(--r-full)}
+    .topbar-mid{font-family:var(--mono);font-size:11px;color:var(--ec-gray-400)}
+    .topbar-right{display:flex;align-items:center;gap:16px}
+    .flow{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:10px;color:var(--ec-gray-400)}
+    .flow b{color:var(--ec-green);font-weight:500}
+    .link-back{font-size:12.5px;color:var(--ec-gray-500);text-decoration:none;transition:color var(--tr)}
+    .link-back:hover{color:var(--ec-green)}
+
+    .workspace{flex:1;display:grid;grid-template-columns:440px 1fr;min-height:0}
+    @media(max-width:1100px){.workspace{grid-template-columns:380px 1fr}}
+
+    .inpane{background:var(--ec-white);border-right:1px solid var(--ec-border);display:flex;flex-direction:column;min-height:0;overflow-y:auto}
+    .inpane-inner{padding:24px 26px}
+    .lead h2{font-family:var(--serif);font-size:26px;font-weight:500;line-height:1.15}
+    .lead p{font-size:13px;color:var(--ec-ink);margin-top:8px;line-height:1.6}
+    .raw-label{display:block;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ec-gray-500);margin:22px 0 8px}
+    .raw-box{border:1px solid var(--ec-border);border-radius:var(--r-md);padding:16px;transition:border-color var(--tr)}
+    .raw-box:focus-within{border-color:var(--ec-green-light);box-shadow:0 0 0 3px var(--ec-green-dim)}
+    .raw-box textarea{width:100%;min-height:150px;border:none;outline:none;resize:vertical;background:transparent;font-size:15px;color:var(--ec-black);line-height:1.6}
+    .run-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px}
+    .btn-run{background:var(--ec-green);color:#fff;font-weight:600;font-size:12px;letter-spacing:.05em;text-transform:uppercase;padding:13px 24px;border-radius:var(--r-full);border:none;display:inline-flex;align-items:center;gap:9px;transition:transform var(--tr),background var(--tr)}
+    .btn-run:hover{background:var(--ec-green-light);transform:scale(1.02)}
+    .word-c{font-family:var(--mono);font-size:11px;color:var(--ec-gray-400)}
+    .ex-label{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ec-gray-400);margin:24px 0 10px}
+    .ex-list{display:grid;gap:8px}
+    .ex{text-align:left;font-size:12.5px;color:var(--ec-ink);background:var(--ec-off-white);border:1px solid var(--ec-border);padding:11px 13px;border-radius:var(--r-md);cursor:pointer;transition:all var(--tr);line-height:1.4}
+    .ex:hover{border-color:var(--ec-green-light);color:var(--ec-green)}
+    .ex b{font-family:var(--mono);font-size:9.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--ec-gray-400);display:block;margin-bottom:3px}
+
+    .outpane{min-height:0;overflow-y:auto;padding:24px 30px 50px;background:var(--ec-paper)}
+    .out-empty{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:var(--ec-gray-400)}
+    .out-empty svg{margin-bottom:14px}
+    .out-empty p{font-family:var(--serif);font-style:italic;font-size:18px}
+    .out-empty span{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;margin-top:6px}
+
+    .amb-banner{background:rgba(196,146,42,.08);border:1px solid rgba(196,146,42,.35);border-radius:var(--r-md);padding:16px 18px;margin-bottom:20px}
+    .amb-banner.clear{background:var(--ec-green-pale);border-color:rgba(107,143,103,.3)}
+    .amb-head{display:flex;align-items:center;gap:8px;font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ec-warning)}
+    .amb-banner.clear .amb-head{color:var(--ec-green)}
+    .amb-list{list-style:none;margin-top:10px;display:grid;gap:7px}
+    .amb-list li{font-size:12.5px;color:var(--ec-ink);display:flex;gap:9px;align-items:flex-start;line-height:1.45}
+    .amb-list li::before{content:'!';flex-shrink:0;font-family:var(--mono);font-size:10px;color:var(--ec-warning);background:rgba(196,146,42,.15);width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-top:1px}
+    .amb-clear-msg{font-size:12.5px;color:var(--ec-ink);margin-top:8px}
+
+    .out-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    @media(max-width:900px){.out-grid{grid-template-columns:1fr}}
+    .ocard{background:var(--ec-white);border:1px solid var(--ec-border);border-radius:var(--r-lg);padding:20px 22px}
+    .ocard.span{grid-column:1 / -1}
+    .ocard h3{font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ec-gray-500);display:flex;align-items:center;justify-content:space-between}
+    .ocard h3 .stage{font-family:var(--mono);font-size:9px;font-weight:400;color:var(--ec-green);background:var(--ec-green-pale);padding:3px 8px;border-radius:var(--r-full);letter-spacing:.04em}
+    .kv{display:grid;grid-template-columns:118px 1fr;gap:8px 14px;margin-top:16px}
+    .kv dt{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--ec-gray-400);padding-top:2px}
+    .kv dd{font-size:13.5px;color:var(--ec-black);line-height:1.4}
+    .kv dd.muted{color:var(--ec-gray-400);font-style:italic}
+    .tags{display:flex;flex-wrap:wrap;gap:6px}
+    .tag{font-size:11.5px;color:var(--ec-green);background:var(--ec-green-pale);border:1px solid rgba(107,143,103,.2);padding:4px 10px;border-radius:var(--r-full)}
+    .tag.warn{color:var(--ec-warning);background:rgba(196,146,42,.1);border-color:rgba(196,146,42,.3)}
+    .tag.mat{color:var(--ec-ink);background:var(--ec-off-white);border-color:var(--ec-border)}
+
+    .size-hero{display:flex;align-items:baseline;gap:10px;margin-top:14px}
+    .size-hero .num{font-family:var(--serif);font-size:44px;color:var(--ec-green);line-height:1}
+    .size-hero .tier{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ec-ink);background:var(--ec-off-white);border:1px solid var(--ec-border);padding:5px 11px;border-radius:var(--r-full)}
+    .stem-table{width:100%;border-collapse:collapse;margin-top:16px}
+    .stem-table td{font-size:12.5px;padding:7px 0;border-bottom:1px solid var(--ec-gray-100)}
+    .stem-table td:first-child{color:var(--ec-gray-500)}
+    .stem-table td:last-child{font-family:var(--mono);text-align:right;color:var(--ec-black)}
+    .stem-note{font-size:11.5px;color:var(--ec-ink);margin-top:12px;padding-top:12px;border-top:1px solid var(--ec-gray-100);display:flex;justify-content:space-between;gap:10px}
+    .stem-note b{color:var(--ec-green)}
+    .interp-note{font-size:11px;color:var(--ec-warning);margin-top:8px;font-style:italic}
+
+    .swatches{display:flex;gap:12px;margin-top:16px}
+    .sw{flex:1;text-align:center}
+    .sw-chip{height:64px;border-radius:var(--r-md);border:1px solid rgba(0,0,0,.08)}
+    .sw-role{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.05em;color:var(--ec-gray-400);margin-top:8px}
+    .sw-name{font-size:12.5px;color:var(--ec-black);margin-top:2px;line-height:1.2}
+    .sw-hex{font-family:var(--mono);font-size:9.5px;color:var(--ec-gray-400);margin-top:2px}
+    .pal-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+    .pal-note{font-size:12px;color:var(--ec-ink);margin-top:12px;padding-top:12px;border-top:1px solid var(--ec-gray-100);line-height:1.5;font-style:italic}
+
+    .json-panel{background:var(--ink-panel);border-radius:var(--r-lg);padding:18px 20px;position:relative;margin-top:18px}
+    .json-panel .jhead{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:#8A9683;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
+    .json-panel pre{font-family:var(--mono);font-size:11px;line-height:1.6;color:#C6D0BE;white-space:pre;margin:0;overflow:auto;max-height:420px}
+    .copy-btn{font-size:11px;font-weight:600;color:#12160F;background:var(--ec-green-light);border:none;border-radius:var(--r-sm);padding:6px 12px;transition:background var(--tr)}
+    .copy-btn:hover{background:#7CA277}
+    .handoff{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+    .ho{font-family:var(--mono);font-size:10px;color:var(--ec-ink);background:var(--ec-white);border:1px solid var(--ec-border);padding:7px 12px;border-radius:var(--r-full);display:flex;align-items:center;gap:7px}
+    .ho b{color:var(--ec-green)}
+
+    .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);z-index:80;background:var(--ec-black);color:#fff;font-size:13px;padding:12px 22px;border-radius:var(--r-full);box-shadow:0 12px 32px rgba(0,0,0,.2);display:flex;align-items:center;gap:9px;opacity:0;animation:tin .3s ease forwards}
+    @keyframes tin{to{transform:translateX(-50%) translateY(0);opacity:1}}
+    .toast b{color:var(--ec-green-light);font-weight:600}
+  </style>
+</helmet>
+
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <span class="wm">Mood<span>oor</span></span>
+      <span class="badge">Studio · Intake Engine · CDIE-1.0</span>
+    </div>
+    <div class="topbar-mid">
+      <span class="flow"><b>Intake</b> → Emotion Translator → Blueprint → Placement</span>
+    </div>
+    <div class="topbar-right">
+      <a class="link-back" href="Moodoor Operator Console.dc.html">Operator Console →</a>
+    </div>
+  </header>
+
+  <div class="workspace">
+    <aside class="inpane">
+      <div class="inpane-inner">
+        <div class="lead">
+          <h2>Raw client request</h2>
+          <p>Paste anything the client sent — a paragraph, a one-liner, a bullet list. The engine normalizes it into a structured brief, sizing spec, and resolved palette, and flags every ambiguity for you.</p>
+        </div>
+        <span class="raw-label">Client input</span>
+        <div class="raw-box">
+          <textarea placeholder="e.g. Something cozy for our front door this fall — sage and rust, maybe some dried bits. Nothing too fussy. Around 20 inches." value="{{ raw }}" onInput="{{ onRaw }}"></textarea>
+        </div>
+        <div class="run-row">
+          <span class="word-c">{{ wordCount }} words</span>
+          <button class="btn-run" onClick="{{ normalize }}">
+            Normalize brief
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+        </div>
+        <div class="ex-label">Try a sample</div>
+        <div class="ex-list">
+          <sc-for list="{{ examples }}" as="e" hint-placeholder-count="4">
+            <button class="ex" onClick="{{ e.pick }}"><b>{{ e.tag }}</b>{{ e.text }}</button>
+          </sc-for>
+        </div>
+      </div>
+    </aside>
+
+    <main class="outpane">
+      <sc-if value="{{ hasResult }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div class="amb-banner {{ ambCls }}">
+            <div class="amb-head">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+              {{ ambTitle }}
+            </div>
+            <sc-if value="{{ hasAmb }}" hint-placeholder-val="{{ false }}">
+              <ul class="amb-list">
+                <sc-for list="{{ ambiguities }}" as="a" hint-placeholder-count="2">
+                  <li>{{ a }}</li>
+                </sc-for>
+              </ul>
+            </sc-if>
+            <sc-if value="{{ noAmb }}" hint-placeholder-val="{{ false }}">
+              <div class="amb-clear-msg">No ambiguities — brief is complete. Pipeline may proceed to the Emotion Translator.</div>
+            </sc-if>
+          </div>
+
+          <div class="out-grid">
+            <div class="ocard">
+              <h3>Normalized brief <span class="stage">Stage 1</span></h3>
+              <dl class="kv">
+                <dt>Occasion</dt><dd class="{{ b.occasionCls }}">{{ b.occasion }}</dd>
+                <dt>Mood</dt><dd class="{{ b.moodCls }}">{{ b.mood }}</dd>
+                <dt>Colors</dt>
+                <dd>
+                  <sc-if value="{{ b.hasColors }}" hint-placeholder-val="{{ false }}"><div class="tags"><sc-for list="{{ b.colorMentions }}" as="c" hint-placeholder-count="2"><span class="tag">{{ c }}</span></sc-for></div></sc-if>
+                  <sc-if value="{{ b.noColors }}" hint-placeholder-val="{{ false }}"><span style="color:var(--ec-gray-400);font-style:italic">none stated — derived in Stage 3</span></sc-if>
+                </dd>
+                <dt>Materials</dt>
+                <dd>
+                  <sc-if value="{{ b.hasMats }}" hint-placeholder-val="{{ false }}"><div class="tags"><sc-for list="{{ b.materials }}" as="m" hint-placeholder-count="2"><span class="tag mat {{ m.cls }}">{{ m.label }}</span></sc-for></div></sc-if>
+                  <sc-if value="{{ b.noMats }}" hint-placeholder-val="{{ false }}"><span style="color:var(--ec-gray-400);font-style:italic">none specified</span></sc-if>
+                </dd>
+                <dt>Size</dt><dd>{{ b.sizeText }}</dd>
+                <dt>Budget</dt><dd>{{ b.budget }}</dd>
+              </dl>
+            </div>
+
+            <div class="ocard">
+              <h3>Sizing spec <span class="stage">Stage 2</span></h3>
+              <div class="size-hero"><span class="num">{{ sz.sizeText }}</span><span class="tier">{{ sz.tier }} tier</span></div>
+              <table class="stem-table">
+                <tr><td>Focal stems</td><td>{{ sz.focal }}</td></tr>
+                <tr><td>Greenery stems</td><td>{{ sz.greenery }}</td></tr>
+                <tr><td>Filler stems</td><td>{{ sz.filler }}</td></tr>
+                <tr><td>Accent stems</td><td>{{ sz.accent }}</td></tr>
+                <tr><td>Focal clusters (odd)</td><td>{{ sz.clusters }}</td></tr>
+              </table>
+              <div class="stem-note"><span>Total est. <b>{{ sz.total }}</b></span><span>Density · {{ sz.density }}</span></div>
+              <sc-if value="{{ sz.hasInterp }}" hint-placeholder-val="{{ false }}"><div class="interp-note">{{ sz.interp }}</div></sc-if>
+            </div>
+
+            <div class="ocard span">
+              <h3>Color palette <span class="stage">Stage 3 · 60·30·10</span></h3>
+              <div class="swatches">
+                <sc-for list="{{ pal.swatches }}" as="s" hint-placeholder-count="3">
+                  <div class="sw">
+                    <div class="sw-chip" style="{{ s.style }}"></div>
+                    <div class="sw-role">{{ s.role }}</div>
+                    <div class="sw-name">{{ s.name }}</div>
+                    <div class="sw-hex">{{ s.hex }}</div>
+                  </div>
+                </sc-for>
+              </div>
+              <div class="pal-meta">
+                <span class="tag">lean · {{ pal.lean }}</span>
+                <span class="tag">contrast · {{ pal.contrast }}</span>
+                <span class="tag">season · {{ pal.seasonal }}</span>
+              </div>
+              <sc-if value="{{ pal.hasNotes }}" hint-placeholder-val="{{ false }}"><div class="pal-note">{{ pal.notes }}</div></sc-if>
+            </div>
+          </div>
+
+          <div class="json-panel">
+            <div class="jhead">
+              CDIE-1.0 output contract · raw JSON
+              <button class="copy-btn" onClick="{{ copyJson }}">Copy</button>
+            </div>
+            <pre>{{ json }}</pre>
+          </div>
+          <div class="handoff">
+            <span class="ho"><b>normalized_brief + color_palette</b> → Emotion Translator</span>
+            <span class="ho"><b>sizing_spec</b> → Blueprint Composition Engine</span>
+            <span class="ho"><b>ambiguities</b> → human operator</span>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ noResult }}" hint-placeholder-val="{{ true }}">
+        <div class="out-empty">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#C9C4BA" stroke-width="1.4"><path d="M4 7h16M4 12h10M4 17h7"/></svg>
+          <p>Paste a client request and normalize</p>
+          <span>raw input → structured design intelligence</span>
+        </div>
+      </sc-if>
+    </main>
+  </div>
+</div>
+
+<sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+  <div class="toast">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6B8F67" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+    {{ toastText }}
+  </div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;100%&quot;,&quot;height&quot;:&quot;100%&quot;}}">
+const OCCASIONS=[
+  {keys:['wedding','bridal','ceremony','bride'],label:'wedding ceremony'},
+  {keys:['sympathy','funeral','memorial','condolence','grieving','passing'],label:'sympathy gift'},
+  {keys:['anniversary'],label:'anniversary'},
+  {keys:['birthday','bday'],label:'birthday'},
+  {keys:['housewarming','new home','hostess','host gift'],label:'hostess / housewarming gift'},
+  {keys:['christmas','holiday','thanksgiving','easter','halloween','hanukkah'],label:'holiday display'},
+  {keys:['front door','entryway','entry way','porch','foyer'],label:'front door'},
+  {keys:['door'],label:'front door'}
+];
+const MOODS=[
+  {keys:['cozy','comforting','snug'],m:'cozy'},{keys:['elegant','refined','sophisticated','chic'],m:'elegant'},
+  {keys:['whimsical','playful'],m:'whimsical'},{keys:['peaceful','calm','serene','tranquil','quiet','gentle'],m:'peaceful'},
+  {keys:['romantic','tender'],m:'romantic'},{keys:['dramatic','bold','striking'],m:'dramatic'},
+  {keys:['earthy','grounded','organic','natural','rustic'],m:'earthy'},{keys:['festive','celebratory','joyful','cheerful'],m:'festive'},
+  {keys:['nostalgic','sentimental'],m:'nostalgic'},{keys:['minimal','understated','pared'],m:'minimal'},
+  {keys:['lush','abundant','opulent'],m:'lush'},{keys:['airy','delicate'],m:'airy'},
+  {keys:['moody','somber'],m:'moody'},{keys:['luxurious','luxe','glamorous'],m:'luxurious'}
+];
+const CONTRA=[['dramatic','soft'],['dramatic','minimal'],['bold','subtle'],['lush','minimal'],['opulent','simple'],['moody','cheerful'],['festive','somber']];
+const INFER_MOOD={'sympathy gift':'calm, muted, restrained','wedding ceremony':'elevated, romantic, refined','birthday':'warm, celebratory, joyful','anniversary':'warm, romantic, refined','holiday display':'festive, abundant, luminous'};
+const COLOR_LIB={white:['aged ivory','#F2EDE3'],ivory:['aged ivory','#F2EDE3'],cream:['warm cream','#EFE6D3'],blush:['soft blush','#E7CAC3'],pink:['antique rose','#D6A39B'],rose:['antique mauve','#C08C86'],mauve:['antique mauve','#B98F8A'],red:['deep red','#8E2C2C'],burgundy:['deep burgundy','#5E2230'],wine:['wine','#5E2230'],maroon:['maroon','#5E2230'],orange:['burnt orange','#B4652A'],rust:['rust','#9E4E2B'],terracotta:['terracotta','#B06A4E'],peach:['soft peach','#E7BFA0'],coral:['coral','#E08B6F'],gold:['aged gold','#C4922A'],champagne:['champagne','#E4D3A8'],mustard:['mustard','#C9A24B'],yellow:['soft yellow','#E8D08A'],green:['deep forest green','#2F4B36'],sage:['dusty sage','#9AA88C'],olive:['olive','#6E7A4E'],emerald:['emerald','#2C6E52'],forest:['deep forest green','#2F4B36'],mint:['soft mint','#BCD3BE'],blue:['dusty blue','#7C93A6'],navy:['navy','#2A3A4F'],teal:['muted teal','#3F6F6B'],lavender:['lavender','#B7A6C9'],purple:['plum','#5B3A5B'],plum:['plum','#5B3A5B'],lilac:['lilac','#C6B4D6'],grey:['warm grey','#A7A198'],gray:['warm grey','#A7A198'],silver:['frosted silver','#C9CCC9'],taupe:['taupe','#B3A794'],brown:['cocoa','#6B4E3A'],caramel:['caramel','#B07B45'],cognac:['cognac','#8E4E32'],tan:['tan','#C2A87F'],copper:['copper','#A15C36'],bronze:['antique bronze','#7E5B34']};
+const WARM=new Set(['cream','ivory','white','blush','pink','rose','mauve','peach','coral','gold','champagne','mustard','yellow','rust','orange','terracotta','red','burgundy','wine','maroon','caramel','cognac','copper','bronze','tan','brown','olive']);
+const COOL=new Set(['blue','navy','teal','lavender','purple','plum','lilac','silver','grey','gray','mint','sage','emerald','forest','green']);
+const MATERIALS=['roses','rose','peonies','peony','dahlias','dahlia','ranunculus','eucalyptus','cedar','pine','fir','spruce','cotton','wheat','lavender','hydrangea','magnolia','fern','ivy','berries','berry','pampas','thistle','sunflower','tulip','lilies','lily','orchid','wildflowers','wildflower','greenery','boxwood','holly','mistletoe','dried','strawflower','oak'];
+const DNA_CONFLICT=['cherry blossoms','cherry blossom','pussy willow','twig blossom','blossom branches','blossom branch','fresh flowers','fresh flower','real flowers','real flower','bouquet'];
+const SEASON_WORDS={spring:['spring','easter'],summer:['summer'],fall:['fall','autumn','thanksgiving','harvest'],winter:['winter','christmas','holiday','snow','yuletide']};
+const SEASON_IMPLIED_COLORS={fall:['rust','burnt orange','deep green'],winter:['deep red','evergreen','gold'],spring:['blush','mint','soft yellow'],summer:['coral','peach','cream']};
+const SEASON_PAL={spring:{dom:'blush',sup:'sage',acc:'gold'},summer:{dom:'cream',sup:'coral',acc:'sage'},fall:{dom:'caramel',sup:'rust',acc:'green'},winter:{dom:'green',sup:'red',acc:'gold'},yearround:{dom:'taupe',sup:'sage',acc:'champagne'}};
+const TIERS=[{s:12,t:'mini',f:'3–5',g:'8–12',fi:'5–8',a:'3–5',tot:'19–30'},{s:16,t:'small',f:'5–7',g:'12–16',fi:'8–12',a:'5–8',tot:'30–43'},{s:20,t:'medium',f:'7–9',g:'16–22',fi:'10–15',a:'7–10',tot:'40–56'},{s:24,t:'standard',f:'9–12',g:'22–28',fi:'14–18',a:'9–13',tot:'54–71'},{s:28,t:'large',f:'12–15',g:'28–35',fi:'18–22',a:'12–16',tot:'70–88'},{s:36,t:'statement',f:'15–20',g:'35–45',fi:'22–28',a:'15–20',tot:'87–113'}];
+
+function has(t,arr){return arr.find(k=>t.includes(k));}
+function col(w){const c=COLOR_LIB[w];return c?{name:c[0],hex:c[1]}:{name:w,hex:'#B3A794'};}
+function cap(s){return s?s[0].toUpperCase()+s.slice(1):s;}
+
+class Component extends DCLogic {
+  state={raw:'',result:null,toast:''};
+  onRaw=(e)=>this.setState({raw:e.target.value});
+  toast(m){this.setState({toast:m});clearTimeout(this._t);this._t=setTimeout(()=>this.setState({toast:''}),2400);}
+
+  parse(raw){
+    const t=' '+raw.toLowerCase().replace(/[^a-z0-9%".\s-]/g,' ')+' ';
+    const wc=(raw.trim().match(/\S+/g)||[]).length;
+    const amb=[];
+
+    let occ=null;
+    for(const o of OCCASIONS){ if(has(t,o.keys)){occ=o.label;break;} }
+    const occasion=occ||'unspecified — assumed decorative';
+    let season=null; for(const s in SEASON_WORDS){ if(has(t,SEASON_WORDS[s]))season=s; }
+
+    let found=[]; MOODS.forEach(mo=>{ if(has(t,mo.keys)&&!found.includes(mo.m))found.push(mo.m); });
+    let contradiction=null; CONTRA.forEach(p=>{ if(has(t,[p[0]])&&has(t,[p[1]]))contradiction=p; });
+    let mood,moodInferred=false;
+    if(found.length)mood=found.slice(0,3).join(', ');
+    else if(INFER_MOOD[occasion]){mood=INFER_MOOD[occasion];moodInferred=true;}
+    else mood='ambiguous — not stated or inferable';
+
+    let colors=[]; for(const w in COLOR_LIB){ if(t.includes(' '+w)&&!colors.includes(w))colors.push(w); }
+    const colorMentions=colors.slice();
+    const impliedFromSeason=(colorMentions.length===0&&season&&SEASON_IMPLIED_COLORS[season])?SEASON_IMPLIED_COLORS[season]:[];
+
+    let mats=[]; MATERIALS.forEach(m=>{ if(t.includes(' '+m)&&!mats.some(x=>x.includes(m)||m.includes(x)))mats.push(m); });
+    let conflicts=[]; DNA_CONFLICT.forEach(d=>{ if(t.includes(d)&&!conflicts.some(x=>x.includes(d)||d.includes(x)))conflicts.push(d); });
+
+    let size=24,sizeStated=false;
+    const mm=raw.toLowerCase().match(/(\d{1,2})\s?(?:in\b|inch|inches|")/);
+    if(mm){size=parseInt(mm[1],10);sizeStated=true;}
+    else{const bare=raw.match(/\b(1[2-9]|2\d|3[0-6])\b/);if(bare){size=parseInt(bare[1],10);sizeStated=true;}}
+
+    let budget='unspecified';
+    if(has(t,['luxury','high-end','high end','splurge','someone special','premium','luxe','elevated','heirloom','investment']))budget='premium';
+    else if(has(t,['budget','affordable','cheap','inexpensive','economical','small budget','price sensitive']))budget='accessible';
+
+    const complex=!!has(t,['elaborate','layered','lots of layers','intricate','lush','abundant','ornate','maximal']);
+
+    if(!sizeStated)amb.push('Size not specified — defaulted to 24in. Confirm with client.');
+    if(mood.startsWith('ambiguous'))amb.push('Mood not stated and occasion does not imply one — needs client clarification.');
+    if(moodInferred)amb.push(`Mood inferred from occasion (${occasion}); not stated directly — confirm.`);
+    if(contradiction)amb.push(`Contradictory moods mentioned ("${contradiction[0]}" vs "${contradiction[1]}") — resolve intended direction.`);
+    if(conflicts.length)amb.push(`Style-DNA conflict: "${conflicts.join('", "')}" — fresh-florist material Evercrafted does not use. Override confirmation required.`);
+
+    let palNotes='';
+    if(colorMentions.length&&season){
+      const cw=colorMentions.filter(c=>WARM.has(c)).length, cc=colorMentions.filter(c=>COOL.has(c)).length;
+      const seasonWarm=(season==='fall'||season==='summer');
+      if((seasonWarm&&cc>cw)||(!seasonWarm&&cw>cc)){
+        palNotes=`Client palette leans ${cw>cc?'warm':'cool'} against a ${season} brief; supporting tone bridged for seasonal cohesion. Client preference kept.`;
+        amb.push(`Color preference may conflict with ${season} season — kept client intent, bridged supporting tone.`);
+      }
+    }
+    if(wc>0&&wc<5)amb.push('Request is under five words with little context — most fields inferred or defaulted; confirm with client.');
+
+    // sizing
+    let tier=TIERS[0]; for(let i=0;i<TIERS.length;i++){ if(size>=TIERS[i].s)tier=TIERS[i]; }
+    const interp=!TIERS.find(x=>x.s===size);
+    let clusters; if(size<=16)clusters=3; else if(size<=24)clusters=complex?5:3; else if(size<=28)clusters=5; else clusters=7;
+    let density='none';
+    if(complex||has(t,['dense','abundant','lush','full']))density='+10–15% filler';
+    else if(has(t,['minimal','airy','restrained','simple','sparse','understated']))density='-10–15% filler';
+
+    // palette
+    const contrastMap={peaceful:'low',nostalgic:'low',romantic:'low',cozy:'low',calm:'low',tender:'low',earthy:'medium',grounded:'medium',natural:'medium',rustic:'medium',festive:'high',dramatic:'high',elegant:'high',bold:'high',luxurious:'high'};
+    let contrast='medium'; for(const k in contrastMap){ if(mood.includes(k)){contrast=contrastMap[k];break;} }
+    const chosen=colorMentions.length?colorMentions:impliedFromSeason.map(c=>c.split(' ').pop());
+    let domW=chosen[0],supW=chosen[1],accW=chosen[2];
+    const sp=SEASON_PAL[season||'yearround'];
+    domW=domW||sp.dom; supW=supW||sp.sup; accW=accW||sp.acc;
+    let dominant=col(domW),supporting=col(supW),accent=col(accW);
+    const warmN=[domW,supW,accW].filter(c=>WARM.has(c)).length, coolN=[domW,supW,accW].filter(c=>COOL.has(c)).length;
+    let lean=warmN>coolN?'warm':(coolN>warmN?'cool':'balanced');
+    if(lean==='warm'&&!COOL.has(accW)){accent=col('blue');if(!palNotes)palNotes='Warm-dominant palette given a cool dusty-blue accent as counterpoint.';}
+    else if(lean==='cool'&&!WARM.has(accW)){accent=col('champagne');if(!palNotes)palNotes='Cool-dominant palette given a warm champagne accent as counterpoint.';}
+    if(!palNotes)palNotes=`${cap(contrast)}-contrast ${lean} palette resolved on the 60·30·10 ratio.`;
+    const seasonalFit=season?`${season} — ${(SEASON_IMPLIED_COLORS[season]||[]).join(', ')}`:'year-round neutrals';
+
+    return {
+      normalized_brief:{occasion,mood,color_mentions:colorMentions.length?colorMentions:impliedFromSeason,material_preferences:[...mats,...conflicts],wreath_size_in:size,budget_signal:budget,ambiguities:amb},
+      sizing_spec:{size_in:size,tier:tier.t,focal_stems:tier.f,greenery_stems:tier.g,filler_stems:tier.fi,accent_stems:tier.a,focal_clusters:clusters,density_adjustment:density},
+      color_palette:{dominant:{name:dominant.name,hex:dominant.hex},supporting:{name:supporting.name,hex:supporting.hex},accent:{name:accent.name,hex:accent.hex},warm_cool_lean:lean,contrast_level:contrast,seasonal_fit:seasonalFit,notes:palNotes},
+      _meta:{sizeStated,tierTotal:tier.tot,interp:interp?`Non-standard size — interpolated from ${tier.s}in ${tier.t} tier.`:'',conflicts}
+    };
+  }
+
+  normalize=()=>{
+    const raw=(this.state.raw||'').trim();
+    if(!raw){this.toast('Paste a client request first.');return;}
+    this.setState({result:this.parse(raw)});
+  };
+  pick=(txt)=>this.setState({raw:txt});
+  copyJson=()=>{
+    if(!this._json)return;
+    try{navigator.clipboard&&navigator.clipboard.writeText(this._json);}catch(e){}
+    this.toast('Contract JSON copied');
+  };
+
+  renderVals(){
+    const s=this.state;
+    const wc=(s.raw.trim().match(/\S+/g)||[]).length;
+    const examples=[
+      {tag:'seasonal · front door',text:'Something cozy for our front door this fall — sage and rust, maybe some dried bits. Nothing too fussy. Around 20 inches.'},
+      {tag:'sympathy',text:'A sympathy wreath for a memorial service. Soft whites and muted green, nothing loud — elegant and restrained.'},
+      {tag:'vague · under 5 words',text:"my mom's birthday wreath"},
+      {tag:'premium · style conflict',text:'Luxury wedding piece for the ceremony — blush and champagne, lots of cherry blossoms. Make it dramatic but soft.'}
+    ].map(e=>({tag:e.tag,text:e.text,pick:()=>this.pick(e.text)}));
+
+    let out={
+      hasResult:!!s.result,noResult:!s.result,
+      raw:s.raw,onRaw:this.onRaw,wordCount:wc,normalize:this.normalize,examples,
+      copyJson:this.copyJson,hasToast:!!s.toast,toastText:s.toast,
+      b:{},sz:{},pal:{swatches:[]},ambiguities:[],json:''
+    };
+    if(s.result){
+      const r=s.result, nb=r.normalized_brief, ss=r.sizing_spec, cp=r.color_palette;
+      const contract={normalized_brief:nb,sizing_spec:ss,color_palette:cp};
+      this._json=JSON.stringify(contract,null,2);
+      const conflictSet=new Set(r._meta.conflicts);
+      out.b={
+        occasion:nb.occasion,occasionCls:nb.occasion.startsWith('unspecified')?'muted':'',
+        mood:nb.mood,moodCls:nb.mood.startsWith('ambiguous')?'muted':'',
+        colorMentions:nb.color_mentions,hasColors:nb.color_mentions.length>0,noColors:nb.color_mentions.length===0,
+        materials:nb.material_preferences.map(m=>({label:m,cls:conflictSet.has(m)?'warn':''})),
+        hasMats:nb.material_preferences.length>0,noMats:nb.material_preferences.length===0,
+        sizeText:`${nb.wreath_size_in}in`+(r._meta.sizeStated?'':' · defaulted'),
+        budget:nb.budget_signal
+      };
+      out.sz={
+        sizeText:`${ss.size_in}in`,tier:ss.tier,focal:ss.focal_stems,greenery:ss.greenery_stems,
+        filler:ss.filler_stems,accent:ss.accent_stems,clusters:ss.focal_clusters,
+        total:r._meta.tierTotal,density:ss.density_adjustment,
+        hasInterp:!!r._meta.interp,interp:r._meta.interp
+      };
+      out.pal={
+        swatches:[
+          {role:'Dominant · 60%',name:cp.dominant.name,hex:cp.dominant.hex,style:`background:${cp.dominant.hex}`},
+          {role:'Supporting · 30%',name:cp.supporting.name,hex:cp.supporting.hex,style:`background:${cp.supporting.hex}`},
+          {role:'Accent · 10%',name:cp.accent.name,hex:cp.accent.hex,style:`background:${cp.accent.hex}`}
+        ],
+        lean:cp.warm_cool_lean,contrast:cp.contrast_level,seasonal:cp.seasonal_fit,notes:cp.notes,hasNotes:!!cp.notes
+      };
+      out.ambiguities=nb.ambiguities;
+      out.hasAmb=nb.ambiguities.length>0; out.noAmb=nb.ambiguities.length===0;
+      out.ambCls=nb.ambiguities.length?'':'clear';
+      out.ambTitle=nb.ambiguities.length?`${nb.ambiguities.length} ambiguit${nb.ambiguities.length===1?'y':'ies'} flagged for operator`:'Brief complete — no ambiguities';
+      out.json=this._json;
+    }
+    return out;
+  }
+}
+</script>
+</body>
+</html>

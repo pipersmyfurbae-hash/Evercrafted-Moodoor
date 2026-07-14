@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <title>Moodoor Studio — Brief-to-Collection Generator</title>
+  <meta name="description" content="Describe a season, theme, or feeling. Generates a complete 8-product wreath collection — hierarchy, continuity map, release strategy, cross-sell architecture, and a production-ready MJ V7 render prompt.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root{--ec-white:#FFFFFF;--ec-off-white:#F9F7F4;--ec-paper:#F2EFE9;--ec-card2:#F5F2EA;--ec-black:#1A1A1A;--ec-ink:#4A4A4A;--ec-green:#4A6741;--ec-green-light:#6B8F67;--ec-green-pale:#EEF2ED;--ec-green-dim:rgba(74,103,65,.12);--ec-gray-100:#F5F5F5;--ec-gray-200:#E8E8E8;--ec-gray-300:#D0D0D0;--ec-gray-400:#A8A8A8;--ec-gray-500:#787878;--ec-warning:#C4922A;--ec-border:#E8E8E8;--ec-dark:#1E1D18;--ec-dark2:#2A2820;--serif:'Cormorant Garamond',Georgia,serif;--sans:'Inter',system-ui,sans-serif;--mono:'DM Mono',monospace;--r-sm:6px;--r-md:10px;--r-lg:14px;--r-full:9999px;--tr:180ms ease}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{font-family:var(--sans);font-size:14px;color:var(--ec-black);background:var(--ec-off-white);-webkit-font-smoothing:antialiased}
+    ::selection{background:var(--ec-green-dim);color:var(--ec-green)}
+    button{font-family:inherit;cursor:pointer}
+    a{color:var(--ec-green)}
+    a:hover{color:var(--ec-green-light)}
+  </style>
+</helmet>
+
+<div style="display:flex;flex-direction:column;height:100vh;overflow:hidden">
+  <header style="display:flex;align-items:center;justify-content:space-between;gap:20px;padding:0 24px;height:58px;background:var(--ec-white);border-bottom:1px solid var(--ec-border);flex-shrink:0;z-index:20">
+    <div style="display:flex;align-items:center;gap:12px">
+      <span style="font-family:var(--serif);font-size:22px;font-weight:600">Mood<span style="color:var(--ec-green)">oor</span></span>
+      <span style="font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ec-green);background:var(--ec-green-pale);border:1px solid rgba(107,143,103,.3);padding:4px 9px;border-radius:var(--r-full)">Studio · Brief Generator</span>
+    </div>
+    <div style="font-family:var(--mono);font-size:11px;color:var(--ec-gray-400)">brief → collection intelligence → 8-product system</div>
+    <a style="font-size:12.5px;color:var(--ec-gray-500);text-decoration:none" href="Moodoor Collection Engine.dc.html">Collection engine →</a>
+  </header>
+
+  <div style="flex:1;min-height:0;overflow-y:auto;position:relative">
+
+  <sc-if value="{{ isInput }}" hint-placeholder-val="{{ true }}">
+    <div style="min-height:100%;display:flex;align-items:center;justify-content:center;padding:48px 24px">
+      <div style="max-width:560px;width:100%">
+        <div style="font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ec-green);margin-bottom:36px">◦ Moodoor · Collection Intelligence Engine</div>
+        <h1 style="font-family:var(--serif);font-size:52px;font-weight:500;line-height:1.0;margin-bottom:14px">Brief-to-Collection<br>Generator</h1>
+        <p style="font-size:13.5px;color:var(--ec-ink);line-height:1.7;margin-bottom:36px;max-width:440px">Describe a season, theme, mood, or emotional direction. Generates a complete 8-product wreath collection — hierarchy, continuity map, release strategy, cross-sell architecture, and a production-ready render prompt.</p>
+        <label style="display:block;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ec-gray-500);margin-bottom:9px">Collection Brief</label>
+        <textarea rows="5" placeholder="e.g. Late winter — the last cold before warmth arrives. Pale greens, aged paper, the weight of something almost finished." style="width:100%;background:var(--ec-white);border:1px solid var(--ec-border);border-radius:var(--r-md);color:var(--ec-black);font-family:var(--sans);font-size:14px;padding:16px;resize:vertical;outline:none;line-height:1.7;min-height:110px" value="{{ brief }}" onChange="{{ onBriefChange }}" onKeyDown="{{ onKeyDown }}"></textarea>
+        <button style="width:100%;margin-top:14px;background:var(--ec-green);color:#fff;font-weight:600;font-size:12px;letter-spacing:.05em;text-transform:uppercase;padding:15px;border-radius:var(--r-full);border:none;opacity:{{ genOpacity }}" onClick="{{ generate }}" disabled="{{ genDisabled }}">Generate Collection</button>
+        <p style="margin-top:14px;font-size:11px;color:var(--ec-gray-400);line-height:1.65">Tip: <span style="font-family:var(--mono);font-size:9px">Ctrl+Enter</span> or <span style="font-family:var(--mono);font-size:9px">⌘+Enter</span> to generate</p>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isLoading }}" hint-placeholder-val="{{ false }}">
+    <div style="min-height:100%;display:flex;align-items:center;justify-content:center">
+      <div style="text-align:center">
+        <div style="width:44px;height:44px;border-radius:50%;border:1.5px solid var(--ec-border);border-top-color:var(--ec-green);animation:spin 1.1s linear infinite;margin:0 auto 26px"></div>
+        <div style="font-family:var(--serif);font-size:22px;font-weight:500;margin-bottom:6px">Building collection intelligence</div>
+        <div style="font-size:12.5px;color:var(--ec-ink)">Translating brief into collection architecture</div>
+        <div style="margin-top:28px;display:flex;flex-direction:column;gap:6px;align-items:center">
+          <sc-for list="{{ phases }}" as="p" hint-placeholder-count="5">
+            <div style="{{ p.style }}">◦ {{ p.text }}</div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isError }}" hint-placeholder-val="{{ false }}">
+    <div style="min-height:100%;display:flex;align-items:center;justify-content:center;padding:40px">
+      <div style="max-width:480px;text-align:center">
+        <div style="font-family:var(--serif);font-size:24px;margin-bottom:10px;color:#B4652A">Generation failed</div>
+        <div style="font-size:13px;color:var(--ec-ink);margin-bottom:24px;line-height:1.6;background:var(--ec-white);border:1px solid var(--ec-border);border-radius:var(--r-md);padding:14px;text-align:left;font-family:var(--mono)">{{ errorMsg }}</div>
+        <button style="font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ec-black);background:var(--ec-white);border:1px solid var(--ec-border);border-radius:var(--r-sm);padding:10px 20px" onClick="{{ tryAgain }}">Try again</button>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isResults }}" hint-placeholder-val="{{ false }}">
+    <div>
+      <div style="padding:22px 32px 18px;border-bottom:1px solid var(--ec-border);display:flex;align-items:flex-start;gap:20px;background:var(--ec-white)">
+        <button style="font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--ec-gray-500);background:none;border:1px solid var(--ec-border);border-radius:var(--r-sm);padding:7px 14px;margin-top:3px;flex-shrink:0" onClick="{{ tryAgain }}">+ New Collection</button>
+        <div style="flex:1">
+          <div style="font-family:var(--mono);font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--ec-green);margin-bottom:3px">{{ r.atmo }}</div>
+          <div style="font-family:var(--serif);font-size:28px;font-weight:500;line-height:1.1;margin-bottom:3px">{{ r.name }}</div>
+          <div style="font-family:var(--serif);font-style:italic;font-size:13.5px;color:var(--ec-ink)">{{ r.tagline }}</div>
+        </div>
+      </div>
+
+      <div style="display:flex;overflow-x:auto;background:var(--ec-white);border-bottom:1px solid var(--ec-border);padding:0 32px">
+        <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="6">
+          <button style="{{ t.style }}" onClick="{{ t.onClick }}">{{ t.label }}</button>
+        </sc-for>
+      </div>
+
+      <div style="padding:36px;max-width:960px">
+
+      <sc-if value="{{ isTabCollection }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--ec-gray-500);margin-bottom:16px">Collection Foundation</div>
+          <div style="background:var(--ec-white);border-left:3px solid var(--ec-green);padding:18px 22px;margin-bottom:28px;border-radius:0 var(--r-md) var(--r-md) 0">
+            <p style="font-family:var(--serif);font-style:italic;font-size:17px;line-height:1.67;color:var(--ec-black)">{{ r.emotionalBrief }}</p>
+          </div>
+          <div style="font-family:var(--serif);font-size:20px;font-weight:600;margin-bottom:14px">Palette Identity</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px">
+            <sc-for list="{{ r.palette }}" as="p" hint-placeholder-count="5">
+              <div style="flex:1;min-width:90px;border-radius:var(--r-sm);overflow:hidden;border:1px solid var(--ec-border)">
+                <div style="{{ p.swatchStyle }}"></div>
+                <div style="background:var(--ec-white);padding:8px 10px">
+                  <div style="font-size:11px;font-weight:500;margin-bottom:2px">{{ p.name }}</div>
+                  <div style="font-family:var(--mono);font-size:9px;color:var(--ec-gray-500)">{{ p.hex }}</div>
+                  <div style="font-family:var(--mono);font-size:9px;color:var(--ec-green)">{{ p.pct }}</div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="font-family:var(--serif);font-size:20px;font-weight:600;margin-bottom:14px">Signature Spec</div>
+          <div style="background:var(--ec-dark);border:1px solid var(--ec-dark2);border-radius:var(--r-md);margin-bottom:24px;overflow:hidden">
+            <sc-for list="{{ r.spec }}" as="s" hint-placeholder-count="10">
+              <div style="display:flex;gap:14px;padding:10px 16px;border-bottom:1px solid var(--ec-dark2)">
+                <div style="font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--ec-warning);min-width:165px;flex-shrink:0;padding-top:1px">{{ s.label }}</div>
+                <div style="font-family:var(--serif);font-size:14px;color:#D8D0BC;line-height:1.5">{{ s.value }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--ec-gray-500);margin-bottom:16px">Emotion Tags</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px">
+            <sc-for list="{{ r.tags }}" as="tag" hint-placeholder-count="5">
+              <span style="font-family:var(--mono);font-size:9px;letter-spacing:.07em;padding:3px 10px;border:1px solid var(--ec-green-light);border-radius:12px;color:var(--ec-green)">{{ tag }}</span>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isTabHierarchy }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--ec-gray-500);margin-bottom:16px">Product Hierarchy — {{ r.hierCount }} Products</div>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:24px">
+            <sc-for list="{{ r.hierarchy }}" as="item" hint-placeholder-count="8">
+              <div style="{{ item.cardStyle }}">
+                <div style="flex:1">
+                  <div style="font-family:var(--mono);font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--ec-gray-500);margin-bottom:3px">{{ item.role }}</div>
+                  <div style="font-family:var(--serif);font-size:17px;font-weight:600;margin-bottom:3px">{{ item.name }}</div>
+                  <div style="font-size:11.5px;color:var(--ec-ink);line-height:1.55"><strong>{{ item.form }}</strong> · {{ item.formula }} · {{ item.scale }}</div>
+                  <div style="font-size:11px;color:var(--ec-gray-400);margin-top:4px">{{ item.notes }}</div>
+                </div>
+                <div style="font-family:var(--mono);font-size:22px;font-weight:500;color:var(--ec-black);flex-shrink:0;padding-top:2px">{{ item.priceText }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="background:var(--ec-paper);border:1px solid var(--ec-border);border-radius:var(--r-md);padding:16px 22px;display:flex;gap:36px;flex-wrap:wrap">
+            <div><div style="font-family:var(--mono);font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:var(--ec-gray-500);margin-bottom:4px">Price Range</div><div style="font-family:var(--mono);font-size:24px;color:var(--ec-green)">{{ r.priceRangeText }}</div></div>
+            <div><div style="font-family:var(--mono);font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:var(--ec-gray-500);margin-bottom:4px">Center of Gravity</div><div style="font-family:var(--mono);font-size:24px;color:var(--ec-green)">{{ r.priceCenterText }}</div></div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isTabContinuity }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--ec-gray-500);margin-bottom:16px">Emotional Continuity Map</div>
+          <sc-for list="{{ r.threads }}" as="th" hint-placeholder-count="5">
+            <div style="background:var(--ec-white);border:1px solid var(--ec-border);border-radius:var(--r-md);padding:14px 18px;margin-bottom:8px">
+              <div style="font-family:var(--serif);font-size:15px;font-weight:600;margin-bottom:4px;color:var(--ec-green)">{{ th.name }}</div>
+              <div style="font-size:12.5px;color:var(--ec-ink);line-height:1.62">{{ th.body }}</div>
+            </div>
+          </sc-for>
+          <div style="border:none;border-top:1px solid var(--ec-border);margin:26px 0"></div>
+          <div style="font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--ec-gray-500);margin-bottom:16px">Continuity Audit</div>
+          <table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:28px">
+            <thead><tr><th style="font-family:var(--mono);font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--ec-gray-500);padding:9px 12px;text-align:left;border-bottom:1px solid var(--ec-border)">Product</th><th style="font-family:var(--mono);font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--ec-gray-500);padding:9px 12px;text-align:left;border-bottom:1px solid var(--ec-border)">Atmosphere</th><th style="font-family:var(--mono);font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--ec-gray-500);padding:9px 12px;text-align:left;border-bottom:1px solid var(--ec-border)">Palette</th><th style="font-family:var(--mono);font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--ec-gray-500);padding:9px 12px;text-align:left;border-bottom:1px solid var(--ec-border)">Movement</th><th style="font-family:var(--mono);font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--ec-gray-500);padding:9px 12px;text-align:left;border-bottom:1px solid var(--ec-border)">Texture</th></tr></thead>
+            <tbody>
+              <sc-for list="{{ r.hierarchy }}" as="item" hint-placeholder-count="8">
+                <tr><td style="padding:8px 12px;border-bottom:1px solid var(--ec-border)">{{ item.name }}</td><td style="padding:8px 12px;border-bottom:1px solid var(--ec-border);color:var(--ec-green)">✓</td><td style="padding:8px 12px;border-bottom:1px solid var(--ec-border);color:var(--ec-green)">✓</td><td style="padding:8px 12px;border-bottom:1px solid var(--ec-border);color:var(--ec-green)">✓</td><td style="padding:8px 12px;border-bottom:1px solid var(--ec-border);color:var(--ec-green)">✓</td></tr>
+              </sc-for>
+            </tbody>
+          </table>
+          <div style="background:var(--ec-white);border:1px solid var(--ec-border);border-radius:var(--r-md);padding:12px 16px;font-size:12px;color:var(--ec-ink);line-height:1.6"><strong style="color:var(--ec-black);font-weight:500">All threads hold.</strong> Clear to advance to release and merchandising.</div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isTabRelease }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--ec-gray-500);margin-bottom:16px">Seasonal Release Strategy</div>
+          <sc-for list="{{ r.phases }}" as="p" hint-placeholder-count="4">
+            <div style="border-left:2px solid var(--ec-green-light);padding:4px 0 24px 22px;position:relative">
+              <div style="font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ec-green-light);margin-bottom:3px">{{ p.phase }} · {{ p.timing }}</div>
+              <div style="font-family:var(--serif);font-size:18px;font-weight:600;margin-bottom:5px">{{ p.title }}</div>
+              <div style="font-size:12px;color:var(--ec-ink);line-height:1.65;margin-top:3px"><b>Releases:</b> {{ p.releases }}</div>
+              <div style="font-size:12px;color:var(--ec-ink);line-height:1.65;margin-top:3px"><b>Purpose:</b> {{ p.purpose }}</div>
+              <div style="font-size:12px;color:var(--ec-ink);line-height:1.65;margin-top:3px"><b>Copy framing:</b> {{ p.copy }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isTabCrosssell }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--ec-gray-500);margin-bottom:16px">Room-Level Completion Systems</div>
+          <sc-for list="{{ r.crossSell }}" as="s" hint-placeholder-count="3">
+            <div style="background:var(--ec-white);border:1px solid var(--ec-border);border-radius:var(--r-md);padding:14px 18px;margin-bottom:8px">
+              <div style="font-family:var(--serif);font-size:15px;font-weight:600;color:var(--ec-green);margin-bottom:5px">{{ s.name }}</div>
+              <div style="font-size:12.5px;color:var(--ec-ink);line-height:1.6">{{ s.flow }}</div>
+            </div>
+          </sc-for>
+          <div style="border:none;border-top:1px solid var(--ec-border);margin:26px 0"></div>
+          <div style="font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--ec-gray-500);margin-bottom:16px">Bundle Architecture</div>
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px">
+            <sc-for list="{{ r.bundles }}" as="b" hint-placeholder-count="4">
+              <div style="background:var(--ec-white);border:1px solid var(--ec-border);border-radius:var(--r-md);padding:14px 16px">
+                <div style="font-family:var(--serif);font-size:15px;font-weight:600;margin-bottom:2px">{{ b.name }}</div>
+                <div style="font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--ec-gray-500);margin-bottom:8px">{{ b.type }}</div>
+                <div style="font-size:11.5px;color:var(--ec-ink);line-height:1.5;margin-bottom:10px">{{ b.contents }}</div>
+                <div style="display:flex;align-items:baseline;gap:8px">
+                  <sc-if value="{{ b.hasDiscount }}" hint-placeholder-val="{{ false }}"><span style="font-family:var(--mono);font-size:11px;color:var(--ec-gray-500);text-decoration:line-through">{{ b.sumText }}</span></sc-if>
+                  <span style="font-family:var(--mono);font-size:19px;color:var(--ec-green);font-weight:500">{{ b.finalText }}</span>
+                </div>
+                <sc-if value="{{ b.hasDiscount }}" hint-placeholder-val="{{ false }}"><div style="font-family:var(--mono);font-size:9px;color:var(--ec-green-light);margin-top:3px">{{ b.saveText }}</div></sc-if>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isTabRender }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--ec-gray-500);margin-bottom:16px">Hero MJ V7 Render Prompt</div>
+          <div style="background:var(--ec-white);border:1px solid var(--ec-border);border-radius:var(--r-md);padding:12px 16px;font-size:12px;color:var(--ec-ink);line-height:1.6;margin-bottom:16px"><strong style="color:var(--ec-black);font-weight:500">Faux rules enforced:</strong> Materials named as artificial/silk/polyester throughout. Complete ring structure stated. Wall-mount framing. --no block included.</div>
+          <div style="background:var(--ec-dark);border:1px solid var(--ec-dark2);border-radius:var(--r-md);overflow:hidden;margin-bottom:16px">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 15px;border-bottom:1px solid var(--ec-dark2);gap:12px">
+              <span style="font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ec-gray-400)">Phase 2 Hero Prompt — ready to paste</span>
+              <button style="font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;padding:5px 12px;background:none;border:1px solid var(--ec-dark2);color:var(--ec-gray-400);border-radius:3px" onClick="{{ copyPrompt }}">{{ copyLabel }}</button>
+            </div>
+            <div style="font-family:var(--mono);font-size:11px;color:#D8C8A0;padding:16px;line-height:1.75;white-space:pre-wrap;word-break:break-word">{{ r.heroRenderPrompt }}</div>
+          </div>
+          <div style="background:var(--ec-white);border:1px solid var(--ec-border);border-radius:var(--r-md);padding:13px 16px;margin-bottom:22px">
+            <div style="font-family:var(--mono);font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:var(--ec-gray-500);margin-bottom:5px">WGS Genome String</div>
+            <div style="font-family:var(--mono);font-size:10px;color:var(--ec-green);word-break:break-all;line-height:1.6">{{ r.heroGenome }}</div>
+          </div>
+          <div style="font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--ec-gray-500);margin-bottom:16px">Visual Merchandising Notes</div>
+          <ul style="list-style:none">
+            <sc-for list="{{ r.merchandising }}" as="m" hint-placeholder-count="4">
+              <li style="font-size:12.5px;color:var(--ec-ink);padding:8px 0 8px 20px;border-bottom:1px solid var(--ec-border);position:relative;line-height:1.55">◦ {{ m }}</li>
+            </sc-for>
+          </ul>
+        </div>
+      </sc-if>
+
+      </div>
+    </div>
+  </sc-if>
+
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const SYSTEM = `You are the Moodoor Collection Intelligence Engine — the design OS for a luxury faux botanical wreath brand. You generate complete, commercially viable collection packages for premium Etsy and Shopify wreath makers.
+
+OUTPUT FORMAT: Respond with valid JSON only. No markdown fences, no backticks, no preamble, no explanation. Pure JSON.
+
+VOICE: Luxury editorial director. Cinematically specific. Emotionally precise.
+Never: "stunning", "beautiful", "gorgeous", "cozy", "vibrant", "boho", "rustic", "whimsical".
+Never moodboard language. Never generic.
+
+DESIGN RULES:
+- Never include: sunflowers, pussy willow, dried wheat, cherry blossoms
+- No perfect symmetry anywhere
+- Winter/holiday designs MUST include warm LED strand in wreath products
+- All compositions must be physically manufacturable with faux silk and polyester
+- Composition formulas MUST be from this list: Half Ring, Crescent, Side Sweep, Bottom Heavy, Diagonal Flow, Twin Cluster, Corner Cluster, Wild Asymmetry, Top Cluster, Spiral Flow, Classic Balanced, Garden Scatter
+- Atmosphere archetypes MUST be from this list: Quiet Opulence, Weathered Romance, Sacred Warmth, Lingering Autumn, Velvet Stillness, Candlelit Gathering, Garden Memory, Coastal Melancholy, Wild Ceremony, Soft Grandeur, Inherited Beauty, Winter Reverence, Faded Celebration, Untamed Elegance, Gilded Silence, Reverence, Ceremony, Stillness, Tension, Drift, Inheritance, Echo, Sanctuary
+
+PRODUCT HIERARCHY — generate exactly 8 products:
+1. Premium Anchor: garland or complex centerpiece piece, most labor, $225-350
+2. Hero: primary 24-inch door wreath, main product, $145-195
+3. Supporting 1: garland or tablescape ring, $95-165
+4. Supporting 2: coordinating wreath or second garland, $85-155
+5. Gateway: simplified 16-18 inch version of the Hero, $95-135
+6. Atmospheric Filler: candle ring 5-7 inches, $35-55
+7. Accent 1: ribbon bundle or decorative picks, $18-38
+8. Accent 2: second accent object, $18-38
+
+HERO RENDER PROMPT rules (heroRenderPrompt field):
+- Open: "Luxury handcrafted faux botanical wreath, premium artificial silk and polyester florals, home decor product photography"
+- Name ALL materials as artificial, faux, silk, polyester, wire-structured
+- State: "complete circular grapevine ring base forming a full unbroken 24-inch loop"
+- Describe greenery covering "the full ring with varying density"
+- Specify density by clock position and state silence arc
+- Include: "photographed flat against a pale gray painted wall as if hanging on a front door, front-facing camera angle"
+- If winter/holiday: include "integrated warm LED light strand woven through the dense arc with soft warm glow visible"
+- End with: "--no fresh flowers, real plants, live botanicals, organic, dew, wilting, florist, fresh-cut, flat lay, overhead shot, bird's eye view --style raw --s 150 --ar 1:1 --v 7"
+- Total 140-180 words
+
+CONCISENESS RULE: Every string value must be 1-2 sentences maximum. No exceptions.
+
+JSON SCHEMA (output this exact structure):
+{
+  "collectionName": "2-4 word poetic name",
+  "tagline": "10-14 word editorial tagline, not generic",
+  "atmosphereArchetype": "from canonical list only",
+  "emotionalBrief": "3-4 sentence luxury editorial brief",
+  "palette": [{"name":"","hex":"#xxxxxx","role":"dominant","pct":"60%"},{"name":"","hex":"","role":"supporting","pct":"20%"},{"name":"","hex":"","role":"accent","pct":"10%"},{"name":"","hex":"","role":"bridge","pct":"7%"},{"name":"","hex":"","role":"negative","pct":"3%"}],
+  "signatureSpec": [{"label":"Emotional Atmosphere","value":""},{"label":"Structural Movement","value":""},{"label":"Palette Language","value":""},{"label":"Density Profile","value":""},{"label":"Asymmetry Direction","value":""},{"label":"Texture Language","value":""},{"label":"Composition Formula","value":""},{"label":"Silence Arc","value":""},{"label":"Seasonal Resonance","value":""},{"label":"Emotion Tags","value":"comma-separated"}],
+  "emotionTags": ["tag1","tag2","tag3","tag4","tag5"],
+  "hierarchy": [
+    {"role":"Premium Anchor","name":"","form":"","formula":"","scale":"","price":0,"keyMaterials":"","notes":""},
+    {"role":"Hero","name":"","form":"","formula":"","scale":"","price":0,"keyMaterials":"","notes":""},
+    {"role":"Supporting","name":"","form":"","formula":"","scale":"","price":0,"keyMaterials":"","notes":""},
+    {"role":"Supporting","name":"","form":"","formula":"","scale":"","price":0,"keyMaterials":"","notes":""},
+    {"role":"Gateway","name":"","form":"","formula":"","scale":"","price":0,"keyMaterials":"","notes":""},
+    {"role":"Atmospheric Filler","name":"","form":"","formula":"","scale":"","price":0,"keyMaterials":"","notes":""},
+    {"role":"Accent","name":"","form":"","formula":"","scale":"","price":0,"keyMaterials":"","notes":""},
+    {"role":"Accent","name":"","form":"","formula":"","scale":"","price":0,"keyMaterials":"","notes":""}
+  ],
+  "priceRange": {"low":0,"high":0,"center":0},
+  "continuity": {"atmosphere":"","palette":"","movement":"","texture":"","bridgeTone":""},
+  "releasePhases": [{"phase":"Phase 1","title":"","timing":"","releases":"","purpose":"","copy":""},{"phase":"Phase 2","title":"","timing":"","releases":"","purpose":"","copy":""},{"phase":"Phase 3","title":"","timing":"","releases":"","purpose":"","copy":""},{"phase":"Phase 4","title":"","timing":"","releases":"","purpose":"","copy":""}],
+  "crossSell": [{"name":"","flow":""},{"name":"","flow":""},{"name":"","flow":""}],
+  "bundles": [{"name":"","type":"","contents":"","sum":0,"discount":0.12},{"name":"","type":"","contents":"","sum":0,"discount":0.08},{"name":"","type":"","contents":"","sum":0,"discount":0},{"name":"","type":"","contents":"","sum":0,"discount":0.16}],
+  "heroRenderPrompt": "full render prompt 140-180 words",
+  "heroGenome": "WGS1|24|...",
+  "merchandising": ["note1","note2","note3","note4"]
+}`;
+
+const ROLE_COLORS = {'Premium Anchor':'#2A3D28','Hero':'#C4922A','Supporting':'#4A6741','Atmospheric Filler':'#6B8F67','Gateway':'#8A5A3A','Accent':'#787058'};
+const PHASE_TEXT = ['Profiling emotional atmosphere','Generating palette and signature spec','Building 8-product hierarchy','Mapping continuity threads','Writing MJ V7 render prompt'];
+const TABS = [['collection','Collection'],['hierarchy','Hierarchy'],['continuity','Continuity'],['release','Release'],['crosssell','Cross-Sell'],['render','Render']];
+
+class Component extends DCLogic {
+  state = { screen:'input', brief:'', phaseCount:0, error:'', data:null, tab:'collection', copyLabel:'Copy' };
+
+  componentWillUnmount(){ clearInterval(this._pt); }
+
+  onBriefChange = (e) => this.setState({ brief: e.target.value });
+  onKeyDown = (e) => { if((e.ctrlKey||e.metaKey) && e.key==='Enter') this.generate(); };
+  setTab = (name) => this.setState({ tab: name });
+  tryAgain = () => this.setState({ screen:'input', error:'', data:null });
+
+  copyPrompt = () => {
+    const d = this.state.data; if(!d) return;
+    navigator.clipboard.writeText(d.heroRenderPrompt||'').then(() => {
+      this.setState({ copyLabel:'Copied ✓' });
+      setTimeout(() => this.setState({ copyLabel:'Copy' }), 2200);
+    }).catch(() => {});
+  };
+
+  generate = async () => {
+    const brief = this.state.brief.trim();
+    if(!brief) return;
+    this.setState({ screen:'loading', phaseCount:0 });
+    clearInterval(this._pt);
+    this._pt = setInterval(() => {
+      this.setState(s => s.phaseCount < 5 ? { phaseCount: s.phaseCount+1 } : s);
+    }, 900);
+    try {
+      const text = await window.claude.complete({
+        model: 'claude-sonnet-4-5',
+        max_tokens: 8192,
+        system: SYSTEM,
+        messages: [{ role:'user', content: 'Generate a complete collection intelligence package for this brief: ' + brief }]
+      });
+      const clean = String(text).replace(/```json|```/g,'').trim();
+      let data;
+      try { data = JSON.parse(clean); }
+      catch(pe) { throw new Error('JSON parse error — response may have been truncated. Try a shorter brief.'); }
+      clearInterval(this._pt);
+      this.setState({ screen:'results', data, tab:'collection' });
+    } catch(err) {
+      clearInterval(this._pt);
+      this.setState({ screen:'error', error: (err && err.message) || 'Generation failed. Please try again.' });
+    }
+  };
+
+  buildR(d) {
+    const palette = (d.palette||[]).map(p => ({ name:p.name, hex:p.hex, pct:p.pct||'', swatchStyle:`height:56px;background:${p.hex||'#ccc'}` }));
+    const spec = (d.signatureSpec||[]).map(s => ({ label:s.label, value:s.value }));
+    const hierarchy = (d.hierarchy||[]).map(item => ({
+      role:item.role, name:item.name, form:item.form, formula:item.formula||'—', scale:item.scale, notes:item.notes||'',
+      priceText: item.price ? '$'+item.price : '—',
+      cardStyle:`background:var(--ec-white);border:1px solid var(--ec-border);border-left:4px solid ${ROLE_COLORS[item.role]||ROLE_COLORS.Accent};border-radius:var(--r-md);padding:14px 18px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px`
+    }));
+    const pr = d.priceRange || {};
+    const c = d.continuity || {};
+    const threads = [['Thread 1 — Atmosphere',c.atmosphere],['Thread 2 — Palette Rhythm',c.palette],['Thread 3 — Movement',c.movement],['Thread 4 — Texture',c.texture],['Bridge Tone',c.bridgeTone]]
+      .filter(([,v]) => v).map(([name,body]) => ({ name, body }));
+    const bundles = (d.bundles||[]).map(b => {
+      const disc = b.discount||0;
+      const final = disc > 0 ? Math.round((b.sum||0)*(1-disc)) : (b.sum||0);
+      const save = (b.sum||0) - final;
+      return { name:b.name, type:b.type, contents:b.contents, hasDiscount: disc>0 && save>0, sumText:'$'+b.sum, finalText:'$'+final, saveText:`Save $${save} (${Math.round(disc*100)}%)` };
+    });
+    return {
+      atmo: d.atmosphereArchetype||'', name: d.collectionName||'', tagline: d.tagline||'',
+      emotionalBrief: d.emotionalBrief||'', palette, spec, tags: d.emotionTags||[],
+      hierCount: hierarchy.length, hierarchy,
+      priceRangeText: `$${pr.low||'—'} – $${pr.high||'—'}`, priceCenterText: '$'+(pr.center||'—'),
+      threads, phases: d.releasePhases||[], crossSell: d.crossSell||[], bundles,
+      heroRenderPrompt: d.heroRenderPrompt||'', heroGenome: d.heroGenome||'', merchandising: d.merchandising||[]
+    };
+  }
+
+  renderVals() {
+    const s = this.state;
+    const phases = PHASE_TEXT.map((text,i) => ({ text, style: `font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:${i<s.phaseCount?'var(--ec-warning)':'var(--ec-gray-300)'};opacity:${i<s.phaseCount?1:0.35};transition:opacity .4s` }));
+    const tabs = TABS.map(([key,label]) => ({
+      label, onClick: () => this.setTab(key),
+      style:`font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:12px 18px;background:none;border:none;border-bottom:2px solid ${s.tab===key?'var(--ec-green)':'transparent'};color:${s.tab===key?'var(--ec-green)':'var(--ec-gray-500)'}`
+    }));
+    const r = s.data ? this.buildR(s.data) : {};
+    return {
+      isInput: s.screen==='input', isLoading: s.screen==='loading', isError: s.screen==='error', isResults: s.screen==='results',
+      brief: s.brief, onBriefChange: this.onBriefChange, onKeyDown: this.onKeyDown,
+      genDisabled: !s.brief.trim() || s.screen==='loading' ? true : null,
+      genOpacity: !s.brief.trim() ? 0.5 : 1,
+      generate: this.generate, tryAgain: this.tryAgain,
+      phases, errorMsg: s.error,
+      r, tabs,
+      isTabCollection: s.tab==='collection', isTabHierarchy: s.tab==='hierarchy', isTabContinuity: s.tab==='continuity',
+      isTabRelease: s.tab==='release', isTabCrosssell: s.tab==='crosssell', isTabRender: s.tab==='render',
+      copyPrompt: this.copyPrompt, copyLabel: s.copyLabel
+    };
+  }
+}
+
+</script>
+</body>
+</html>

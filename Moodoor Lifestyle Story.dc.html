@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <title>{{ pageTitle }}</title>
+  <meta name="description" content="A Moodoor lifestyle story — generated from a saved catalog wreath.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Dancing+Script:wght@500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{overflow-x:hidden;background:#faf9f7}
+    @keyframes mlsFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+    @keyframes mlsFadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+    @keyframes mlsPulse{0%,100%{opacity:.35;transform:scaleY(1)}50%{opacity:1;transform:scaleY(1.2)}}
+  </style>
+</helmet>
+
+<sc-if value="{{ notReady }}" hint-placeholder-val="{{ true }}">
+  <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#faf9f7;font-family:'Cormorant Garamond',Georgia,serif">
+    <div style="text-align:center;padding:40px">
+      <div style="font-family:'Dancing Script',cursive;font-size:34px;color:#7a8f70">Moodoor</div>
+      <p style="font-style:italic;font-size:19px;color:#6b6560;margin-top:10px">{{ loadMsg }}</p>
+      <a href="Moodoor%20Stories%20Studio.dc.html" style="display:inline-block;margin-top:22px;font-family:'Inter',sans-serif;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#4A6741;text-decoration:none;border:1px solid #cdd8c9;border-radius:999px;padding:10px 20px">← Back to Stories Studio</a>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ ready }}" hint-placeholder-val="{{ false }}">
+<div id="mls-root" style="{{ rootStyle }}">
+
+  <div style="position:fixed;inset:0;pointer-events:none;z-index:900;opacity:.5;background-image:url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22180%22 height=%22180%22%3E%3Cfilter id=%22n%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3CfeColorMatrix type=%22saturate%22 values=%220%22/%3E%3C/filter%3E%3Crect width=%22180%22 height=%22180%22 filter=%22url(%23n)%22 opacity=%220.04%22/%3E%3C/svg%3E')"></div>
+
+  <header id="mls-header" style="position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 40px;display:flex;justify-content:space-between;align-items:center;background:transparent;border-bottom:1px solid transparent;transition:background .4s ease,backdrop-filter .4s ease,border-color .4s ease">
+    <a href="Moodoor%20Stories%20Studio.dc.html" style="font-family:'Dancing Script',cursive;font-size:24px;color:#2e2d2b;text-decoration:none">{{ brandName }}</a>
+    <span style="font-family:'Inter',sans-serif;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#6b6560">{{ overline }}</span>
+  </header>
+
+  <!-- HERO -->
+  <section style="min-height:100vh;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));overflow:hidden">
+    <div id="mls-hero-img" style="position:relative;overflow:hidden;min-height:clamp(380px,52vh,860px);background:var(--dominant)">
+      <sc-if value="{{ hasImage }}" hint-placeholder-val="{{ false }}">
+        <img src="{{ image }}" alt="wreath" style="width:100%;height:100%;object-fit:cover;transform:scale(1.06);transition:transform 6s ease" onLoad="{{ onHeroLoad }}">
+      </sc-if>
+      <sc-if value="{{ noImage }}" hint-placeholder-val="{{ true }}">
+        <div style="width:100%;height:100%;min-height:inherit;display:flex;align-items:center;justify-content:center;background:{{ heroFallback }}">
+          <span style="font-family:'Inter',sans-serif;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.85)">{{ focal }}</span>
+        </div>
+      </sc-if>
+      <div style="position:absolute;inset:0;background:linear-gradient(to right,transparent 68%,var(--offwhite) 100%)"></div>
+    </div>
+    <div style="display:flex;flex-direction:column;justify-content:center;padding:clamp(5rem,9vw,8rem) clamp(2rem,5vw,5rem) 5rem clamp(2rem,4vw,4rem);background:var(--offwhite)">
+      <p style="font-family:'Inter',sans-serif;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--sage);margin-bottom:22px;animation:mlsFadeUp .9s .2s ease both">{{ overline }}</p>
+      <h1 style="font-family:'Cormorant Garamond',serif;font-size:clamp(2.7rem,5vw,4.5rem);font-weight:300;line-height:1.06;letter-spacing:-.02em;color:var(--charcoal);animation:mlsFadeUp .9s .35s ease both">{{ heroL1 }}<br><em style="font-style:italic;color:var(--deep)">{{ heroL2 }}</em><br>{{ heroL3 }}</h1>
+      <p style="font-family:'Dancing Script',cursive;font-size:clamp(2.4rem,4vw,3.6rem);color:var(--dominant);line-height:1;margin-top:8px;animation:mlsFadeUp .9s .5s ease both">{{ heroScript }}</p>
+      <p style="font-family:'Cormorant Garamond',serif;font-size:clamp(1.15rem,1.5vw,1.4rem);font-weight:300;line-height:1.55;color:var(--muted);max-width:44ch;margin-top:26px;animation:mlsFadeUp .9s .68s ease both">{{ heroBody }}</p>
+      <p style="font-family:'Inter',sans-serif;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-top:28px;animation:mlsFadeUp .9s .82s ease both">{{ metaLine }}</p>
+      <div style="display:flex;align-items:center;gap:12px;margin-top:44px;animation:mlsFadeUp .9s 1s ease both">
+        <div style="width:1px;height:40px;background:var(--faint);transform-origin:top;animation:mlsPulse 2.4s ease-in-out infinite"></div>
+        <span style="font-family:'Inter',sans-serif;font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint)">Scroll</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- PULLQUOTE -->
+  <section style="background:var(--paper);padding:clamp(5rem,10vw,9rem) clamp(1.5rem,6vw,3rem);display:flex;justify-content:center">
+    <div style="max-width:920px;text-align:center" data-reveal>
+      <p style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:clamp(1.7rem,3.4vw,2.9rem);line-height:1.4;color:var(--charcoal)">“{{ pullQuote }}”</p>
+      <p style="font-family:'Inter',sans-serif;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--sage);margin-top:30px">{{ pullCite }}</p>
+    </div>
+  </section>
+
+  <!-- SCENE 01 (image left) -->
+  <section style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));align-items:stretch">
+    <div style="position:relative;min-height:clamp(340px,44vw,620px);background:{{ grad1 }};overflow:hidden">
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:2.5rem">
+        <sc-if value="{{ hasImage }}" hint-placeholder-val="{{ false }}"><img src="{{ image }}" alt="scene" style="max-width:86%;max-height:86%;object-fit:contain;filter:drop-shadow(0 24px 60px rgba(0,0,0,.22))"></sc-if>
+        <sc-if value="{{ noImage }}" hint-placeholder-val="{{ true }}"><span style="font-family:'Inter',sans-serif;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.8)">render placeholder</span></sc-if>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;justify-content:center;padding:clamp(3rem,6vw,6rem) clamp(2rem,5vw,5rem);background:var(--offwhite)">
+      <p style="font-family:'Inter',sans-serif;font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--sage);margin-bottom:20px" data-reveal>{{ s1.label }}</p>
+      <h2 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(2rem,3.4vw,3rem);line-height:1.1;color:var(--charcoal);margin-bottom:24px" data-reveal>{{ s1.hA }}<br><em style="font-style:italic;color:var(--deep)">{{ s1.hB }}</em></h2>
+      <p style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(1.1rem,1.4vw,1.35rem);line-height:1.7;color:var(--muted)" data-reveal>{{ s1.body }}</p>
+      <p style="font-family:'Inter',sans-serif;font-size:11px;line-height:1.7;letter-spacing:.02em;color:var(--faint);margin-top:26px;padding-top:20px;border-top:1px solid var(--sage-pale)" data-reveal>{{ s1.detail }}</p>
+    </div>
+  </section>
+
+  <div style="display:flex;justify-content:center;padding:clamp(2.5rem,5vw,4rem) 0;background:var(--offwhite);color:var(--sage)" data-reveal>{{ divider }}</div>
+
+  <!-- SCENE 02 (copy left) -->
+  <section style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));align-items:stretch">
+    <div style="display:flex;flex-direction:column;justify-content:center;padding:clamp(3rem,6vw,6rem) clamp(2rem,5vw,5rem);background:var(--offwhite);order:1">
+      <p style="font-family:'Inter',sans-serif;font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--sage);margin-bottom:20px" data-reveal>{{ s2.label }}</p>
+      <h2 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(2rem,3.4vw,3rem);line-height:1.1;color:var(--charcoal);margin-bottom:24px" data-reveal>{{ s2.hA }}<br><em style="font-style:italic;color:var(--deep)">{{ s2.hB }}</em></h2>
+      <p style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(1.1rem,1.4vw,1.35rem);line-height:1.7;color:var(--muted)" data-reveal>{{ s2.body }}</p>
+      <p style="font-family:'Inter',sans-serif;font-size:11px;line-height:1.7;letter-spacing:.02em;color:var(--faint);margin-top:26px;padding-top:20px;border-top:1px solid var(--sage-pale)" data-reveal>{{ s2.detail }}</p>
+    </div>
+    <div style="position:relative;min-height:clamp(340px,44vw,620px);background:{{ grad2 }};overflow:hidden;order:2">
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:2.5rem">
+        <sc-if value="{{ hasImage }}" hint-placeholder-val="{{ false }}"><img src="{{ image }}" alt="scene" style="max-width:86%;max-height:86%;object-fit:contain;filter:drop-shadow(0 24px 60px rgba(0,0,0,.22))"></sc-if>
+        <sc-if value="{{ noImage }}" hint-placeholder-val="{{ true }}"><span style="font-family:'Inter',sans-serif;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.8)">render placeholder</span></sc-if>
+      </div>
+    </div>
+  </section>
+
+  <!-- PALETTE INTERLUDE -->
+  <section style="background:var(--charcoal);padding:clamp(5rem,9vw,7rem) 2rem;display:flex;flex-direction:column;align-items:center;gap:2.6rem">
+    <p style="font-family:'Inter',sans-serif;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--sage)" data-reveal>{{ paletteLabel }}</p>
+    <h3 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(1.7rem,3.2vw,2.6rem);color:#f0eddf;text-align:center;max-width:20ch;line-height:1.25" data-reveal>{{ paletteHead }}</h3>
+    <div style="display:flex;gap:0;border-radius:5px;overflow:hidden;width:min(100%,620px);height:86px" data-reveal>
+      <sc-for list="{{ swatches }}" as="sw" hint-placeholder-count="6">
+        <div style="flex:1;transition:flex .3s ease;position:relative;background:{{ sw.hex }}" style-hover="flex:2.4">
+          <span style="position:absolute;bottom:8px;left:0;right:0;text-align:center;font-family:'Inter',sans-serif;font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.9)">{{ sw.name }}</span>
+        </div>
+      </sc-for>
+    </div>
+    <p style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(1.1rem,1.5vw,1.35rem);line-height:1.7;color:rgba(240,237,223,.72);text-align:center;max-width:56ch" data-reveal>{{ paletteCopy }}</p>
+  </section>
+
+  <!-- SCENE 03 (image left) -->
+  <section style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));align-items:stretch">
+    <div style="position:relative;min-height:clamp(340px,44vw,620px);background:{{ grad3 }};overflow:hidden">
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:2.5rem">
+        <sc-if value="{{ hasImage }}" hint-placeholder-val="{{ false }}"><img src="{{ image }}" alt="scene" style="max-width:86%;max-height:86%;object-fit:contain;filter:drop-shadow(0 24px 60px rgba(0,0,0,.22))"></sc-if>
+        <sc-if value="{{ noImage }}" hint-placeholder-val="{{ true }}"><span style="font-family:'Inter',sans-serif;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.8)">render placeholder</span></sc-if>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;justify-content:center;padding:clamp(3rem,6vw,6rem) clamp(2rem,5vw,5rem);background:var(--offwhite)">
+      <p style="font-family:'Inter',sans-serif;font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--sage);margin-bottom:20px" data-reveal>{{ s3.label }}</p>
+      <h2 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(2rem,3.4vw,3rem);line-height:1.1;color:var(--charcoal);margin-bottom:24px" data-reveal>{{ s3.hA }}<br><em style="font-style:italic;color:var(--deep)">{{ s3.hB }}</em></h2>
+      <p style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(1.1rem,1.4vw,1.35rem);line-height:1.7;color:var(--muted)" data-reveal>{{ s3.body }}</p>
+      <p style="font-family:'Inter',sans-serif;font-size:11px;line-height:1.7;letter-spacing:.02em;color:var(--faint);margin-top:26px;padding-top:20px;border-top:1px solid var(--sage-pale)" data-reveal>{{ s3.detail }}</p>
+    </div>
+  </section>
+
+  <div style="display:flex;justify-content:center;padding:clamp(2.5rem,5vw,4rem) 0;background:var(--offwhite);color:var(--sage)" data-reveal>{{ divider }}</div>
+
+  <!-- FULL-BLEED FLOATING MOMENT -->
+  <div style="position:relative;height:min(84vh,760px);overflow:hidden;display:flex;align-items:flex-end;justify-content:center;padding-bottom:clamp(2.5rem,5vw,4.5rem)" data-reveal>
+    <div style="position:absolute;inset:0;background:{{ fbGrad }}"></div>
+    <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
+      <sc-if value="{{ hasImage }}" hint-placeholder-val="{{ false }}"><img src="{{ image }}" alt="wreath" style="width:min(66%,540px);height:min(66%,540px);object-fit:contain;filter:drop-shadow(0 32px 80px rgba(0,0,0,.3));animation:mlsFloat 6s ease-in-out infinite"></sc-if>
+    </div>
+    <div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent 42%,rgba(28,28,28,.55) 100%)"></div>
+    <div style="position:relative;z-index:2;text-align:center;padding:0 1.5rem">
+      <p style="font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(1.2rem,2.6vw,1.9rem);color:rgba(245,242,238,.9);max-width:50ch;margin:0 auto;line-height:1.5">“{{ fbCaption }}”</p>
+    </div>
+  </div>
+
+  <!-- SENSORY DETAILS -->
+  <section style="background:var(--offwhite);padding:clamp(5rem,9vw,8rem) clamp(1.5rem,6vw,4rem);display:flex;justify-content:center">
+    <div style="width:100%;max-width:1120px">
+      <p style="font-family:'Inter',sans-serif;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--sage);margin-bottom:8px;text-align:center" data-reveal>Read at close distance</p>
+      <h2 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(1.9rem,3.2vw,2.7rem);color:var(--charcoal);text-align:center;margin-bottom:clamp(2.5rem,5vw,4rem)" data-reveal>What the eye <em style="font-style:italic;color:var(--deep)">notices</em> before you do.</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:clamp(2.2rem,4vw,4rem) clamp(2.5rem,4vw,5rem)">
+        <sc-for list="{{ sensory }}" as="c" hint-placeholder-count="6">
+          <div data-reveal data-delay="{{ c.delay }}">
+            <div style="font-family:'Inter',sans-serif;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--sage);font-weight:500;margin-bottom:12px">{{ c.title }}</div>
+            <p style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:1.12rem;line-height:1.7;color:var(--muted)">{{ c.bodyEl }}</p>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <!-- EMOTIONAL REGISTER -->
+  <section style="background:var(--paper);padding:clamp(5rem,9vw,8rem) clamp(1.5rem,6vw,4rem);display:flex;justify-content:center">
+    <div style="width:100%;max-width:1080px">
+      <p style="font-family:'Inter',sans-serif;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--sage);margin-bottom:12px" data-reveal>What this wreath carries</p>
+      <h2 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(2.1rem,3.6vw,3.2rem);color:var(--charcoal);margin-bottom:clamp(2.5rem,4vw,3.5rem);max-width:22ch;line-height:1.15" data-reveal>{{ regHeadA }}<em style="font-style:italic;color:var(--deep)">{{ regHeadEm }}</em>{{ regHeadB }}</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:clamp(2.5rem,5vw,5rem);align-items:start">
+        <div data-reveal>
+          <p style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(1.15rem,1.5vw,1.4rem);line-height:1.75;color:var(--charcoal);margin-bottom:1.3rem">{{ reg1 }}</p>
+          <p style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(1.15rem,1.5vw,1.4rem);line-height:1.75;color:var(--charcoal);margin-bottom:1.3rem">{{ reg2 }}</p>
+          <p style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(1.15rem,1.5vw,1.4rem);line-height:1.75;color:var(--charcoal)">{{ reg3 }}</p>
+        </div>
+        <div data-reveal>
+          <span style="font-family:'Dancing Script',cursive;font-size:2rem;color:var(--dominant);display:block;margin-bottom:1.2rem">it feels like</span>
+          <ul style="list-style:none;display:grid;gap:.95rem">
+            <sc-for list="{{ feels }}" as="f" hint-placeholder-count="6">
+              <li style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(1.08rem,1.35vw,1.28rem);line-height:1.5;color:var(--muted);padding-left:1.1rem;position:relative"><span style="position:absolute;left:0;top:.55em;width:5px;height:5px;border-radius:50%;background:var(--sage)"></span>{{ f }}</li>
+            </sc-for>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PLACEMENT CARDS -->
+  <section style="background:var(--offwhite);padding:clamp(5rem,9vw,8rem) clamp(1.5rem,6vw,4rem);display:flex;justify-content:center">
+    <div style="width:100%;max-width:1120px">
+      <div style="text-align:center;margin-bottom:clamp(2.5rem,5vw,4rem)">
+        <h2 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(1.9rem,3.2vw,2.7rem);color:var(--charcoal)" data-reveal>Where it <em style="font-style:italic;color:var(--deep)">lives</em> best.</h2>
+        <p style="font-family:'Inter',sans-serif;font-size:11px;letter-spacing:.06em;color:var(--faint);margin-top:12px" data-reveal>Heights to wreath center, from finished floor.</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:clamp(1rem,2vw,1.6rem)">
+        <sc-for list="{{ places }}" as="p" hint-placeholder-count="6">
+          <div style="border:1px solid var(--sage-pale);border-radius:12px;padding:26px 24px;background:var(--offwhite)" data-reveal data-delay="{{ p.delay }}">
+            <div style="color:var(--sage);margin-bottom:16px">{{ p.iconEl }}</div>
+            <div style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--charcoal);margin-bottom:8px">{{ p.title }}</div>
+            <p style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:1.04rem;line-height:1.6;color:var(--muted)">{{ p.body }}</p>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <!-- STORY CLOSE -->
+  <section style="background:var(--paper);padding:clamp(5.5rem,10vw,9rem) clamp(1.5rem,6vw,3rem);display:flex;justify-content:center;text-align:center">
+    <div style="max-width:760px">
+      <span style="font-family:'Dancing Script',cursive;font-size:clamp(1.9rem,3.2vw,2.6rem);color:var(--dominant);display:block;margin-bottom:1.2rem" data-reveal>{{ closeScript }}</span>
+      <h2 style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(2rem,3.8vw,3.2rem);line-height:1.18;color:var(--charcoal)" data-reveal>{{ closeA }}<br><em style="font-style:italic;color:var(--deep)">{{ closeB }}</em></h2>
+      <p style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(1.15rem,1.6vw,1.4rem);line-height:1.7;color:var(--muted);max-width:52ch;margin:1.8rem auto 0" data-reveal>{{ closeBody }}</p>
+      <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:2.6rem" data-reveal>
+        <a href="{{ shopHref }}" style="font-family:'Inter',sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--offwhite);background:var(--charcoal);text-decoration:none;padding:16px 30px;border-radius:999px;transition:transform .18s ease" style-hover="transform:translateY(-2px)">{{ ctaPrimary }}</a>
+        <a href="{{ blueprintHref }}" style="font-family:'Inter',sans-serif;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--charcoal);background:transparent;text-decoration:none;padding:16px 30px;border-radius:999px;border:1px solid var(--charcoal);transition:background .18s ease,color .18s ease" style-hover="background:var(--charcoal);color:var(--offwhite)">{{ ctaSecondary }}</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer style="background:var(--charcoal);padding:clamp(3rem,6vw,4.5rem) clamp(1.5rem,6vw,4rem);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px">
+    <span style="font-family:'Dancing Script',cursive;font-size:26px;color:#f0eddf">{{ brandName }}</span>
+    <span style="font-family:'Inter',sans-serif;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:rgba(240,237,223,.5)">{{ footerId }}</span>
+    <a href="Moodoor%20Stories%20Studio.dc.html" style="font-family:'Inter',sans-serif;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:rgba(240,237,223,.7);text-decoration:none">← Stories Studio</a>
+  </footer>
+
+</div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;100%&quot;,&quot;height&quot;:&quot;100%&quot;},&quot;platform&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Moodoor&quot;,&quot;Etsy&quot;,&quot;Showroom&quot;],&quot;default&quot;:&quot;Moodoor&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Story&quot;},&quot;motion&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Story&quot;}}">
+const NOUNS=['screen door','porch','doorway','door','coffee','cedar','kitchen','garden','rain','snow','fireplace','fire','hearth','table','chairs','chair','letters','lake','morning','evening','window','candle','bread','tea','field','road','ocean','mountain','forest','path','gate','mantel','bonfire','harvest','orchard','apple','cider','leaves','frost','deck','hallway','stairs'];
+const MONTHS=['january','february','march','april','may','june','july','august','september','october','november','december'];
+const DIMWORD={warmth:'quietly warm',energy:'lifted and awake',nostalgia:'steeped in memory',valence:'gently glad',intimacy:'close and unhurried',restraint:'spare on purpose',seasonal:'deep in its season'};
+const cap=(s)=>s?s.replace(/(^|\s)\S/g,c=>c.toUpperCase()):s;
+const low=(s)=>s?s.charAt(0).toLowerCase()+s.slice(1):s;
+
+// ---- color math ----
+function hx(c){c=(c||'#999999').replace('#','');if(c.length===3)c=c.split('').map(x=>x+x).join('');return[parseInt(c.slice(0,2),16)||0,parseInt(c.slice(2,4),16)||0,parseInt(c.slice(4,6),16)||0];}
+function toHex(a){return '#'+a.map(x=>Math.max(0,Math.min(255,Math.round(x))).toString(16).padStart(2,'0')).join('');}
+function lighten(h,t){const c=hx(h);return toHex(c.map(x=>x+(255-x)*t));}
+function darken(h,t){const c=hx(h);return toHex(c.map(x=>x*(1-t)));}
+function sat(h){const c=hx(h);const mx=Math.max(...c),mn=Math.min(...c);return mx===0?0:(mx-mn)/mx;}
+function lum(h){const c=hx(h);return (0.299*c[0]+0.587*c[1]+0.114*c[2])/255;}
+
+// scene templates keyed by placement
+function scenes(key,i,ctx){
+  const {dom,acc,n0,n1,focal}=ctx;
+  const L='Scene 0'+(i+1);
+  const T={
+    door:{hA:'At the',hB:'threshold.',
+      body:`A front door is the first sentence a house says. Before the knock, before the greeting, there is only this — ${n0} holding the last of the afternoon, and a shape on the door that does not announce itself so much as wait. It doesn't decorate the entrance; it finishes the thought the architecture started. People slow at this door without deciding to.`,
+      detail:`Hang centered at 58–62 in with a 1 in standoff for shadow depth. A covered porch keeps the ${dom} true through a full season of changing light.`},
+    entry:{hA:'The first thing',hB:'the house says.',
+      body:`Past the door, the entry is where a home composes itself. Keys find their bowl; a coat lets go of the day. On the wall above the console, this is the note the room holds while everything else keeps moving — not loud, not asking, just present the way a well-set table is present before anyone sits down. You feel arrived before you've taken off your shoes.`,
+      detail:`Center at 58–62 in above a console or entry table. Flanked by a single lamp, it composes an arrival vignette against a warm-neutral wall.`},
+    bedroom:{hA:'The last and first',hB:'thing seen.',
+      body:`The bedroom is the one room made entirely for the person who sleeps in it. Above the headboard, this becomes the thing the room says goodnight with and the thing it offers back at first light — hung there the way certain things simply belong, not placed so much as recognized. Nothing about it demands attention in the dark. Everything about it keeps a little.`,
+      detail:`Center 8–12 in above the headboard, clear of the pillow line. Reads best on walls with room to breathe on either side.`},
+    mantel:{hA:'The center of',hB:'the room’s gravity.',
+      body:`A mantel is where a house keeps its warmth even in the months it isn't lit. Over the shelf, this settles into the chimney breast like it has always been there, catching lamplight in the evening and the low sun in the morning. It's the anchor a room orbits — the reason the chairs turn slightly inward, the reason people end up gathered here without ever being asked to.`,
+      detail:`Center on the chimney breast 6–8 in above the shelf. Over an active fireplace, allow a 3 in standoff for heat.`},
+    dining:{hA:'The moment before',hB:'the table fills.',
+      body:`There is a particular hour in a dining room — the table set, the light lowered, nobody seated yet. On the main wall this holds that stillness and hands it back when the room finally fills with voices. As a gallery anchor it goes up first and everything else orbits it. It is not the celebration; it is the quiet that makes the celebration feel like one.`,
+      detail:`60–64 in center on the primary dining wall. Positioned first as a gallery anchor, other frames arrange themselves around it.`},
+    wedding:{hA:'The frame for',hB:'a kept moment.',
+      body:`Some moments are built to be photographed, then remembered longer than the photograph. As a ceremony focal, this becomes the frame two people stand inside — present without competing, holding the eye softly so the eye can go where it should. The ${acc} reads traditional and garden-modern at once, committing hard to neither. Years later it is the detail everyone somehow still recalls.`,
+      detail:`Position as ceremony focal at 60–70 in center, with a 1.5 in standoff for shadow depth at photographic distance.`},
+    nursery:{hA:'The room made',hB:'for someone not yet here.',
+      body:`A nursery is a room addressed to a person who hasn't arrived. Everything in it is a small act of waiting made visible. On the wall above the dresser this is hope with a shape — gender-neutral, unhurried, the first thing in the house prepared entirely on faith. It will be there for the first morning, and it will be there, unchanged, for a hundred ordinary ones after.`,
+      detail:`Above the dresser or crib-end wall at 56–60 in center. Pairs with white oak, birch, and soft terracotta nursery palettes.`},
+    photography:{hA:'The prop that',hB:'doesn’t behave like one.',
+      body:`On a studio wall the job is restraint: to add depth without pulling focus, to be environment rather than object. Set slightly off-axis with a soft key from ten o'clock, this throws exactly enough shadow to read as depth in the frame. The muted ${dom} never argues with a subject. It is the difference between a photograph that looks styled and one that looks lived in.`,
+      detail:`58–62 in center, held slightly off-axis. A 2–3 in standoff deepens the shadow for editorial framing.`}
+  };
+  const s=T[key]||T.door;
+  return {label:L,hA:s.hA,hB:s.hB,body:s.body,detail:s.detail};
+}
+
+// territory -> content
+function territoryContent(name,ctx){
+  const {dom,acc,focal,memClause,emo1,emo2}=ctx;
+  const has=!!ctx.hasMem;
+  const M={
+    Comfort:{scenes:['door','bedroom','mantel'],script:'a form of welcome',
+      heroL:['There is a kind of quiet','that keeps you,','not the kind that empties a room.'],
+      heroBody:`This was made for the doors and walls where staying is the whole point — where the light is low, the coffee is close, and nothing is asking anything of you.`,
+      pull:{q:`A house doesn't hold you with its rooms. It holds you with the small, unremarkable things that were there when you arrived and are still there when you come back.`,c:'On what a home is actually made of'},
+      regA:'The room that ',regEm:'keeps',regB:' you.',
+      reg:[`There is a kind of object that doesn't express feeling so much as contain it — the way a drawer in a house you grew up in still holds the exact weather of a life, even empty. This is that kind of thing. It does not perform comfort. It sits with it.`,
+        `Built in ${dom} and ${acc}, it reads ${emo1}, ${emo2} underneath. These are not loud colors. They are the colors of a long afternoon that no one is in a hurry to end, of a lamp left on for whoever is still out.`,
+        `That it is faux is beside the point. Memory was never after the flower. It was after the feeling of a room that was always yours — and that a shape on the wall, unchanging through every season, can keep on your behalf.`],
+      feels:['The first cup of coffee, before anyone else is awake','A lamp someone left on for you','The particular quiet of a house where someone is sleeping','The last warm hour of a long afternoon','Coming home to a room exactly as you left it','Rain on the window and nowhere you have to be'],
+      closeScript:'for your door.',closeA:'An object is what it is.',closeB:'This is what it does.'},
+    Celebration:{scenes:['door','dining','wedding'],script:'a threshold walked through smiling',
+      heroL:['Some doors','you walk through','already smiling.'],
+      heroBody:`This was made for the rooms where people gather — where the table is about to fill, the music is about to start, and the whole house is leaning slightly forward.`,
+      pull:{q:`Celebration isn't the loud part. It's the held breath just before — the table set, the light lowered, everyone about to arrive and no one yet through the door.`,c:'On the moment before the moment'},
+      regA:'The held breath, ',regEm:'made',regB:' visible.',
+      reg:[`Some objects hold the aftermath of joy; this one holds its approach. It lives in the minutes when everything is ready and nothing has started — and it makes that particular anticipation into something you can hang on a wall.`,
+        `Built in ${dom} and ${acc}, it reads ${emo1}, ${emo2} underneath. Bright without being sweet, warm without asking for anything. It reads across traditional, garden-modern, and celebratory without committing hard to any of them.`,
+        `It will outlast the party it was made for, and the next one, and the one after that. Faux is not a compromise here — it is the promise that this particular welcome will be at the door again next year, unchanged, waiting.`],
+      feels:['The doorbell, and everyone arriving at once','A table set for people you love','The five minutes before the guests, when the house is still','Laughter from the next room','A toast no one planned','The good plates, out for no reason'],
+      closeScript:'for your gathering.',closeA:'A wreath decorates a door.',closeB:'This opens a room.'},
+    Remembrance:{scenes:['entry','bedroom','photography'],script:'what is kept by leaving space',
+      heroL:['What is kept','is kept','by the space around it.'],
+      heroBody:`This was made with more of the vine left bare than covered — for the walls where quiet is the point, and where what matters most is the part words never reach.`,
+      pull:{q:`We remember by leaving space. The empty stretch of a thing is not a gap; it is the room where the memory is allowed to keep breathing.`,c:'On the language of negative space'},
+      regA:'What quiet ',regEm:'holds',regB:' onto.',
+      reg:[`There is an object that carries a person the way a folded letter does — not by showing them, but by having been near them. This is built in that register. More than half the grapevine is left bare, and the bareness is not absence. It is the shape of what is being kept.`,
+        `Built in ${dom} and ${acc}, it reads ${emo1}, ${emo2} underneath. Restrained. Unhurried. The colors of aged paper and grey lichen, of light through a window in a room where someone is thinking.`,
+        `That it does not fade is the quiet mercy of it. Grief keeps changing what it needs; this stays exactly as it was, so that on the days you want it to, it can hold the same thing it held the day it was made.`],
+      feels:['A folded letter kept in a drawer','A window in a room where someone is thinking','The particular silence of early morning','A garden gone quietly to seed','A name said softly, to no one','The stillness of a house after everyone has gone'],
+      closeScript:'for your wall.',closeA:'It does not fill the space.',closeB:'It keeps it.'},
+    Renewal:{scenes:['door','nursery','wedding'],script:'the after, and everything ahead',
+      heroL:['The after,','and everything','still ahead.'],
+      heroBody:`This was made for beginnings — new doors, new rooms, the walls of a life that is only just starting. It faces forward the way morning does.`,
+      pull:{q:`Renewal isn't the absence of what came before. It's the particular light of a morning that knows about the night, and opens anyway.`,c:'On beginning again'},
+      regA:'The morning that ',regEm:'opens',regB:' anyway.',
+      reg:[`Some things look backward; this one leans into the light. It carries the feeling of an after — the room repainted, the box unpacked, the first ordinary morning in a place that is going to become home.`,
+        `Built in ${dom} and ${acc}, it reads ${emo1}, ${emo2} underneath. These are morning colors, arrival colors — soft enough for a nursery, sure enough for a threshold, hopeful without being naive.`,
+        `Faux means it will be there for the beginning and every beginning after — the same shape on the same wall while the room around it fills, slowly, with a life. It is a small, steady witness to everything about to happen.`],
+      feels:['The first morning in a new place','A room repainted, still smelling of it','A crib assembled before anyone arrives','Light through curtains you just hung','The last box, finally unpacked','A door opened onto a life just starting'],
+      closeScript:'for your beginning.',closeA:'A shape on a wall,',closeB:'and a life about to fill the room.'},
+    Connection:{scenes:['entry','dining','mantel'],script:'the people a house holds',
+      heroL:['A house is only','the walls','the people gather inside.'],
+      heroBody:`This was made for the rooms where people come together — the entry, the table, the hearth. It marks the places a house does its real work.`,
+      pull:{q:`A home is not measured in rooms. It is measured in the number of people who feel, walking in, that a place was somehow already expecting them.`,c:'On the rooms where people gather'},
+      regA:'The house a ',regEm:'table',regB:' makes.',
+      reg:[`Some objects belong to a person; this one belongs to the space between people. It lives where a house gathers — the entry that greets, the table that seats, the hearth that turns the chairs inward.`,
+        `Built in ${dom} and ${acc}, it reads ${emo1}, ${emo2} underneath. Warm without being loud, close without being small. The colors of a room where the conversation has gone on longer than anyone planned.`,
+        `It will still be there for the ordinary gatherings and the ones that matter — unchanged, faux, faithful. A house holds people best when it has a few fixed points they return to. This is meant to be one of them.`],
+      feels:['The conversation that outlasts the meal','A doorway everyone hugs in','The good chair, always the same person’s','A house where the door is never quite locked','Second helpings, and no one leaving','The warm hour after the plates are cleared'],
+      closeScript:'for your table.',closeA:'It is not the gathering.',closeB:'It is the reason a room remembers one.'},
+    'Seasonal Nostalgia':{scenes:['door','mantel','photography'],script:'a month you can almost smell',
+      heroL:['A month','you can almost','smell from here.'],
+      heroBody:`This was made to hold a season — the specific weather of a certain few weeks that a whole year seems to point toward. Hang it and the month walks in with it.`,
+      pull:{q:`Every year has a smell you'd know in the dark. This is an attempt to hang that particular few weeks on a wall, and keep it there long after the weather has moved on.`,c:'On the season a year remembers'},
+      regA:'The month a ',regEm:'year',regB:' points toward.',
+      reg:[`Certain objects don't mark a moment; they mark a season — the whole texture of a few weeks, the light and the cold and the smell of it. This is built to hold one of those, and to hand it back whenever you walk past.`,
+        `Built in ${dom} and ${acc}, it reads ${emo1}, ${emo2} underneath. Harvest colors, low-sun colors, the palette of a specific month you could name with your eyes closed.`,
+        `Faux is the whole trick here: the season it holds does not end. When the real weeks have gone and the weather has forgotten them, the shape on the wall still carries the exact few you meant to keep.`],
+      feels:['Woodsmoke on a cold walk','The first morning you can see your breath','A porch in late September, going gold','Cider on the stove, windows fogged','Leaves underfoot on a familiar road','The particular light of a month ending'],
+      closeScript:'for your season.',closeA:'The weather moves on.',closeB:'This keeps the few weeks you meant.'}
+  };
+  return M[name]||M.Comfort;
+}
+
+const DEMO={
+  id:'DEMO',name:'September Porch',
+  memory:"My grandmother's porch in late September — cedar, cold coffee, and the screen door that never quite closed.",
+  story:{title:'September Porch'},
+  territoryId:6,territoryName:'Seasonal Nostalgia',
+  vector:{warmth:.79,energy:.34,nostalgia:.90,valence:.54,intimacy:.77,restraint:.64,seasonal:.91},
+  palette:{domName:'toffee',domHex:'#A8752A',accName:'cedar green',accHex:'#4A6741',focal:'amber dahlia'},
+  blueprint:{id:'EC_WR_V2_4217',formula:'Crescent',silence:'112°–178° · bare',focal:'amber dahlia',palette:'toffee · cedar green',score:'88 / 120'},
+  size:'20" grapevine',image:'',createdAt:new Date('2025-09-24').toISOString()
+};
+function icon(paths){return 'ICON:'+paths;}
+
+class Component extends DCLogic {
+  state={item:null,status:'loading'};
+
+  componentDidMount(){
+    let id=null;
+    try{id=new URLSearchParams(window.location.search).get('id');}catch(e){}
+    let cat=[];
+    try{const raw=localStorage.getItem('moodoor_catalog');if(raw)cat=JSON.parse(raw)||[];}catch(e){}
+    let item=id?cat.find(c=>c.id===id):cat[0];
+    if(!item&&cat.length)item=cat[0];
+    if(!item&&!id)item=DEMO;   // opened standalone with no catalog — show a demo story
+    if(!item){this.setState({status:'empty'});return;}
+    this.setState({item,status:'ready'});
+    this._onScroll=()=>{const h=document.getElementById('mls-header');if(!h)return;const s=window.scrollY>60;h.style.background=s?'rgba(245,242,238,.9)':'transparent';h.style.backdropFilter=s?'blur(12px)':'none';h.style.webkitBackdropFilter=s?'blur(12px)':'none';h.style.borderBottomColor=s?'rgba(0,0,0,.06)':'transparent';};
+    window.addEventListener('scroll',this._onScroll,{passive:true});
+  }
+  componentDidUpdate(){this.setupReveal();}
+  componentWillUnmount(){if(this._onScroll)window.removeEventListener('scroll',this._onScroll);}
+
+  setupReveal(){
+    if(this._revealed||this.state.status!=='ready')return;this._revealed=true;
+    const motion=this.props.motion!==false;
+    requestAnimationFrame(()=>{
+      const root=document.getElementById('mls-root');if(!root)return;
+      const els=root.querySelectorAll('[data-reveal]');
+      els.forEach(el=>{el.style.opacity='0';el.style.transform='translateY(30px)';el.style.transition='opacity .8s ease, transform .8s ease';});
+      if(!motion||!('IntersectionObserver' in window)){els.forEach(el=>{el.style.opacity='1';el.style.transform='none';});return;}
+      const io=new IntersectionObserver((ents)=>{ents.forEach(en=>{if(en.isIntersecting){const el=en.target;const d=parseInt(el.getAttribute('data-delay'))||0;el.style.transitionDelay=d+'ms';el.style.opacity='1';el.style.transform='none';io.unobserve(el);}});},{threshold:.12,rootMargin:'0px 0px -8% 0px'});
+      els.forEach(el=>io.observe(el));
+    });
+  }
+
+  onHeroLoad=(e)=>{try{e.target.style.transform='scale(1.0)';}catch(x){}};
+
+  renderVals(){
+    const st=this.state;
+    if(st.status!=='ready'||!st.item){
+      return {notReady:true,ready:false,loadMsg:st.status==='empty'?'No saved moodstory found — save one in the Studio first.':'Composing the story…'};
+    }
+    const it=st.item;
+    const V=it.vector||{warmth:.5,energy:.4,nostalgia:.5,valence:.5,intimacy:.5,restraint:.5,seasonal:.5};
+    const P=it.palette||{domName:'warm cream',domHex:'#EFE6D3',accName:'cedar green',accHex:'#4A6741',focal:'preserved bloom'};
+    const BP=it.blueprint||{id:'EC_WR_V2_0000',formula:'Crescent',silence:'110°–170° · bare',focal:P.focal,palette:'',score:'—'};
+    const terrName=it.territoryName||'Comfort';
+    const focal=(BP.focal||P.focal||'a preserved bloom');
+
+    // choose dominant vs neutral by saturation
+    let domHex=P.domHex||'#EFE6D3', accHex=P.accHex||'#4A6741';
+    let domName=P.domName||'warm cream', accName=P.accName||'cedar green';
+    let dominant,neutralWarm,domWord;
+    if(sat(accHex)>=sat(domHex)){dominant=accHex;domWord=accName;neutralWarm=lighten(domHex,0.35);}
+    else{dominant=domHex;domWord=domName;neutralWarm=lighten(accHex,0.35);}
+    if(lum(dominant)>0.82)dominant=darken(dominant,0.22);
+    const deep=darken(dominant,0.3);
+    const accent=(dominant===accHex)?domHex:accHex;
+    const nameHasGreen=(s)=>/green|sage|cedar|euc|lichen|moss|fern/i.test(s||'');
+    let sage=nameHasGreen(accName)?accHex:(nameHasGreen(domName)?domHex:'#7a8f70');
+    if(lum(sage)>0.75)sage=darken(sage,0.2);
+    const sagePale=lighten(sage,0.86);
+    const neutralSoft=lighten(dominant,0.62);
+    const bark='#7b5c3a';
+
+    const rootStyle=[
+      `--dominant:${dominant}`,`--deep:${deep}`,`--accent:${accent}`,`--neutral-warm:${neutralWarm}`,
+      `--neutral-soft:${neutralSoft}`,`--sage:${sage}`,`--sage-pale:${sagePale}`,`--bark:${bark}`,
+      `--ink:#1c1c1c`,`--charcoal:#2e2d2b`,`--muted:#6b6560`,`--faint:#9a9490`,`--paper:#f5f2ee`,`--offwhite:#faf9f7`,
+      `color:#1c1c1c`,`font-family:'Cormorant Garamond',Georgia,serif`
+    ].join(';');
+
+    // overline: No. XX — Season Collection
+    const created=new Date(it.createdAt||Date.now());
+    const m=created.getMonth();
+    const season=V.seasonal>0.72?['Winter','Winter','Spring','Spring','Spring','Summer','Summer','Summer','Autumn','Autumn','Autumn','Holiday'][m]:(m<=2?'Winter':m<=5?'Spring':m<=7?'Summer':m<=10?'Autumn':'Holiday');
+    const digits=String(BP.id||'').replace(/\D/g,'');
+    let num=digits?parseInt(digits.slice(0,2),10):0;
+    if(!num||num<3||num>24)num=((it.territoryId||1)*3+4);
+    num=String(num).padStart(2,'0');
+    const overline='No. '+num+' — '+season+' Collection';
+
+    // memory nouns
+    const mem=(it.memory||'').toLowerCase();
+    const hasMem=!!it.memory;
+    const nouns=[];NOUNS.forEach(n=>{if(mem.includes(n)&&!nouns.some(o=>o.includes(n)||n.includes(o)))nouns.push(n);});
+    const n0=nouns[0]||'the doorway', n1=nouns[1]||'the light';
+    let memClause=(it.memory||'').trim().replace(/\s+/g,' ').split(/[—.,;:]/)[0].trim();
+    memClause=memClause?memClause.slice(0,80):'';
+
+    // top emotions
+    const rk=Object.keys(DIMWORD).map(k=>({k,v:V[k]||0})).sort((a,b)=>b.v-a.v);
+    const emo1=DIMWORD[rk[0].k], emo2=DIMWORD[rk[1].k];
+
+    const ctx={dom:domWord,acc:accName,focal,n0,n1,memClause,emo1,emo2,hasMem};
+    const TC=territoryContent(terrName,ctx);
+
+    // scenes
+    const s1=scenes(TC.scenes[0],0,ctx);
+    const s2=scenes(TC.scenes[1],1,ctx);
+    const s3=scenes(TC.scenes[2],2,ctx);
+
+    // hero body — ground with memory if present
+    let heroBody=TC.heroBody;
+    if(memClause)heroBody=`It begins where the memory does — ${low(memClause)}. `+heroBody;
+
+    // meta line
+    const sizeIn=(String(it.size||'').match(/\d+/)||['18'])[0];
+    const metaLine=[cap(domName),cap(accName),'Grapevine',sizeIn+' in'].join(' · ');
+
+    // gradients (distinct)
+    const g1=`linear-gradient(135deg, ${lighten(dominant,0.28)} 0%, ${dominant} 34%, ${sage} 72%, ${neutralWarm} 100%)`;
+    const g2=`linear-gradient(160deg, ${neutralWarm} 0%, ${neutralSoft} 32%, ${dominant} 66%, ${sage} 100%)`;
+    const g3=`linear-gradient(120deg, ${sagePale} 0%, ${sage} 42%, ${accent} 72%, ${neutralWarm} 100%)`;
+    const fbGrad=`radial-gradient(circle at 50% 34%, ${lighten(dominant,0.34)} 0%, ${dominant} 40%, ${deep} 100%)`;
+    const heroFallback=`linear-gradient(150deg, ${dominant}, ${deep})`;
+
+    // palette swatches
+    const swatches=[
+      {hex:neutralWarm,name:cap(domName)},
+      {hex:lighten(dominant,0.18),name:'tint'},
+      {hex:dominant,name:cap(domWord)},
+      {hex:deep,name:'deep'},
+      {hex:sage,name:'sage'},
+      {hex:accent,name:cap(accName)},
+      {hex:bark,name:'grapevine'}
+    ];
+    const warmPct=Math.round(V.warmth*100);
+    const paletteLabel='The palette, held to the light';
+    const paletteHead=`${cap(domWord)} carried by ${low(accName)}, grounded in bare grapevine.`;
+    const paletteCopy=`Roughly ${warmPct}% warm to ${100-warmPct}% cool — a reading that lands ${emo1}. Hover a band to name it. The bark is not a background; it is the reason the florals read gathered, not assembled.`;
+
+    // sensory cards
+    const sil=BP.silence||'110°–170° · bare';
+    const mk=(html)=>{try{return React.createElement('span',{dangerouslySetInnerHTML:{__html:html}});}catch(e){return html;}}
+    const strong=(s)=>`<strong style="font-weight:400;color:var(--charcoal);font-style:italic">${s}</strong>`;
+    const sensory=[
+      {title:'Light behavior',html:`Through the day the ${domWord} shifts more than a real color would let you notice — cool at noon, nearly gold by five. The faux faces hold their read where fresh stems would wilt, so the piece stays ${strong('composed at every hour')}, never caught looking tired.`},
+      {title:'Texture register',html:`Up close nothing repeats. The grapevine exposes warm bark against the cooler florals — a contrast that reads ${strong('gathered, not assembled')}. Disc leaves flatten slightly; the focal stays full. At arm's length the whole thing resolves into something that looks touched by hand.`},
+      {title:'Shadow quality',html:`Given a 1 in standoff the wall does half the work. The silence arc throws a long, clean shadow while the mass holds a denser pool beneath it — ${strong('depth you read before you see the flowers')}. On a lit wall the shadow becomes part of the composition.`},
+      {title:'Seasonal read',html:`It leans ${season.toLowerCase()} without costuming it. No single element ties it to a date, so it carries the feeling of the season while ${strong('refusing to expire with it')} — the whole point of building it in faux rather than fresh.`},
+      {title:'Movement',html:`Built as a ${String(BP.formula||'crescent').toLowerCase()}, the eye enters at the heavier arc, sweeps the mass, and settles on ${focal}. It ${strong('completes a full breath')} before you've consciously decided to look — the asymmetry is doing the guiding.`},
+      {title:'The silence arc',html:`Between ${sil.replace(' · bare','')}, the vine is deliberately left bare. That emptiness is not a shortfall of flowers; it is ${strong('the part of the memory words never reach')} — the room the composition needs in order to feel like it is holding something.`}
+    ].map((c,i)=>({title:c.title,bodyEl:mk(c.html),delay:i*80}));
+
+    // placement cards (6)
+    const svg=(p)=>{try{return React.createElement('span',{dangerouslySetInnerHTML:{__html:`<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5">${p}</svg>`}});}catch(e){return '';}}
+    const places=[
+      {title:'Front door',ic:'<path d="M3 12l9-9 9 9M5 10v9a1 1 0 001 1h4v-5h4v5h4a1 1 0 001-1v-9"/>',body:'Center at 58–62 in with a 1 in standoff. Painted wood, fiber cement, brick, or stone. Covered porch preferred for silk longevity.'},
+      {title:'Interior entry',ic:'<path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>',body:'58–62 in above a console. Flank with a lamp for a composed arrival. Reads best against warm-neutral or sage walls.'},
+      {title:'Above the headboard',ic:'<circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0112 0v2"/>',body:'8–12 in above the headboard, clear of the pillow line. Give it wall width on either side to breathe.'},
+      {title:'Over the mantel',ic:'<path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 3v4M8 3v4"/>',body:'6–8 in above the shelf, centered on the chimney breast. For an active fire, a 3 in standoff and heat-safe fixing.'},
+      {title:'Dining & gallery wall',ic:'<path d="M5 3v4M3 7h4M19 3v4M17 7h4M12 3v18M8 12h8"/>',body:'60–64 in center on the main wall. As a gallery anchor, hang it first and let the other frames orbit it.'},
+      {title:'Nursery',ic:'<path d="M3 3h18v18H3zM3 9h18M9 21V9"/>',body:'56–60 in above the dresser or crib-end wall. Gender-neutral palette; pairs with white oak, birch, and soft terracotta.'}
+    ].map((p,i)=>({title:p.title,body:p.body,iconEl:svg(p.ic),delay:i*70}));
+
+    // divider
+    const dividerEl=mk(`<svg width="30" height="30" viewBox="0 0 32 32" fill="none"><path d="M16 28 C16 28 8 20 8 12 C8 7.6 11.6 4 16 4 C20.4 4 24 7.6 24 12 C24 20 16 28 16 28Z" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M16 28 L16 10" stroke="currentColor" stroke-width="1" stroke-dasharray="2 2"/><path d="M16 18 C16 18 12 16 10 13" stroke="currentColor" stroke-width="1" fill="none"/><path d="M16 14 C16 14 20 12 22 9" stroke="currentColor" stroke-width="1" fill="none"/></svg>`);
+
+    // full-bleed caption
+    const fbCaption=TC.pull.q.split('. ')[0].replace(/^"|"$/g,'')+'.';
+
+    // close body
+    const closeBody=`Built in ${domName} and ${accName} around ${focal}, it reads ${emo1}, ${emo2} underneath. Available as a finished piece, or as the ${BP.id} blueprint you can build yourself.`;
+
+    // platform
+    const platform=this.props.platform||'Moodoor';
+    const brandName=platform==='Etsy'?'Evercrafted':'Moodoor';
+    const ctaPrimary=platform==='Showroom'?'Reserve this piece':'Shop this wreath';
+    const ctaSecondary='View the blueprint';
+
+    return {
+      notReady:false,ready:true,
+      rootStyle,brandName,overline,
+      hasImage:!!it.image,noImage:!it.image,image:it.image||'',heroFallback,focal,onHeroLoad:this.onHeroLoad,
+      pageTitle:(it.story&&it.story.title?it.story.title:it.name||'Moodoor')+' — Moodoor Story',
+      heroL1:TC.heroL[0],heroL2:TC.heroL[1],heroL3:TC.heroL[2],heroScript:TC.script,heroBody,metaLine,
+      pullQuote:TC.pull.q,pullCite:TC.pull.c,
+      s1,s2,s3,divider:dividerEl,
+      grad1:g1,grad2:g2,grad3:g3,fbGrad,fbCaption,
+      paletteLabel,paletteHead,paletteCopy,swatches,
+      sensory,
+      regHeadA:TC.regA,regHeadEm:TC.regEm,regHeadB:TC.regB,
+      reg1:TC.reg[0],reg2:TC.reg[1],reg3:TC.reg[2],feels:TC.feels,
+      places,
+      closeScript:TC.closeScript,closeA:TC.closeA,closeB:TC.closeB,closeBody,
+      shopHref:'#shop',blueprintHref:'Moodoor%20Studio.dc.html',ctaPrimary,ctaSecondary,
+      footerId:(BP.id||'')+' · '+terrName
+    };
+  }
+}
+</script>
+</body>
+</html>

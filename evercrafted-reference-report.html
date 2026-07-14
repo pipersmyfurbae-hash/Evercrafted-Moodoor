@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evercrafted · Product & System Reference</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#F5F1EB;color:#2C2820;font-family:'Inter',system-ui,sans-serif;font-size:14px;line-height:1.7;}
+.page{max-width:900px;margin:0 auto;padding:40px 32px 80px;}
+h1{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:48px;letter-spacing:0.06em;color:#2C2820;line-height:1;}
+h2{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:30px;color:#2C2820;margin:56px 0 20px;padding-bottom:10px;border-bottom:1px solid rgba(196,170,122,0.4);}
+h3{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:20px;color:#2C2820;margin:32px 0 10px;}
+h4{font-family:'Inter',sans-serif;font-weight:500;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#C4AA7A;margin:24px 0 8px;}
+p{color:#4A4540;margin-bottom:12px;line-height:1.75;}
+.eyebrow{font-family:'Inter',sans-serif;font-size:10px;letter-spacing:0.22em;text-transform:uppercase;color:#C4AA7A;margin-bottom:8px;display:block;}
+.cover{padding:60px 0 48px;border-bottom:1px solid rgba(196,170,122,0.3);margin-bottom:8px;}
+.cover .subtitle{font-family:'Cormorant Garamond',serif;font-size:18px;font-style:italic;color:#847D74;margin-top:12px;}
+.cover .date{font-family:'Inter',sans-serif;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:#C4AA7A;margin-top:24px;}
+
+/* Product cards */
+.product-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:20px 0;}
+@media(max-width:640px){.product-grid{grid-template-columns:1fr;}}
+.product-card{background:#fff;border:1px solid rgba(0,0,0,0.07);border-radius:6px;padding:18px 20px;box-shadow:0 1px 4px rgba(0,0,0,0.04);}
+.product-card.full{grid-column:1/-1;}
+.product-code{font-family:'Inter',sans-serif;font-size:9px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;padding:2px 8px;border-radius:3px;display:inline-block;margin-bottom:10px;}
+.code-e{background:rgba(196,170,122,0.15);color:#8B6820;}
+.code-d{background:rgba(74,94,138,0.12);color:#2A3A6A;}
+.code-a{background:rgba(74,130,90,0.12);color:#1A5A2A;}
+.code-r{background:rgba(138,74,138,0.12);color:#4A1A6A;}
+.code-s{background:rgba(138,100,74,0.12);color:#6A3A1A;}
+.code-p{background:rgba(100,100,100,0.12);color:#404040;}
+.product-name{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;color:#2C2820;line-height:1.2;margin-bottom:6px;}
+.product-meta{font-family:'Inter',sans-serif;font-size:10px;color:#9A9088;margin-bottom:10px;letter-spacing:0.04em;}
+.product-desc{font-size:12.5px;color:#4A4540;line-height:1.7;margin-bottom:10px;}
+.product-rules{border-top:1px solid rgba(0,0,0,0.06);padding-top:10px;margin-top:10px;}
+.rule-row{display:flex;gap:8px;margin-bottom:5px;align-items:flex-start;}
+.rule-label{font-family:'Inter',sans-serif;font-size:9px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:#C4AA7A;min-width:70px;flex-shrink:0;padding-top:2px;}
+.rule-val{font-size:12px;color:#5A5450;line-height:1.5;}
+.price-tag{font-family:'Cormorant Garamond',serif;font-size:16px;color:#C4AA7A;font-weight:400;}
+
+/* Layer sections */
+.layer-header{display:flex;align-items:center;gap:16px;margin:52px 0 20px;}
+.layer-number{font-family:'Cormorant Garamond',serif;font-size:48px;font-weight:300;color:rgba(196,170,122,0.4);line-height:1;}
+.layer-info h2{margin:0;border:none;padding:0;font-size:26px;}
+.layer-info p{margin:0;font-size:12px;color:#847D74;}
+
+/* HeyGen section */
+.script-block{background:#2C2820;color:#EDE8E0;border-radius:6px;padding:24px 28px;margin:16px 0;position:relative;}
+.script-block .script-label{font-family:'Inter',sans-serif;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:#C4AA7A;margin-bottom:16px;display:block;}
+.script-block .script-text{font-family:'Cormorant Garamond',serif;font-size:17px;font-style:italic;font-weight:300;line-height:1.8;color:#EDE8E0;}
+.script-block .timing{font-family:'Inter',sans-serif;font-size:9px;color:#847D74;margin-top:12px;display:block;}
+.delivery-note{background:rgba(196,170,122,0.1);border-left:2px solid #C4AA7A;padding:10px 14px;margin:8px 0;font-size:12px;color:#5A5450;line-height:1.6;}
+.delivery-note strong{color:#2C2820;font-weight:500;}
+
+/* Rules summary */
+.rules-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:16px 0;}
+@media(max-width:640px){.rules-grid{grid-template-columns:1fr;}}
+.rule-card{background:#fff;border:1px solid rgba(0,0,0,0.07);border-radius:6px;padding:14px 16px;}
+.rule-card h4{margin:0 0 8px;}
+.rule-card p{font-size:12px;color:#5A5450;margin:0;line-height:1.6;}
+
+/* Phase plan */
+.phase-row{display:grid;grid-template-columns:80px 1fr;gap:16px;margin-bottom:24px;padding-bottom:24px;border-bottom:1px solid rgba(0,0,0,0.06);}
+.phase-num{font-family:'Cormorant Garamond',serif;font-size:40px;font-weight:300;color:rgba(196,170,122,0.5);line-height:1;}
+.phase-content h3{margin:4px 0 8px;font-size:18px;}
+.phase-content p{font-size:12.5px;color:#5A5450;margin:0;}
+
+/* Proposal workflow */
+.workflow-steps{counter-reset:step;margin:16px 0;}
+.workflow-step{display:flex;gap:14px;margin-bottom:16px;align-items:flex-start;}
+.step-num{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:#C4AA7A;line-height:1;flex-shrink:0;min-width:28px;}
+.step-content{font-size:12.5px;color:#5A5450;line-height:1.65;padding-top:4px;}
+.step-content strong{color:#2C2820;display:block;margin-bottom:2px;font-size:13px;}
+
+/* TOC */
+.toc{background:#fff;border:1px solid rgba(0,0,0,0.07);border-radius:6px;padding:20px 24px;margin:24px 0 48px;}
+.toc h4{margin:0 0 14px;}
+.toc a{display:block;font-size:12.5px;color:#5A5450;text-decoration:none;padding:3px 0;border-bottom:1px solid rgba(0,0,0,0.04);}
+.toc a:hover{color:#C4AA7A;}
+.toc a span{color:#C4AA7A;margin-right:10px;font-family:monospace;font-size:11px;}
+
+.divider{height:1px;background:rgba(196,170,122,0.25);margin:48px 0;}
+.tag{display:inline-block;font-size:9px;font-family:'Inter',sans-serif;letter-spacing:0.1em;text-transform:uppercase;padding:2px 7px;border-radius:3px;margin:2px;}
+.tag-bow{background:rgba(196,170,122,0.15);color:#7A5A10;}
+.tag-greenonly{background:rgba(74,130,90,0.12);color:#1A5A2A;}
+.tag-noblow{background:rgba(180,60,60,0.1);color:#8A2020;}
+.tag-discovery{background:rgba(138,74,138,0.12);color:#4A1A6A;}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- COVER -->
+<div class="cover">
+  <span class="eyebrow">Evercrafted · Full Reference Report</span>
+  <h1>Product Library<br>& Systems Guide</h1>
+  <p class="subtitle">The complete 32-form product library, design laws, HeyGen proposal system, and avatar scripts — everything defined in this session.</p>
+  <p class="date">Session Reference · July 2026</p>
+</div>
+
+<!-- TOC -->
+<div class="toc">
+  <h4>Contents</h4>
+  <a href="#entry"><span>01</span>Layer 1 — Entry Statement (E1–E7)</a>
+  <a href="#draw"><span>02</span>Layer 2 — The Draw (D1–D3)</a>
+  <a href="#anchor"><span>03</span>Layer 3 — The Anchor (A1–A6)</a>
+  <a href="#discovery"><span>04</span>Layer 4 — Discovery (R1–R8)</a>
+  <a href="#specialty"><span>05</span>Specialty Forms (S1–S6)</a>
+  <a href="#accents"><span>06</span>Accent Packs (P1–P2)</a>
+  <a href="#design-laws"><span>07</span>Design Laws Reference</a>
+  <a href="#heygen"><span>08</span>HeyGen Proposal System</a>
+  <a href="#scripts"><span>09</span>The Three Avatar Scripts</a>
+  <a href="#phases"><span>10</span>Build Phase Plan</a>
+</div>
+
+<!-- ════════════════════════════════════════ -->
+<!-- LAYER 1 -->
+<!-- ════════════════════════════════════════ -->
+<div id="entry" class="layer-header">
+  <div class="layer-number">01</div>
+  <div class="layer-info">
+    <h2>Entry Statement</h2>
+    <p>First impression. Boldest botanical expression. Everything the eye sees the moment the front door opens.</p>
+  </div>
+</div>
+
+<div class="product-grid">
+
+  <div class="product-card">
+    <span class="product-code code-e">E1</span>
+    <div class="product-name">Grande Wreath</div>
+    <div class="product-meta">26–30 inch · Front door or primary entry wall</div>
+    <div class="product-desc">The statement piece. Heavy crescent formula, Tier 1 florals at full expression — the most blooms, the most ribbon, the most presence in the entire collection. Sets the visual expectation for everything that follows.</div>
+    <div class="product-rules">
+      <div class="rule-row"><span class="rule-label">Formula</span><span class="rule-val">Heavy Crescent Extended · counter-clockwise sweep 6→12 o'clock</span></div>
+      <div class="rule-row"><span class="rule-label">Florals</span><span class="rule-val">Tier 1 full expression · 5 hero blooms (odd) · 3 magnolia buds · drama pole at 9 o'clock</span></div>
+      <div class="rule-row"><span class="rule-label">Ribbon</span><span class="rule-val">3-ribbon layered bow at 6 o'clock · 5in statement + 2in character pattern + 1.5in metallic accent</span></div>
+      <div class="rule-row"><span class="rule-label">Silence Arc</span><span class="rule-val">1:30 → 5:30 o'clock deliberate bare grapevine</span></div>
+      <div class="rule-row"><span class="rule-label">Price</span><span class="rule-val price-tag">$295 – $385</span></div>
+    </div>
+  </div>
+
+  <div class="product-card">
+    <span class="product-code code-e">E2</span>
+    <div class="product-name">Hero Wreath</div>
+    <div class="product-meta">22–26 inch · Front door or primary interior door</div>
+    <div class="product-desc">The emotional centerpiece of the collection. Standard asymmetric crescent, Tier 1 signature species featured at full expression. This is the product that defines what the collection is about.</div>
+    <div class="product-rules">
+      <div class="rule-row"><span class="rule-label">Formula</span><span class="rule-val">Heavy Crescent · 7→12 o'clock sweep · asymmetry score 0.65–0.70</span></div>
+      <div class="rule-row"><span class="rule-label">Florals</span><span class="rule-val">Tier 1 featured · 3 open hero blooms + 2 buds · 3 supporting buds</span></div>
+      <div class="rule-row"><span class="rule-label">Ribbon</span><span class="rule-val">3-ribbon layered bow at 6 o'clock</span></div>
+      <div class="rule-row"><span class="rule-label">Price</span><span class="rule-val price-tag">$185 – $245</span></div>
+    </div>
+  </div>
+
+  <div class="product-card">
+    <span class="product-code code-e">E3</span>
+    <div class="product-name">Entry Tree Pair</div>
+    <div class="product-meta">Flanking outdoor pots · Sold as pair only</div>
+    <div class="product-desc">Two matching botanical cone topiary trees in decorative pots flanking the front entry. The only product in the library where symmetry is intentional and appropriate — it's an architectural statement, not a design accident. The pot is half the product.</div>
+    <div class="product-rules">
+      <div class="rule-row"><span class="rule-label">Form</span><span class="rule-val">Cone wire frame wrapped in botanicals, decorated matching pair</span></div>
+      <div class="rule-row"><span class="rule-label">Ribbon</span><span class="rule-val">3-ribbon bow at base of each tree · matching across both</span></div>
+      <div class="rule-row"><span class="rule-label">Trigger</span><span class="rule-val">Grand entry · estate · dramatic arrival signal in collection intent</span></div>
+      <div class="rule-row"><span class="rule-label">Price</span><span class="rule-val price-tag">$265 – $395 / pair</span></div>
+    </div>
+  </div>
+
+  <div class="product-card">
+    <span class="product-code code-e">E4</span>
+    <div class="product-name">Foyer Arrangement</div>
+    <div class="product-meta">24–36 inch tall · Entry console table</div>
+    <div class="product-desc">A tall asymmetric vessel arrangement on the entry console — the botanical welcome inside the door. Tier 1 florals at mid expression (same species as the Grande wreath but slightly more restrained). The vessel is part of the design — aged ceramic, terracotta, or wooden box.</div>
+    <div class="product-rules">
+      <div class="rule-row"><span class="rule-label">Form</span><span class="rule-val">Tall vessel arrangement · stems gathered asymmetrically reaching upward and outward</span></div>
+      <div class="rule-row"><span class="rule-label">Florals</span><span class="rule-val">Tier 1 at mid expression · 5 hero blooms in odd counts · 3 supporting buds</span></div>
+      <div class="rule-row"><span class="rule-label">Ribbon</span><span class="rule-val">3-ribbon bow at vessel neck · tails trailing down vessel face</span></div>
+      <div class="rule-row"><span class="rule-label">Price</span><span class="rule-val price-tag">$215 – $285</span></div>
+    </div>
+  </div>
+
+  <div class="product-card full">
+    <span class="product-code code-e">E5</span>
+    <div class="product-name">Threshold Treatment</div>
+    <div class="product-meta">Full interior door frame · Entry hallway to living room or dining room</div>
+    <div class="product-desc">The architectural frame of the sightline draw. An asymmetric header swag running across the top of the interior door frame, heavier on one side, with a focal bloom cluster at one upper corner. One botanical drop cascades down one jamb. The opposite jamb is ribbon-dominant with long flowing tails. Large looped bows anchor each upper corner. The room beyond is part of the photograph — the treatment frames a view.</div>
+    <div class="product-rules">
+      <div class="rule-row"><span class="rule-label">Anatomy</span><span class="rule-val">Header swag (asymmetric, heavier left) + focal corner cluster + botanical drop one jamb + ribbon drop opposite jamb</span></div>
+      <div class="rule-row"><span class="rule-label">Florals</span><span class="rule-val">Tier 1 stepping back to buds only (no full blooms) · Tier 2 species carrying</span></div>
+      <div class="rule-row"><span class="rule-label">Ribbon</span><span class="rule-val">3-ribbon layered bows at BOTH upper corner anchors · tails running along header and down jambs</span></div>
+      <div class="rule-row"><span class="rule-label">Price</span><span class="rule-val price-tag">$185 – $265</span></div>
+    </div>
+  </div>
+
+  <div class="product-card">
+    <span class="product-code code-e">E6</span>
+    <div class="product-name">Lamp Neck Wreath Pair</div>
+    <div class="product-meta">8–10 inch · Entry table lamp necks · Set of 2</div>
+    <div class="product-desc">Small botanical collars that wear on the neck of a table lamp just below the shade. The ribbon loop is both the functional hang mechanism and the decorative moment — it ties into a bow visible between the shade and the collar. The whole lamp becomes a styled object. Sells only as a pair — lamps come in pairs.</div>
+    <div class="product-rules">
+      <div class="rule-row"><span class="rule-label">Scale</span><span class="rule-val">8in maximum — must not interfere with the shade or read as heavy</span></div>
+      <div class="rule-row"><span class="rule-label">Florals</span><span class="rule-val">Tier 2 small buds · 3 foliage stems · very lightweight construction</span></div>
+      <div class="rule-row"><span class="rule-label">Ribbon</span><span class="rule-val">2-ribbon bow above the wreath where ribbon loop meets shade collar</span></div>
+      <div class="rule-row"><span class="rule-label">Price</span><span class="rule-val price-tag">$75 – $95 / pair</span></div>
+    </div>
+  </div>
+
+  <div class="product-card">
+    <span class="product-code code-e">E7</span>
+    <div class="product-name">Door Swag</div>
+    <div class="product-meta">18–30 inch · Narrow doors · Sidelights</div>
+    <div class="product-desc">An elongated asymmetric spray for spaces too narrow for a wreath. No ring base — stems are gathered at a central knot with foliage and ribbon trails cascading both above and below. Elegant and understated. Ideal for sidelights, interior narrow doors, or as a complement to a primary wreath on an adjacent surface.</div>
+    <div class="product-rules">
+      <div class="rule-row"><span class="rule-label">Form</span><span class="rule-val">No ring · stems gathered at knot · trails cascade up and down from center</span></div>
+      <div class="rule-row"><span class="rule-label">Florals</span><span class="rule-val">Tier 2 · 3 buds or small blooms at the knot · foliage trails</span></div>
+      <div class="rule-row"><span class="rule-label">Ribbon</span><span class="rule-val">3-ribbon bow at the center knot · long tails trailing both directions</span></div>
+      <div class="rule-row"><span class="rule-label">Price</span><span class="rule-val price-tag">$95 – $135</span></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ════════════════════════════════════════ -->
+<!-- LAYER 2 -->
+<!-- ════════════════════════════════════════ -->
+<div id="draw" class="layer-header">
+  <div class="layer-number">02</div>
+  <div class="layer-info">
+    <h2>The Draw</h2>
+    <p>The architectural transition. Pulls the eye from the entry deeper into the home. Staircase, doorways, railing.</p>
+  </div>
+</div>
+
+<div class="product-grid">
+
+  <div class="product-card">
+    <span class="product-code code-d">D1</span>
+    <div class="product-name">The Puddle Post</div>
+    <div class="product-meta">Full post installation · Staircase newel post · Sold as pair</div>
+    <div class="product-desc">Crown cluster at the post cap. One botanical cascade falling down one face of the post. The botanicals reach the floor and spread outward in a natural puddle. Glass icicle clusters emerge from the crown greenery in winter collections. The most photographically dramatic product in the entire library — requires the floor to be in frame. Nobody else in the faux botanical market is selling this as an intentional design product.</div>
+    <div class="product-rules">
+      <div class="rule-row"><span class="rule-label">Anatomy</span><span class="rule-val">Crown cluster (dense) + single cascade down one post face + floor puddle spreading outward</span></div>
+      <div class="rule-row"><span class="rule-label">Florals</span><span class="rule-val tag tag-greenonly">GREENERY ONLY</span> No Tier 1 florals · greenery darkness graduates dark at puddle base → lighter at crown</span></div>
+      <div class="rule-row"><span class="rule-label">Ribbon</span><span class="rule-val">3-ribbon bow at crown-to-drop transition · tails cascading down post face</span></div>
+      <div class="rule-row"><span class="rule-label">Render</span><span class="rule-val">Full post height in frame from crown to floor puddle · herringbone floor visible</span></div>
+      <div class="rule-row"><span class="rule-label">Winter</span><span class="rule-val">Glass icicle clusters emerging upward from crown at varying heights</span></div>
+      <div class="rule-row"><span class="rule-label">Price</span><span class="rule-val price-tag">$265 – $365 / pair</span></div>
+    </div>
+  </div>
+
+  <div class="product-card">
+    <span class="product-code code-d">D2</span>
+    <div class="product-name">Interior Threshold</div>
+    <div class="product-meta">Interior room-to-room doorway · Lighter version of E5</div>
+    <div class="product-desc">A lighter, more restrained threshold treatment for interior passage doorways — living room to dining room, kitchen to hallway. Header swag only, or header with lighter drops. Tier 2 florals. The same architecture as E5 but designed to feel discovered rather than announced.</div>
+    <div class="product-rules">
+      <div class="rule-row"><span class="rule-label">Anatomy</span><span class="rule-val">Asymmetric header swag · optional light drops · corner accents not full bows</span></div>
+      <div class="rule-row"><span class="rule-label">Florals</span><span class="rule-val">Tier 2 carrying · no Tier 1 full blooms</span></div>
+      <div class="rule-row"><span class="rule-label">Ribbon</span><span class="rule-val">2-ribbon bows at corner anchors · simpler than E5</span></div>
+      <div class="rule-row"><span class="rule-label">Price</span><span class="rule-val price-tag">$125 – $175</span></div>
+    </div>
+  </div>
+
+  <div class="product-card full">
+    <span class="product-code code-d">D3</span>
+    <div class="product-name">Staircase Cascade</div>
+    <div class="product-meta">Along banister or railing · Length varies with staircase</div>
+    <div class="product-desc">A botanical treatment running the length of the staircase banister or railing — heavier at the newel post end, tapering to a wisp at the upper landing. Not a garland draped over the railing. A directional cascade that leans outward from the railing face, with greenery trailing downward. The restraint version of a traditional garland-on-banister — intentional, architectural, not overdone. Ribbon bow at the heaviest newel post anchor point.</div>
+    <div class="product-rules">
+      <div class="rule-row"><span class="rule-label">Form</span><span class="rule-val">Directional lean · heavy at bottom newel post · tapering to wisp at top · greenery dominant</span></div>
+      <div class="rule-row"><span class="rule-label">Florals</span><span class="rule-val">Tier 2 at most · primarily greenery · 3 botanical clusters at irregular intervals</span></div>
+      <div class="rule-row"><span class="rule-label">Ribbon</span><span class="rule-val">3-ribbon bow at newel post anchor · ribbon accents at 2 other intervals along length</span></div>
+      <div class="rule-row"><span class="rule-label">Price</span><span class="rule-val price-tag">$185 – $295 depending on staircase length</span></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ════════════════════════════════════════ -->
+<!-- LAYER 3 -->
+<!-- ════════════════════════════════════════ -->
+<div id="anchor" class="layer-header">
+  <div class="layer-number">03</div>
+  <div class="layer-info">
+    <h2>The Anchor</h2>
+    <p>The deepest visible room. Where the sightline resolves. The botanical treatment the eye has been traveling toward since the door opened.</p>
+  </div>
+</div>
+
+<div class="product-grid">
+
+  <div class="product-card">
+    <span class="product-code code-a">A1</span>
+    <div class="product-name">Mantel Garland</div>
+    <div class="product-meta">48–60 inch · Fireplace mantel</div>
+    <div class="product-desc">The living room anchor. Linear directional, densest at center, tapering to wisp at both ends — left end slightly heavier than right with a directional lean. The garland bows naturally at center from its own weight. In winter collections, glass icicle clusters hang from the garland ends. Tier 2 florals — no hero blooms at the mantel.</div>
+    <div class="product-rules">
+      <div class="rule-row"><span class="rule-label">Formula</span><span class="rule-val">Linear Directional · center dense → taper both ends · left heavier</span></div>
+      <div class="rule-row"><span class="rule-label">Florals</span><span class="rule-val">Tier 2 supporting · 3 magnolia buds · no Tier 1 full blooms</span></div>
+      <div class="rule-row"><span class="rule-label">Ribbon</span><span class="rule-val">3-ribbon layered bow at center drape · tails trailing over mantel face</span></div>
+      <div class="rule-row"><span class="rule-label">Winter</span><span class="rule-val">Glass icicle clusters at garland ends hanging downward</span></div>
+      <div class="rule-row"><span class="rule-label">Price</span><span class="rule-val price-tag">$165 – $215</span></div>
+    </div>
+  </div>
+
+  <div class="product-card">
+    <span class="product-code code-a">A2</span>
+    <div class="product-name">Chandelier Treatment</div>
+    <div class="product-meta">Ceiling fixture · Dining room or living room</div>
+    <div class="product-desc">Greenery and Tier 2 florals draped over the chandelier arms. Botanical drops of varying lengths cascading below the fixture. Glass icicle clusters hanging within the cascade — they catch the fixture light from above and throw refractions across the dining table below. Three-ribbon bow at the top gathering point. The only product in the line that changes the ceiling plane of a room.</div>
+    <div class="product-rules">
+      <div class="rule-row"><span class="rule-label">Anatomy</span><span class="rule-val">Frame wrap (arms and body) + botanical drops below (3-5 lengths) + glass icicle clusters</span></div>
+      <div class="rule-row"><span class="rule-label">Florals</span><span class="rule-val">Tier 2 buds only · greenery dominant · no Tier 1 full blooms</span></div>
+      <div class="rule-row"><span class="rule-label">Ribbon</span><span class="rule-val">3-ribbon bow at top gathering point · tails trailing down through the cascade</span></div>
+      <div class="rule-row"><span class="rule-label">Render</span><span class="rule-val">Full room in frame · dining table visible below · ceiling height established</span></div>
+      <div class="rule-row"><span class="rule-label">Price</span><span class="rule-val price-tag">$195 – $285</span></div>
+    </div>
+  </div>
+
+  <div class="product-card">
+    <span class="product-code code-a">A3</span>
+    <div class="product-name">Bookcase Cascade</div>
+    <div class="product-meta">Top of tall bookcase · Cascading down outer face</div>
+    <div class="product-desc">Botanical treatment gathered at the top crown of a tall bookcase, cascading down the outer face toward the floor. The bookcase edge replaces the newel post — same puddle logic, different architectural surface. Greenery dominant. Discovery florals (Tier 3) only. The cascade reads as something that grew there rather than was placed there. The library or study product.</div>
+    <div class="product-rules">
+      <div class="rule-row"><span class="rule-label">Florals</span><span class="rule-val tag tag-greenonly">GREENERY DOMINANT</span> Tier 3 discovery only · no Tier 1 or 2</span></div>
+      <div class="rule-row"><span class="rule-label">Ribbon</span><span class="rule-val">2-ribbon bow at crown · no ribbon on cascade itself</span></div>
+      <div class="rule-row"><span class="rule-label">Render</span><span class="rule-val">Full bookcase height in frame · books and objects on shelves provide domestic scale</span></div>
+      <div class="rule-row"><span class="rule-label">Price</span><span class="rule-val price-tag">$125 – $185</span></div>
+    </div>
+  </div>
+
+  <div class="product-card">
+    <span class="product-code code-a">A4</span>
+    <div class="product-name">Bookcase Shelf Drape</div>
+    <div class="product-meta">Individual shelf edge · Inside bookcase</div>
+    <div class="product-desc">Small botanical clusters trailing over one or two shelf edges inside the bookcase — beside books and objects. Pure greenery and Tier 3 discovery elements. Seen only up close. No bow. The reward for people who look carefully at your shelves. Excellent for Zoom and video call contexts — the bookcase behind someone in a call becomes quietly extraordinary.</div>
+    <div class="product-rules">
+      <div class="rule-row"><span class="rule-label">Florals</span><span class="rule-val tag tag-greenonly">GREENERY ONLY</span> or Tier 3 discovery · no bow</span></div>
+      <div class="rule-row"><span class="rule-label">Scale</span><span class="rule-val">Intimate · 6–10 inch trailing cluster per shelf · 1–3 shelves treated</span></div>
+      <div class="rule-row"><span class="rule-label">Price</span><span class="rule-val price-tag">$45 – $85 / shelf treatment</span></div>
+    </div>
+  </div>
+
+  <div class="product-card">
+    <span class="product-code code-a">A5</span>
+    <div class="product-name">Stove Surround Garland</div>
+    <div class="product-meta">Kitchen range wooden surround or hood · Full width</div>
+    <div class="product-desc">The most intimate room in the home — botanical above the range. Large homes with wooden range surrounds or architectural hoods get this treatment: garland running the full width of the surround with optional drops down the interior column faces. Pure mixed greenery. No florals — the kitchen warmth and the wood surround provide all the richness. The heat question is addressed in product copy: this lives above the hood, not inside it.</div>
+    <div class="product-rules">
+      <div class="rule-row"><span class="rule-label">Florals</span><span class="rule-val tag tag-greenonly">GREENERY ONLY</span> Multiple species · varying darkness · no florals</span></div>
+      <div class="rule-row"><span class="rule-label">Ribbon</span><span class="rule-val">2-ribbon bow at center · palette-appropriate material</span></div>
+      <div class="rule-row"><span class="rule-label">Render</span><span class="rule-val">Range or hood visible below · tile backsplash context · shot from slightly below eye level</span></div>
+      <div class="rule-row"><span class="rule-label">Price</span><span class="rule-val price-tag">$145 – $225</span></div>
+    </div>
+  </div>
+
+  <div class="product-card">
+    <span class="product-code code-a">A6</span>
+    <div class="product-name">Kitchen Ledge Garland</div>
+    <div class="product-meta">Shelf above range or kitchen ledge · 24–36 inch</div>
+    <div class="product-desc">The simplified version of A5 for standard kitchens with a shelf or ledge above the range — not a full wooden surround. Shorter, simpler, pure greenery. Still carries the collection atmosphere into the most-used room in the home.</div>
+    <div class="product-rules">
+      <div class="rule-row"><span class="rule-label">Florals</span><span class="rule-val tag tag-greenonly">GREENERY ONLY</span></div>
+      <div class="rule-row"><span class="rule-label">Ribbon</span><span class="rule-val">1 simple ribbon bow or no bow · understated</span></div>
+      <div class="rule-row"><span class="rule-label">Price</span><span class="rule-val price-tag">$85 – $125</span></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ════════════════════════════════════════ -->
+<!-- LAYER 4 -->
+<!-- ════════════════════════════════════════ -->
+<div id="discovery" class="layer-header">
+  <div class="layer-number">04</div>
+  <div class="layer-info">
+    <h2>The Discovery</h2>
+    <p>Found when you look closely. Zero Tier 1 florals. Tier 3 only. The reward for staying. Sells in sets — chairs in 4s, rings in 2s.</p>
+  </div>
+</div>
+
+<div class="product-grid">
+
+  <div class="product-card">
+    <span class="product-code code-r">R1</span>
+    <div class="product-name">Chair Wreath Set</div>
+    <div class="product-meta">Set of 4 × 10 inch · Dining chair backs</div>
+    <div class="product-desc">Four small grapevine wreaths hanging from dining chair backs via ivory satin ribbon loops. Tier 3 discovery florals only — baby eucalyptus buds, dried cotton stems, frosted seed pods. Nothing you've seen anywhere else in the home. The dining table when all four chairs carry a wreath is the most photographed moment of the whole installation. Sells as a set of 4 — never as singles.</div>
+    <div class="product-rules">
+      <div class="rule-row"><span class="rule-label">Florals</span><span class="rule-val tag tag-discovery">TIER 3 ONLY</span> Baby eucalyptus · cotton stem · seed pod · frosted foliage</span></div>
+      <div class="rule-row"><span class="rule-label">Ribbon</span><span class="rule-val">2-ribbon bow at ribbon loop top where it attaches to chair rail</span></div>
+      <div class="rule-row"><span class="rule-label">Render</span><span class="rule-val">Full dining room · all 4 chairs visible · table setting context</span></div>
+      <div class="rule-row"><span class="rule-label">Price</span><span class="rule-val price-tag">$125 – $165 / set of 4</span></div>
+    </div>
+  </div>
+
+  <div class="product-card">
+    <span class="product-code code-r">R2</span>
+    <div class="product-name">Cabinet Wreath Pair</div>
+    <div class="product-meta">2 × 8–10 inch · Kitchen cabinet door faces</div>
+    <div class="product-desc">Two small wreaths on kitchen or built-in cabinet door faces. Greenery dominant or greenery only. The cabinet hardware — the knob — provides the accent. The wreath frames the hardware beautifully. Hung from the knob itself via ribbon or from a small hook on the cabinet face. Sells as a pair of two adjacent cabinet doors.</div>
+    <div class="product-rules">
+      <div class="rule-row"><span class="rule-label">Florals</span><span class="rule-val tag tag-greenonly">GREENERY ONLY</span> or Tier 3 maximum</span></div>
+      <div class="rule-row"><span class="rule-label">Ribbon</span><span class="rule-val">Simple 1-ribbon loop · no full bow</span></div>
+      <div class="rule-row"><span class="rule-label">Price</span><span class="rule-val price-tag">$55 – $85 / pair</span></div>
+    </div>
+  </div>
+
+  <div class="product-card">
+    <span class="product-code code-r">R3</span>
+    <div class="product-name">Lamp Neck Wreath Set</div>
+    <div class="product-meta">Pair of 8 inch · Table or floor lamp necks</div>
+    <div class="product-desc">Lighter version of E6 designed for living room and bedroom table lamps rather than entry lamps. Same concept — botanical collar on the lamp neck just below the shade. Tier 3 discovery florals. The living room or bedroom discovery moment. Sells as a pair.</div>
+    <div class="product-rules">
+      <div class="rule-row"><span class="rule-label">Florals</span><span class="rule-val tag tag-discovery">TIER 3 ONLY</span></div>
+      <div class="rule-row"><span class="rule-label">Ribbon</span><span class="rule-val">1-ribbon simple bow where loop meets shade collar</span></div>
+      <div class="rule-row"><span class="rule-label">Price</span><span class="rule-val price-tag">$65 – $95 / pair</span></div>
+    </div>
+  </div>
+
+  <div class="product-card">
+    <span class="product-code code-r">R4</span>
+    <div class="product-name">Window Wreath</div>
+    <div class="product-meta">8–12 inch · Kitchen sink window · Two-face visible</div>
+    <div class="product-desc">Hung within the kitchen sink window frame — suspended from the frame or a tension rod, sitting within the glass. Designed to be visible from inside and outside simultaneously. No heavy florals. Greenery dominant. The kitchen sink is where people spend more time than any other single spot in the home. This wreath is seen every time dishes are done, every morning coffee, every evening clean-up.</div>
+    <div class="product-rules">
+      <div class="rule-row"><span class="rule-label">Florals</span><span class="rule-val tag tag-greenonly">GREENERY ONLY</span> Both faces must read cleanly from inside and outside</span></div>
+      <div class="rule-row"><span class="rule-label">Ribbon</span><span class="rule-val tag tag-noblow">NO BOW</span> Simple ribbon hang only</span></div>
+      <div class="rule-row"><span class="rule-label">Render</span><span class="rule-val">Shot backlit by window · exterior scene blurred behind · plant on sill in foreground</span></div>
+      <div class="rule-row"><span class="rule-label">Price</span><span class="rule-val price-tag">$55 – $85</span></div>
+    </div>
+  </div>
+
+  <div class="product-card">
+    <span class="product-code code-r">R5</span>
+    <div class="product-name">Pantry Door Wreath</div>
+    <div class="product-meta">8–10 inch · Interior face of pantry door</div>
+    <div class="product-desc">On the inside face of the pantry door. The client sees it every time they open the pantry. Nobody is marketing this placement. It's intimate, unexpected, and it delights every single time — a private botanical moment in the most domestic space of the home. Tier 3 only, pure simplicity. Nobody markets this placement. You'd be the first.</div>
+    <div class="product-rules">
+      <div class="rule-row"><span class="rule-label">Florals</span><span class="rule-val tag tag-discovery">TIER 3 ONLY</span></div>
+      <div class="rule-row"><span class="rule-label">Ribbon</span><span class="rule-val">Simple grosgrain ribbon only · 1 color · no pattern</span></div>
+      <div class="rule-row"><span class="rule-label">Price</span><span class="rule-val price-tag">$45 – $65</span></div>
+    </div>
+  </div>
+
+  <div class="product-card">
+    <span class="product-code code-r">R6</span>
+    <div class="product-name">Candle Ring Set</div>
+    <div class="product-meta">2 × 8 inch · Table surface · Set of 2</div>
+    <div class="product-desc">Two grapevine candle rings placed on a console or dining table surface, positioned at different angles with one slightly overlapping the other for editorial depth. Tier 3 florals only. Asymmetric cluster, NOT centered. The two rings should not be identical — slight variation between them is the law.</div>
+    <div class="product-rules">
+      <div class="rule-row"><span class="rule-label">Florals</span><span class="rule-val tag tag-discovery">TIER 3 ONLY</span> 1 tiny bud · 3 foliage leaves · 3 small stems per ring</span></div>
+      <div class="rule-row"><span class="rule-label">Ribbon</span><span class="rule-val tag tag-noblow">NO BOW EVER</span> No ribbon of any kind</span></div>
+      <div class="rule-row"><span class="rule-label">Asymmetry</span><span class="rule-val">Cluster at 8 o'clock not centered · rings at different angles · not matching</span></div>
+      <div class="rule-row"><span class="rule-label">Price</span><span class="rule-val price-tag">$55 – $75 / set</span></div>
+    </div>
+  </div>
+
+  <div class="product-card">
+    <span class="product-code code-r">R7</span>
+    <div class="product-name">Lantern Collar</div>
+    <div class="product-meta">Lantern base installation · Console or mantel</div>
+    <div class="product-desc">The lantern is the vertical anchor. The botanicals are the base collar — they gather around the lantern's feet and breathe outward asymmetrically. One side heavier than the other. A few stems trail away from the base entirely. The lantern and the botanicals read as one composed object. Greenery dominant with Tier 3 discovery florals. The candle inside is unlit in product photography.</div>
+    <div class="product-rules">
+      <div class="rule-row"><span class="rule-label">Florals</span><span class="rule-val tag tag-greenonly">GREENERY DOMINANT</span> Tier 3 accents only</span></div>
+      <div class="rule-row"><span class="rule-label">Ribbon</span><span class="rule-val">2-ribbon bow at the collar gathering point · tails trailing outward across the surface</span></div>
+      <div class="rule-row"><span class="rule-label">Design Law</span><span class="rule-val">Heavier side creates directionality · botanicals radiate not surround</span></div>
+      <div class="rule-row"><span class="rule-label">Price</span><span class="rule-val price-tag">$85 – $125</span></div>
+    </div>
+  </div>
+
+  <div class="product-card">
+    <span class="product-code code-r">R8</span>
+    <div class="product-name">Table Centerpiece</div>
+    <div class="product-meta">8–14 inch tall · Dining or coffee table low vessel</div>
+    <div class="product-desc">A low botanical arrangement in a vessel for the dining table or coffee table. Low enough to preserve sight lines across the table from a seated position. Tier 2 florals at quiet expression. The vessel is half the product — a compote, a low ceramic bowl, a shallow wooden box. Designed to be seen from above and from seated eye level simultaneously.</div>
+    <div class="product-rules">
+      <div class="rule-row"><span class="rule-label">Scale</span><span class="rule-val">Max 14in height · dining sight line law</span></div>
+      <div class="rule-row"><span class="rule-label">Florals</span><span class="rule-val">Tier 2 quiet expression · same species as collection but at discovery scale</span></div>
+      <div class="rule-row"><span class="rule-label">Ribbon</span><span class="rule-val">2-ribbon bow at vessel base or handle</span></div>
+      <div class="rule-row"><span class="rule-label">Price</span><span class="rule-val price-tag">$95 – $145</span></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ════════════════════════════════════════ -->
+<!-- SPECIALTY -->
+<!-- ════════════════════════════════════════ -->
+<div id="specialty" class="layer-header">
+  <div class="layer-number">05</div>
+  <div class="layer-info">
+    <h2>Specialty Forms</h2>
+    <p>Non-standard product forms. Selected by the engine based on collection intent signals — never included by default.</p>
+  </div>
+</div>
+
+<div class="product-grid">
+
+  <div class="product-card">
+    <span class="product-code code-s">S1</span>
+    <div class="product-name">Tabletop Tree</div>
+    <div class="product-meta">12–24 inch · Cone wire frame · Console or sideboard</div>
+    <div class="product-desc">A cone-form wire frame wrapped botanically — pure greenery at the base graduating to Tier 2 florals near the crown. Three viable versions: all-greenery (cedar, noble fir, boxwood), all-floral (collection hero species fading top to bottom), or mixed. Massive gifting market. Three-ribbon bow at base.</div>
+    <div class="product-rules">
+      <div class="rule-row"><span class="rule-label">Trigger</span><span class="rule-val">Christmas · holiday · festive signal in collection intent</span></div>
+      <div class="rule-row"><span class="rule-label">Sizes</span><span class="rule-val">12in, 18in, and 24in are the sweet spots · sell as set of 3 or individually</span></div>
+      <div class="rule-row"><span class="rule-label">Ribbon</span><span class="rule-val">3-ribbon bow at base · tails fanning outward</span></div>
+      <div class="rule-row"><span class="rule-label">Price</span><span class="rule-val price-tag">$85 – $185 depending on size</span></div>
+    </div>
+  </div>
+
+  <div class="product-card">
+    <span class="product-code code-s">S2</span>
+    <div class="product-name">Kissing Ball</div>
+    <div class="product-meta">8–14 inch sphere · Hanging from ribbon loop</div>
+    <div class="product-desc">A botanical sphere of massed florals and foliage hung from a ribbon loop. Photographs beautifully, ships easily, commands strong price points relative to material cost. Traditional and romantic. Large looped bow at the top where the ribbon attaches.</div>
+    <div class="product-rules">
+      <div class="rule-row"><span class="rule-label">Trigger</span><span class="rule-val">Romantic · holiday · abundant · wedding-adjacent signal</span></div>
+      <div class="rule-row"><span class="rule-label">Ribbon</span><span class="rule-val">Large droopy looped bow at top where ribbon loop attaches · tails trailing</span></div>
+      <div class="rule-row"><span class="rule-label">Price</span><span class="rule-val price-tag">$75 – $125</span></div>
+    </div>
+  </div>
+
+  <div class="product-card">
+    <span class="product-code code-s">S3</span>
+    <div class="product-name">Dough Bowl Arrangement</div>
+    <div class="product-meta">Reclaimed wood vessel · Low sprawling cluster</div>
+    <div class="product-desc">A low, organically sprawling botanical cluster arranged inside an antique or reclaimed wood dough bowl. No foam — stems wired and gathered. The bowl does the styling work. Console table, coffee table, or kitchen island. Farmhouse and cottage collections. No ribbon or subtle 1-ribbon accent only.</div>
+    <div class="product-rules">
+      <div class="rule-row"><span class="rule-label">Trigger</span><span class="rule-val">Cottage · farmhouse · organic · rustic signal</span></div>
+      <div class="rule-row"><span class="rule-label">Ribbon</span><span class="rule-val">No ribbon or single understated 1-ribbon accent</span></div>
+      <div class="rule-row"><span class="rule-label">Price</span><span class="rule-val price-tag">$125 – $185</span></div>
+    </div>
+  </div>
+
+  <div class="product-card">
+    <span class="product-code code-s">S4</span>
+    <div class="product-name">Bottle Brush Tree Cluster</div>
+    <div class="product-meta">Set of 3 graduated sizes · 3 / 6 / 9 inch</div>
+    <div class="product-desc">Three vintage-style bottle brush trees in graduated sizes grouped as a tabletop vignette. Incredibly giftable, low material cost, high visual return. Christmas and holiday collections only. No bow on individual trees — the cluster composition is the product.</div>
+    <div class="product-rules">
+      <div class="rule-row"><span class="rule-label">Trigger</span><span class="rule-val">Christmas · holiday signal ONLY · never include without this signal</span></div>
+      <div class="rule-row"><span class="rule-label">Ribbon</span><span class="rule-val">No bow on trees · optional wrapped kraft base on smallest tree only</span></div>
+      <div class="rule-row"><span class="rule-label">Price</span><span class="rule-val price-tag">$55 – $85 / set of 3</span></div>
+    </div>
+  </div>
+
+  <div class="product-card">
+    <span class="product-code code-s">S5</span>
+    <div class="product-name">Moon Wreath</div>
+    <div class="product-meta">Half-crescent grapevine base · 18–24 inch</div>
+    <div class="product-desc">A half-moon or crescent-shaped grapevine base — not a full circle. Botanical cluster concentrated at the lower arc, the upper arc bare grapevine. Very editorial, very interior-design-forward. Trending hard. Different buyer than the traditional wreath customer — appeals to modern, minimal, design-forward homes. Replaces E1/E2 for minimal or modern collection intent.</div>
+    <div class="product-rules">
+      <div class="rule-row"><span class="rule-label">Trigger</span><span class="rule-val">Editorial · modern · minimal · design-forward signal</span></div>
+      <div class="rule-row"><span class="rule-label">Base</span><span class="rule-val">Half-crescent grapevine · upper arc deliberately bare · not a full ring</span></div>
+      <div class="rule-row"><span class="rule-label">Ribbon</span><span class="rule-val">2-ribbon bow at cluster base · long tails</span></div>
+      <div class="rule-row"><span class="rule-label">Price</span><span class="rule-val price-tag">$125 – $185</span></div>
+    </div>
+  </div>
+
+  <div class="product-card">
+    <span class="product-code code-s">S6</span>
+    <div class="product-name">Hoop Wreath</div>
+    <div class="product-meta">Thin metal ring · 16–22 inch · One-sided cluster</div>
+    <div class="product-desc">A thin metal or wire ring — not grapevine — with an asymmetric botanical cluster concentrated on one side only. Most of the ring is bare metal. Modern, graphic, editorial. The opposite of traditional. Long ribbon tail not a full bow — just a single ribbon length with a simple loose knot. Different buyer than any other product in the library.</div>
+    <div class="product-rules">
+      <div class="rule-row"><span class="rule-label">Trigger</span><span class="rule-val">Minimal · modern · editorial · apartment · design-conscious signal</span></div>
+      <div class="rule-row"><span class="rule-label">Base</span><span class="rule-val">Thin metal or wire ring · bare metal visible throughout · not grapevine</span></div>
+      <div class="rule-row"><span class="rule-label">Ribbon</span><span class="rule-val">Single ribbon tail only · loose knot · no loops · no droopy bow</span></div>
+      <div class="rule-row"><span class="rule-label">Price</span><span class="rule-val price-tag">$95 – $145</span></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ════════════════════════════════════════ -->
+<!-- ACCENT PACKS -->
+<!-- ════════════════════════════════════════ -->
+<div id="accents" class="layer-header">
+  <div class="layer-number">06</div>
+  <div class="layer-info">
+    <h2>Accent Packs</h2>
+    <p>Sold separately. Added to existing installations. Natural upsell at checkout.</p>
+  </div>
+</div>
+
+<div class="product-grid">
+
+  <div class="product-card">
+    <span class="product-code code-p">P1</span>
+    <div class="product-name">Icicle Accent Pack</div>
+    <div class="product-meta">Clusters of glass icicles · Add-on to existing products</div>
+    <div class="product-desc">Glass icicles sold separately as an add-on accent pack. Three uses: emerging UPWARD from staircase or post greenery (like they crystallized out of the botanicals), hanging DOWNWARD from mantel garland ends, or hanging within chandelier botanical cascade catching fixture light and throwing refractions. Transparent — no color opinion, works in every palette. Only winter collections.</div>
+    <div class="product-rules">
+      <div class="rule-row"><span class="rule-label">Trigger</span><span class="rule-val">Winter · Nordic · icy · snow signal in collection intent</span></div>
+      <div class="rule-row"><span class="rule-label">Uses</span><span class="rule-val">Staircase (upward) · Mantel garland ends (downward) · Chandelier (hanging within cascade)</span></div>
+      <div class="rule-row"><span class="rule-label">Price</span><span class="rule-val price-tag">$35 – $55 / pack</span></div>
+    </div>
+  </div>
+
+  <div class="product-card">
+    <span class="product-code code-p">P2</span>
+    <div class="product-name">Stem Bundle</div>
+    <div class="product-meta">6-stem coordinating botanical picks · Kraft wrapped</div>
+    <div class="product-desc">Six coordinating botanical stems loosely wrapped in natural kraft paper twine. Positioned as a coordinating home accent — not a DIY kit. Goes in a narrow ceramic vase, on a console, or on a kitchen counter. The collection palette in stem form. Small coordinating ribbon bow at the wrap point.</div>
+    <div class="product-rules">
+      <div class="rule-row"><span class="rule-label">Contents</span><span class="rule-val">3 foliage stems + 2 accent berry or textural stems + 1 hero foliage branch · all from collection palette</span></div>
+      <div class="rule-row"><span class="rule-label">Ribbon</span><span class="rule-val">Small coordinating 1-ribbon bow at stem wrap · matched to collection accent ribbon</span></div>
+      <div class="rule-row"><span class="rule-label">Price</span><span class="rule-val price-tag">$22 – $38</span></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="divider"></div>
+
+<!-- ════════════════════════════════════════ -->
+<!-- DESIGN LAWS -->
+<!-- ════════════════════════════════════════ -->
+<h2 id="design-laws">Design Laws Reference</h2>
+
+<div class="rules-grid">
+
+  <div class="rule-card">
+    <h4>Odd Counts · Always</h4>
+    <p>Every individual floral species count must be odd: 1, 3, 5, 7, or 9. Never 2, 4, 6, or 8. Applies to every product, every species, every layer. Non-negotiable.</p>
+  </div>
+
+  <div class="rule-card">
+    <h4>Bow Rule</h4>
+    <p>All products get a bow EXCEPT: Candle Rings (R6), Window Wreath (R4), Shelf Drape (A4), Bottle Brush Trees (S4), Hoop Wreath (S6 gets a ribbon tail only). Large droopy looped layered bows — never stiff, never symmetrical.</p>
+  </div>
+
+  <div class="rule-card">
+    <h4>Multi-Ribbon System</h4>
+    <p>Up to 3 ribbons of different widths. Statement (widest, solid), Character (mid-width, pattern), Accent (narrowest, texture/sheen). Never two patterns together. Describe all widths, materials, colors, and patterns explicitly.</p>
+  </div>
+
+  <div class="rule-card">
+    <h4>Floral Hierarchy</h4>
+    <p>Tier 1 (hero) at Layer 1 only. Tier 2 (supporting) at Layers 2–3. Tier 3 (discovery) at Layer 4 only. Tier 1 is completely absent from discovery products.</p>
+  </div>
+
+  <div class="rule-card">
+    <h4>Color Movement</h4>
+    <p>Full saturation at Entry → Midtone at Anchor rooms → Whisper tone at Discovery. The palette gets quieter as the eye moves deeper into the home. Neutral anchor (greenery) constant at all layers.</p>
+  </div>
+
+  <div class="rule-card">
+    <h4>Greenery-Only Products</h4>
+    <p>D1 Puddle Post, A5/A6 Kitchen Garlands, A4 Shelf Drape, R2 Cabinet Wreaths, R4 Window Wreath, R7 Lantern Collar carry zero florals. Greenery, texture, and ribbon do all the work.</p>
+  </div>
+
+  <div class="rule-card">
+    <h4>Species Diversity</h4>
+    <p>Minimum 7 distinct botanical species across the full collection. Layer 1: 5 species. Layers 2-3: 4 species. Layer 4: 3 species. No two products share all the same species.</p>
+  </div>
+
+  <div class="rule-card">
+    <h4>PIE R1-R18</h4>
+    <p>Wreath products follow the Placement Intelligence Engine. Classic coverage 33–55% of ring. Asymmetry score 0.40–0.80. Drama pole at t=0.7 of arc. Silence arc ≥120° opposition from mass centroid.</p>
+  </div>
+
+  <div class="rule-card">
+    <h4>Sightline Architecture</h4>
+    <p>Every collection is built as a sightline story. Products are selected based on which home spaces are relevant, not from a fixed list. Minimum: one hero wreath + one Layer 2 draw product + one Layer 3 anchor + one Layer 4 discovery.</p>
+  </div>
+
+</div>
+
+<div class="divider"></div>
+
+<!-- ════════════════════════════════════════ -->
+<!-- HEYGEN SYSTEM -->
+<!-- ════════════════════════════════════════ -->
+<h2 id="heygen">The HeyGen Proposal System</h2>
+
+<p>The client proposal is not a document. It's a private, beautifully designed web experience sent as a single link. The client taps it on their phone and gets a page that feels like it was made specifically for them — because it was. Your avatar appears three times throughout the experience, each time with a different role.</p>
+
+<h3>The Proposal Page — What the Client Experiences</h3>
+<div class="workflow-steps">
+  <div class="workflow-step">
+    <span class="step-num">1</span>
+    <div class="step-content"><strong>The Cover</strong> Their name in 82px elegant typography on a dark editorial page. Collection name, season, palette chips. Three seconds of silence. Then your avatar appears.</div>
+  </div>
+  <div class="workflow-step">
+    <span class="step-num">2</span>
+    <div class="step-content"><strong>Designer Introduction (90 seconds)</strong> Your avatar in an editorial room setting — dark wall, warm side light. Not a pitch. A statement of design philosophy built around the sightline concept applied to their specific home.</div>
+  </div>
+  <div class="workflow-step">
+    <span class="step-num">3</span>
+    <div class="step-content"><strong>The Sightline Story</strong> Three full-width scroll panels: Layer 1 (what you see at the door), Layer 2 (what pulls you deeper), Layer 3 (where it resolves). Lifestyle render photography in each panel.</div>
+  </div>
+  <div class="workflow-step">
+    <span class="step-num">4</span>
+    <div class="step-content"><strong>The Home Blueprint</strong> An interactive SVG floor plan showing every botanical placement in the home. Clicking any dot scrolls to that product's card. Your avatar's 10-second floor plan voiceover plays here.</div>
+  </div>
+  <div class="workflow-step">
+    <span class="step-num">5</span>
+    <div class="step-content"><strong>The Collection</strong> Products in sightline order. Pencil illustration sketch shows by default → hover dissolves to full color render. Product name, placement description, species details, price beneath each.</div>
+  </div>
+  <div class="workflow-step">
+    <span class="step-num">6</span>
+    <div class="step-content"><strong>Investment Summary</strong> Clean table organized by sightline layer. Total estimate. Professional but not clinical.</div>
+  </div>
+  <div class="workflow-step">
+    <span class="step-num">7</span>
+    <div class="step-content"><strong>The Close (20 seconds)</strong> Your avatar returns. Brief, warm, personal. Then a single button: "Begin Your Installation" linking to your Calendly.</div>
+  </div>
+</div>
+
+<h3>The Variable System</h3>
+<p>Record one master script per collection. HeyGen's variable text system inserts the client name and one personalized home detail automatically. One recording — infinite personalizations. Each proposal feels entirely bespoke without re-recording.</p>
+
+<div class="delivery-note"><strong>Variable format:</strong> [CLIENT_NAME] · [COLLECTION_NAME] · [HOME_DETAIL] — e.g. "your staircase and the living room beyond it"</div>
+
+<h3>Workflow — Intake to Sent Link</h3>
+<div class="workflow-steps">
+  <div class="workflow-step">
+    <span class="step-num">1</span>
+    <div class="step-content"><strong>Client Intake</strong> Home style, rooms to treat, season, budget range. 10-minute conversation or form.</div>
+  </div>
+  <div class="workflow-step">
+    <span class="step-num">2</span>
+    <div class="step-content"><strong>Collection Selection</strong> Choose or generate the right collection. The engine selects products based on the home profile.</div>
+  </div>
+  <div class="workflow-step">
+    <span class="step-num">3</span>
+    <div class="step-content"><strong>Proposal Generation</strong> Paste the collection JSON into the proposal generator. Client name in. Full page built automatically.</div>
+  </div>
+  <div class="workflow-step">
+    <span class="step-num">4</span>
+    <div class="step-content"><strong>Send the Link</strong> One URL. One text message. Done. Total time from intake to sent link: under one hour.</div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ════════════════════════════════════════ -->
+<!-- THE THREE SCRIPTS -->
+<!-- ════════════════════════════════════════ -->
+<h2 id="scripts">The Three Avatar Scripts</h2>
+
+<div class="script-block">
+  <span class="script-label">Script 01 · The Introduction · 85–90 seconds · ~215 words</span>
+  <div class="script-text">
+    "[CLIENT_NAME].<br><br>
+    Thank you for being here.<br><br>
+    I want to start by telling you something I tell every client before I show them anything. When I walk into a home for the first time, I always go back to the front door. I open it. I stand in the threshold. And I ask myself one question.<br><br>
+    What do you see the moment it opens?<br><br>
+    Not what's decorated. Not what's been styled. What does the eye travel to — instinctively, before a single conscious thought?<br><br>
+    That question is where everything I do begins. Because when a home is designed botanically from the inside out — when every placement exists in conversation with every other placement — that first sightline moment becomes something you feel before you understand it.<br><br>
+    What I've built for you in this proposal is an answer to that question. For your home. For this season.<br><br>
+    Every placement you're about to see was chosen for what it does to the eye as it moves through your space. Not just what it looks like on a wall.<br><br>
+    Scroll through slowly.<br><br>
+    I'll see you at the end."
+  </div>
+  <span class="timing">Deliver slowly. The sightline question is the thesis — slow down there. "Scroll through slowly" is an invitation, not a directive.</span>
+</div>
+
+<div class="delivery-note"><strong>Recording setup:</strong> Darkest wall you have as background. One light source from left or right — not in front of you. Wall behind you reads as shadow. This puts you inside the Evercrafted world, not in front of it.</div>
+
+<div class="script-block">
+  <span class="script-label">Script 02 · The Floor Plan Moment · 10 seconds · ~28 words</span>
+  <div class="script-text">
+    "Every dot on this plan is a decision I made about your home.<br><br>
+    Tap any one of them."
+  </div>
+  <span class="timing">Delivered as the floor plan section scrolls into view — audio only, no video. The voice arrives while the client is looking at the plan. Say nothing more.</span>
+</div>
+
+<div class="delivery-note"><strong>Option A (recommended):</strong> Audio file only — embeds as ambient voice that plays when the blueprint section enters the viewport. Client stays focused on the plan while hearing you. Most unexpected and elegant.<br><br><strong>Option B:</strong> Small floating HeyGen video in lower-left corner. Appears for 10 seconds, fades out. Plan stays interactive behind it.</div>
+
+<div class="script-block">
+  <span class="script-label">Script 03 · The Close · 18–22 seconds · ~50 words</span>
+  <div class="script-text">
+    "Now you've seen how I see your home.<br><br>
+    The only thing left is to begin.<br><br>
+    When you're ready — and there's no rush — tap the button below. Let's talk through it together.<br><br>
+    I'd love to bring this to life for you."
+  </div>
+  <span class="timing">First sentence almost to yourself. Long pause after it. "There's no rush" — mean it. End warmly, not professionally.</span>
+</div>
+
+<div class="divider"></div>
+
+<!-- ════════════════════════════════════════ -->
+<!-- PHASE PLAN -->
+<!-- ════════════════════════════════════════ -->
+<h2 id="phases">Build Phase Plan</h2>
+<p>The order of operations to make the full proposal system live and revenue-generating.</p>
+
+<div class="phase-row">
+  <div class="phase-num">01</div>
+  <div class="phase-content">
+    <h3>Avatar Recording</h3>
+    <p>Write the three scripts into HeyGen. Record Script 01 (Introduction) and Script 03 (Close) as video. Record Script 02 (Floor Plan) as audio only. Film in your darkest room with side lighting. The whole collection is Quiet Accord — record that version first. One session, three clips.</p>
+  </div>
+</div>
+
+<div class="phase-row">
+  <div class="phase-num">02</div>
+  <div class="phase-content">
+    <h3>Render the Collection</h3>
+    <p>Run the Quiet Accord phase-stack prompts for all 11 products. For each product: Phase 1 (greenery base) → Phase 2 (hero florals) → Phase 3 (accents + ribbon). Then run the Sketch prompt for each product. Paste all URLs into the Collection Studio app. Export the collection JSON with all image URLs embedded.</p>
+  </div>
+</div>
+
+<div class="phase-row">
+  <div class="phase-num">03</div>
+  <div class="phase-content">
+    <h3>First Proposal</h3>
+    <p>Take the completed Quiet Accord collection JSON and your HeyGen embed URLs. Open the proposal HTML file. Fill in the PROPOSAL configuration block at the top (client name, HeyGen URLs, Calendly link, image URLs). Drop the file on Netlify Drop — instant URL. Send to your first client.</p>
+  </div>
+</div>
+
+<div class="phase-row">
+  <div class="phase-num">04</div>
+  <div class="phase-content">
+    <h3>The Proposal Generator</h3>
+    <p>Build a simple web tool where you type the client name and paste the collection JSON → it builds and outputs the full proposal page link automatically. No more manual HTML editing. 15 seconds from collection to client link. This is the phase that makes the system scalable.</p>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div style="text-align:center;padding:20px 0 40px;">
+  <span class="eyebrow">Evercrafted · Product & Systems Reference · July 2026</span>
+  <p style="font-size:12px;color:#9A9088;margin-top:8px;">32 product forms · 3 HeyGen scripts · 4 build phases · 9 design laws</p>
+</div>
+
+</div>
+</body>
+</html>

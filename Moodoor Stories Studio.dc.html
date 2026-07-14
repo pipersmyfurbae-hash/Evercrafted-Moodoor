@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <title>Moodoor Studio — Stories Studio (Render → Tag → Story)</title>
+  <meta name="description" content="Upload a rendered wreath; the pipeline samples the image, classifies its territory, regenerates the EC_WR_V2 blueprint, and drafts a Moodoor Story from the client's memory. Saves to the shared catalog.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,300;1,400&family=Inter:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root{--ec-white:#FFFFFF;--ec-off-white:#F9F7F4;--ec-paper:#F2EFE9;--ec-black:#1A1A1A;--ec-ink:#4A4A4A;--ec-green:#4A6741;--ec-green-light:#6B8F67;--ec-green-pale:#EEF2ED;--ec-green-dim:rgba(74,103,65,.12);--ec-gray-100:#F5F5F5;--ec-gray-200:#E8E8E8;--ec-gray-300:#D0D0D0;--ec-gray-400:#A8A8A8;--ec-gray-500:#787878;--ec-warning:#C4922A;--ec-border:#E8E8E8;--ink-panel:#20241F;--serif:'Cormorant Garamond',Georgia,serif;--sans:'Inter',system-ui,sans-serif;--mono:'DM Mono',monospace;--r-sm:6px;--r-md:10px;--r-lg:14px;--r-full:9999px;--tr:180ms ease}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{font-family:var(--sans);font-size:14px;color:var(--ec-black);background:var(--ec-off-white);-webkit-font-smoothing:antialiased;overflow:hidden}
+    ::selection{background:var(--ec-green-dim);color:var(--ec-green)}
+    button{font-family:inherit;cursor:pointer}
+    input,select,textarea{font-family:inherit}
+    .app{display:flex;flex-direction:column;height:100vh}
+
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:0 24px;height:58px;background:var(--ec-white);border-bottom:1px solid var(--ec-border);flex-shrink:0;z-index:20}
+    .brand{display:flex;align-items:center;gap:12px}
+    .brand .wm{font-family:var(--serif);font-size:22px;font-weight:600}
+    .brand .wm span{color:var(--ec-green)}
+    .brand .badge{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ec-green);background:var(--ec-green-pale);border:1px solid rgba(107,143,103,.3);padding:4px 9px;border-radius:var(--r-full)}
+    .topbar-mid{font-family:var(--mono);font-size:11px;color:var(--ec-gray-400)}
+    .topbar-right{display:flex;align-items:center;gap:16px}
+    .link-back{font-size:12.5px;color:var(--ec-gray-500);text-decoration:none;transition:color var(--tr)}
+    .link-back:hover{color:var(--ec-green)}
+    .cat-count{font-family:var(--mono);font-size:11px;color:var(--ec-ink);display:flex;align-items:center;gap:6px}
+    .cat-count b{color:var(--ec-green)}
+
+    .workspace{flex:1;display:grid;grid-template-columns:340px 1fr 400px;min-height:0}
+    @media(max-width:1200px){.workspace{grid-template-columns:300px 1fr 360px}}
+
+    /* LEFT: inputs */
+    .inpane{background:var(--ec-white);border-right:1px solid var(--ec-border);overflow-y:auto;min-height:0}
+    .inpane-inner{padding:22px 22px 40px}
+    .sec-label{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ec-gray-500);margin-bottom:10px;display:block}
+    .dropzone{border:1.5px dashed var(--ec-gray-300);border-radius:var(--r-md);padding:26px 18px;text-align:center;cursor:pointer;transition:all var(--tr);display:block;background:var(--ec-off-white)}
+    .dropzone:hover{border-color:var(--ec-green-light);background:var(--ec-green-pale)}
+    .dropzone svg{color:var(--ec-gray-400);margin-bottom:8px}
+    .dropzone p{font-size:12.5px;color:var(--ec-ink)}
+    .dropzone span{font-family:var(--mono);font-size:10px;color:var(--ec-gray-400);display:block;margin-top:4px}
+    .dropzone input{display:none}
+    .thumb-wrap{position:relative;border-radius:var(--r-md);overflow:hidden;border:1px solid var(--ec-border)}
+    .thumb-wrap img{width:100%;display:block}
+    .thumb-clear{position:absolute;top:8px;right:8px;background:rgba(26,26,26,.7);color:#fff;border:none;width:26px;height:26px;border-radius:50%;font-size:14px;display:flex;align-items:center;justify-content:center}
+    .field{margin-top:20px}
+    .field label{display:block;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ec-gray-500);margin-bottom:7px}
+    .field select{width:100%;padding:10px 12px;border:1px solid var(--ec-border);border-radius:var(--r-sm);font-size:13px}
+    .mem-box{border:1px solid var(--ec-border);border-radius:var(--r-md);padding:14px;transition:border-color var(--tr)}
+    .mem-box:focus-within{border-color:var(--ec-green-light);box-shadow:0 0 0 3px var(--ec-green-dim)}
+    .mem-box textarea{width:100%;min-height:120px;border:none;outline:none;resize:vertical;background:transparent;font-family:var(--serif);font-style:italic;font-size:16px;color:var(--ec-black);line-height:1.5}
+    .btn-run{width:100%;margin-top:18px;background:var(--ec-green);color:#fff;font-weight:600;font-size:12px;letter-spacing:.05em;text-transform:uppercase;padding:14px;border-radius:var(--r-full);border:none;display:flex;align-items:center;justify-content:center;gap:9px;transition:transform var(--tr),background var(--tr)}
+    .btn-run:hover{background:var(--ec-green-light);transform:scale(1.01)}
+    .sample-btn{font-family:var(--mono);font-size:10.5px;color:var(--ec-green);background:none;border:none;margin-top:12px;text-decoration:underline;text-underline-offset:3px}
+
+    /* CENTER: render + readings */
+    .stage{background:var(--ec-paper);overflow-y:auto;min-height:0;padding:24px 28px 40px}
+    .stage-render{background:linear-gradient(150deg,var(--ec-white),var(--ec-off-white));border:1px solid var(--ec-border);border-radius:var(--r-lg);min-height:300px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.05)}
+    .stage-render img{max-width:100%;max-height:400px;display:block}
+    .stage-render .ph{text-align:center;color:var(--ec-gray-400);padding:60px 20px}
+    .stage-render .ph svg{margin-bottom:12px;color:var(--ec-gray-300)}
+    .stage-render .ph p{font-family:var(--serif);font-style:italic;font-size:17px}
+    .readings{margin-top:20px}
+    .readings h3{font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ec-gray-500);margin-bottom:14px;display:flex;justify-content:space-between}
+    .readings h3 .sub{font-family:var(--mono);font-size:9px;font-weight:400;color:var(--ec-gray-400);letter-spacing:.02em}
+    .rd-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .rd{background:var(--ec-white);border:1px solid var(--ec-border);border-radius:var(--r-md);padding:13px 15px}
+    .rd .rl{font-family:var(--mono);font-size:9.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--ec-gray-400)}
+    .rd .rv{font-family:var(--serif);font-size:22px;color:var(--ec-black);margin-top:3px}
+    .rd .rmeta{font-size:10.5px;color:var(--ec-gray-500);margin-top:1px}
+    .rd .swatch{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:middle;margin-right:5px;border:1px solid rgba(0,0,0,.1)}
+    .verdict{margin-top:18px;background:var(--ec-white);border:1px solid var(--ec-border);border-radius:var(--r-lg);padding:18px 20px}
+    .verdict-top{display:flex;align-items:baseline;gap:10px}
+    .verdict-top .roman{font-family:var(--serif);font-size:15px;color:var(--ec-green-light)}
+    .verdict-top h2{font-family:var(--serif);font-size:26px}
+    .verdict-top .conf{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--ec-green);background:var(--ec-green-pale);padding:4px 10px;border-radius:var(--r-full)}
+    .vbars{margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:8px 20px}
+    .vbar{display:grid;grid-template-columns:64px 1fr 30px;gap:8px;align-items:center}
+    .vbar .vl{font-size:11px;color:var(--ec-ink)}
+    .vbar .vt{height:4px;background:var(--ec-gray-100);border-radius:var(--r-full);overflow:hidden}
+    .vbar .vf{height:100%;border-radius:var(--r-full)}
+    .vbar .vv{font-family:var(--mono);font-size:9.5px;color:var(--ec-gray-500);text-align:right}
+
+    /* RIGHT: story + blueprint + save */
+    .rpane{background:var(--ec-white);border-left:1px solid var(--ec-border);overflow-y:auto;min-height:0;display:flex;flex-direction:column}
+    .rp-inner{padding:22px;flex:1}
+    .story-card{background:linear-gradient(160deg,var(--ec-green-pale),var(--ec-off-white));border:1px solid rgba(107,143,103,.25);border-radius:var(--r-lg);padding:24px}
+    .story-terr{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ec-green)}
+    .story-title{font-family:var(--serif);font-size:30px;line-height:1.1;margin:8px 0 14px;letter-spacing:-.01em}
+    .story-body{font-family:var(--serif);font-size:16.5px;line-height:1.6;color:var(--ec-ink)}
+    .story-body p{margin-bottom:12px}
+    .story-body p:last-child{margin-bottom:0}
+    .story-empty{text-align:center;color:var(--ec-gray-400);padding:50px 20px;font-family:var(--serif);font-style:italic;font-size:16px}
+    .bp-mini{margin-top:18px;background:var(--ink-panel);border-radius:var(--r-md);padding:15px 17px}
+    .bp-mini .bh{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#8A9683;margin-bottom:10px;display:flex;justify-content:space-between}
+    .bp-mini .brow{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:#C6D0BE;padding:3px 0}
+    .bp-mini .brow b{color:#9BB0D8;font-weight:400}
+
+    .lp-section{margin-top:20px;padding-top:16px;border-top:1px solid var(--ec-border)}
+    .lp-section h3{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ec-gray-500);margin-bottom:12px}
+    .lp-item{margin-bottom:11px}
+    .lp-item:last-child{margin-bottom:0}
+    .lp-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+    .lp-tags{display:flex;align-items:center;gap:7px}
+    .lp-label{font-family:var(--mono);font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--ec-green)}
+    .lp-ar{font-family:var(--mono);font-size:8px;color:var(--ec-gray-400);background:var(--ec-off-white);border:1px solid var(--ec-border);padding:1px 7px;border-radius:var(--r-full)}
+    .lp-copy{font-family:var(--mono);font-size:9px;color:var(--ec-gray-400);padding:3px 9px;border-radius:var(--r-full);border:1px solid var(--ec-border);background:transparent;transition:all var(--tr)}
+    .lp-copy.copied{color:var(--ec-green);border-color:rgba(74,103,65,.3);background:var(--ec-green-pale)}
+    .lp-box{background:var(--ink-panel);border-radius:8px;padding:11px 13px;font-family:var(--mono);font-size:10.5px;color:#8A9A82;line-height:1.65;word-break:break-word;user-select:all}
+    .save-row{padding:18px 22px;border-top:1px solid var(--ec-border);background:var(--ec-off-white);position:sticky;bottom:0}
+    .btn-save{width:100%;background:var(--ec-green);color:#fff;font-weight:600;font-size:13.5px;padding:15px;border-radius:var(--r-full);border:none;display:flex;align-items:center;justify-content:center;gap:9px;transition:transform var(--tr),box-shadow var(--tr)}
+    .btn-save:hover{transform:scale(1.01);box-shadow:0 8px 20px rgba(74,103,65,.24)}
+    .btn-save:disabled{background:var(--ec-gray-200);color:var(--ec-gray-500);cursor:default;transform:none;box-shadow:none}
+    .save-hint{font-family:var(--mono);font-size:10px;color:var(--ec-gray-400);text-align:center;margin-top:8px}
+
+    .catalog{margin-top:22px}
+    .catalog h3{font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ec-gray-500);margin-bottom:12px;display:flex;justify-content:space-between}
+    .cat-list{display:grid;gap:10px}
+    .cat-item{display:grid;grid-template-columns:1fr auto;gap:6px;align-items:center;padding:9px;border:1px solid var(--ec-border);border-radius:var(--r-md);transition:border-color var(--tr),background var(--tr)}
+    .cat-item:hover{border-color:var(--ec-green-light);background:var(--ec-green-pale)}
+    .cat-open{display:grid;grid-template-columns:46px 1fr;gap:11px;align-items:center;text-decoration:none;color:inherit}
+    .cat-thumb{width:46px;height:46px;border-radius:8px;object-fit:cover;background:var(--ec-off-white);border:1px solid var(--ec-gray-100)}
+    .cat-name{font-family:var(--serif);font-size:16px;line-height:1.1}
+    .cat-meta{font-family:var(--mono);font-size:9.5px;color:var(--ec-gray-400);margin-top:2px;display:flex;align-items:center;gap:6px}
+    .cat-go{color:var(--ec-green);opacity:0;transition:opacity var(--tr)}
+    .cat-item:hover .cat-go{opacity:1}
+    .cat-del{background:none;border:none;color:var(--ec-gray-400);font-size:12px;padding:4px}
+    .cat-del:hover{color:#B94040}
+    .cat-empty{font-family:var(--serif);font-style:italic;color:var(--ec-gray-400);font-size:14px;padding:14px 0}
+
+    .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);z-index:80;background:var(--ec-black);color:#fff;font-size:13px;padding:12px 22px;border-radius:var(--r-full);box-shadow:0 12px 32px rgba(0,0,0,.2);display:flex;align-items:center;gap:9px;opacity:0;animation:tin .3s ease forwards}
+    @keyframes tin{to{transform:translateX(-50%) translateY(0);opacity:1}}
+    .toast b{color:var(--ec-green-light);font-weight:600}
+  </style>
+</helmet>
+
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <span class="wm">Mood<span>oor</span></span>
+      <span class="badge">Studio · Stories</span>
+    </div>
+    <div class="topbar-mid">render → sample → classify → EC_WR_V2 → story → catalog</div>
+    <div class="topbar-right">
+      <span class="cat-count"><b>{{ catCount }}</b> in catalog</span>
+      <a class="link-back" href="Moodoor.dc.html">Storefront →</a>
+    </div>
+  </header>
+
+  <div class="workspace">
+    <!-- LEFT -->
+    <aside class="inpane">
+      <div class="inpane-inner">
+        <span class="sec-label">1 · Rendered wreath</span>
+        <sc-if value="{{ hasImage }}" hint-placeholder-val="{{ false }}">
+          <div class="thumb-wrap">
+            <img src="{{ imageUrl }}" alt="render">
+            <button class="thumb-clear" onClick="{{ clearImage }}">×</button>
+          </div>
+        </sc-if>
+        <sc-if value="{{ noImage }}" hint-placeholder-val="{{ true }}">
+          <label class="dropzone" onDrop="{{ onDrop }}" onDragOver="{{ onDragOver }}">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v13"/></svg>
+            <p>Drop a render or click to upload</p>
+            <span>PNG / JPG · the pipeline reads the pixels</span>
+            <input type="file" accept="image/*" onChange="{{ onFile }}">
+          </label>
+        </sc-if>
+
+        <div class="field">
+          <label>Base size</label>
+          <select value="{{ fSize }}" onChange="{{ onSize }}">
+            <option>16" grapevine</option><option>18" grapevine</option><option>20" grapevine</option><option>24" grapevine</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Client memory <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--ec-gray-400)">— becomes the story</span></label>
+          <div class="mem-box">
+            <textarea placeholder="The memory this wreath was built to hold — a place, a person, a season…" value="{{ memory }}" onInput="{{ onMemory }}"></textarea>
+          </div>
+          <button class="sample-btn" onClick="{{ useSample }}">use a sample memory</button>
+        </div>
+
+        <button class="btn-run" onClick="{{ runPipeline }}">
+          Run pipeline
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
+      </div>
+    </aside>
+
+    <!-- CENTER -->
+    <main class="stage">
+      <div class="stage-render">
+        <sc-if value="{{ hasImage }}" hint-placeholder-val="{{ false }}"><img src="{{ imageUrl }}" alt="render"></sc-if>
+        <sc-if value="{{ noImage }}" hint-placeholder-val="{{ true }}">
+          <div class="ph">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+            <p>Upload a rendered wreath to begin</p>
+          </div>
+        </sc-if>
+      </div>
+
+      <sc-if value="{{ analyzed }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div class="readings">
+            <h3>Pixel readings <span class="sub">measured from the render</span></h3>
+            <div class="rd-grid">
+              <div class="rd"><div class="rl">Palette temperature</div><div class="rv"><span class="swatch" style="{{ rd.avgSwatch }}"></span>{{ rd.temp }}</div><div class="rmeta">{{ rd.tempNote }}</div></div>
+              <div class="rd"><div class="rl">Weight distribution</div><div class="rv">{{ rd.weight }}</div><div class="rmeta">{{ rd.weightNote }}</div></div>
+              <div class="rd"><div class="rl">Coverage</div><div class="rv">{{ rd.coverage }}</div><div class="rmeta">{{ rd.coverageNote }}</div></div>
+              <div class="rd"><div class="rl">Source</div><div class="rv">{{ rd.source }}</div><div class="rmeta">{{ rd.sourceNote }}</div></div>
+            </div>
+          </div>
+
+          <div class="verdict">
+            <div class="verdict-top">
+              <span class="roman">{{ terrRoman }}</span>
+              <h2>{{ terrName }}</h2>
+              <span class="conf">tag · {{ terrConf }}</span>
+            </div>
+            <div class="vbars">
+              <sc-for list="{{ vbars }}" as="v" hint-placeholder-count="7">
+                <div class="vbar"><span class="vl">{{ v.label }}</span><div class="vt"><div class="vf" style="{{ v.fillStyle }}"></div></div><span class="vv">{{ v.valText }}</span></div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+    </main>
+
+    <!-- RIGHT -->
+    <aside class="rpane">
+      <div class="rp-inner">
+        <span class="sec-label">Moodoor Story <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--ec-gray-400)">— drafted from the memory</span></span>
+        <sc-if value="{{ analyzed }}" hint-placeholder-val="{{ false }}">
+          <div>
+            <div class="story-card">
+              <div class="story-terr">{{ terrName }}</div>
+              <div class="story-title">{{ story.title }}</div>
+              <div class="story-body">
+                <sc-for list="{{ story.paras }}" as="p" hint-placeholder-count="3"><p>{{ p }}</p></sc-for>
+              </div>
+            </div>
+
+            <div class="bp-mini">
+              <div class="bh"><span>EC_WR_V2 · regenerated</span><span>{{ bp.id }}</span></div>
+              <div class="brow"><span>formula</span><b>{{ bp.formula }}</b></div>
+              <div class="brow"><span>silence arc</span><b>{{ bp.silence }}</b></div>
+              <div class="brow"><span>focal</span><b>{{ bp.focal }}</b></div>
+              <div class="brow"><span>palette</span><b>{{ bp.palette }}</b></div>
+              <div class="brow"><span>composite</span><b>{{ bp.score }}</b></div>
+            </div>
+
+            <div class="lp-section">
+              <h3>Lifestyle render prompts</h3>
+              <sc-for list="{{ lifestylePrompts }}" as="lp" hint-placeholder-count="4">
+                <div class="lp-item">
+                  <div class="lp-head">
+                    <div class="lp-tags"><span class="lp-label">{{ lp.label }}</span><span class="lp-ar">--ar {{ lp.ar }}</span></div>
+                    <button class="lp-copy {{ lp.copiedClass }}" onClick="{{ lp.copy }}">{{ lp.copyText }}</button>
+                  </div>
+                  <div class="lp-box">{{ lp.text }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ notAnalyzed }}" hint-placeholder-val="{{ true }}">
+          <div class="story-empty">Run the pipeline and the story writes itself from the client's memory.</div>
+        </sc-if>
+
+        <div class="catalog">
+          <h3>Catalog <span style="font-family:var(--mono);font-weight:400;color:var(--ec-gray-400)">{{ catCount }} saved</span></h3>
+          <div class="cat-list">
+            <sc-for list="{{ catalog }}" as="c" hint-placeholder-count="2">
+              <div class="cat-item">
+                <a class="cat-open" href="{{ c.href }}">
+                  <img class="cat-thumb" src="{{ c.image }}" alt="">
+                  <div><div class="cat-name">{{ c.name }}</div><div class="cat-meta">{{ c.meta }} <span class="cat-go">· open story →</span></div></div>
+                </a>
+                <button class="cat-del" onClick="{{ c.del }}">Remove</button>
+              </div>
+            </sc-for>
+            <sc-if value="{{ catEmpty }}" hint-placeholder-val="{{ false }}"><div class="cat-empty">Nothing saved yet.</div></sc-if>
+          </div>
+        </div>
+      </div>
+
+      <div class="save-row">
+        <button class="btn-save" disabled="{{ saveDisabled }}" onClick="{{ save }}">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>
+          Save wreath + story to catalog
+        </button>
+        <div class="save-hint">writes to Moodoor Wreaths + Moodoor Stories</div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+  <div class="toast"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6B8F67" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>{{ toastText }}</div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;100%&quot;,&quot;height&quot;:&quot;100%&quot;}}">
+const KEYS=['warmth','energy','nostalgia','valence','intimacy','restraint','seasonal'];
+const DIMS=[{key:'warmth',label:'Warmth',color:'#C4922A'},{key:'energy',label:'Energy',color:'#B4652A'},{key:'nostalgia',label:'Nostalgia',color:'#4A6741'},{key:'valence',label:'Valence',color:'#6B8F67'},{key:'intimacy',label:'Intimacy',color:'#4A6785'},{key:'restraint',label:'Restraint',color:'#8A7458'},{key:'seasonal',label:'Seasonal',color:'#6E7A4E'}];
+const TERR=[
+  {id:1,name:'Comfort',roman:'I',c:{warmth:.863,energy:.220,nostalgia:.757,valence:.707,intimacy:.827,restraint:.760,seasonal:.483},flavor:'the room that was always yours',word:'Hearth'},
+  {id:2,name:'Celebration',roman:'II',c:{warmth:.785,energy:.855,nostalgia:.535,valence:.895,intimacy:.63,restraint:.41,seasonal:.555},flavor:'a threshold walked through smiling',word:'Arrival'},
+  {id:3,name:'Remembrance',roman:'III',c:{warmth:.715,energy:.12,nostalgia:.91,valence:.325,intimacy:.91,restraint:.91,seasonal:.475},flavor:'what is kept by leaving space',word:'Quiet'},
+  {id:4,name:'Renewal',roman:'IV',c:{warmth:.72,energy:.68,nostalgia:.35,valence:.82,intimacy:.62,restraint:.55,seasonal:.65},flavor:'the after, and everything ahead',word:'Morning'},
+  {id:5,name:'Connection',roman:'V',c:{warmth:.80,energy:.32,nostalgia:.70,valence:.78,intimacy:.89,restraint:.65,seasonal:.32},flavor:'the people a house holds',word:'Table'},
+  {id:6,name:'Seasonal Nostalgia',roman:'VI',c:{warmth:.7925,energy:.3425,nostalgia:.90,valence:.54,intimacy:.7725,restraint:.64,seasonal:.91},flavor:'a month you can almost smell',word:'Season'}
+];
+const LEX={coffee:{warmth:.5,nostalgia:.4},fire:{warmth:.6,seasonal:.3},bonfire:{warmth:.5,seasonal:.6,nostalgia:.4},hearth:{warmth:.6,intimacy:.4},kitchen:{warmth:.5,intimacy:.4,nostalgia:.3},bread:{warmth:.5,nostalgia:.3},cedar:{warmth:.4,seasonal:.4,nostalgia:.3},wool:{warmth:.5,intimacy:.3},cozy:{warmth:.6,intimacy:.4},warm:{warmth:.6},sun:{warmth:.4,valence:.4},porch:{nostalgia:.6,warmth:.3,seasonal:.3},screen:{nostalgia:.4},grandmother:{nostalgia:.6,warmth:.4,intimacy:.5},grandma:{nostalgia:.6,warmth:.4,intimacy:.5},childhood:{nostalgia:.7,valence:.3},remember:{nostalgia:.6},old:{nostalgia:.5},letters:{nostalgia:.5,restraint:.4,intimacy:.4},home:{warmth:.4,intimacy:.4,nostalgia:.4},lake:{nostalgia:.4,restraint:.3},mother:{intimacy:.5,warmth:.4,nostalgia:.4},mom:{intimacy:.5,warmth:.4,nostalgia:.4},father:{intimacy:.4,nostalgia:.4},together:{intimacy:.5,valence:.3},partner:{intimacy:.6,warmth:.3},hands:{intimacy:.4,warmth:.3},close:{intimacy:.5},whisper:{intimacy:.5,restraint:.4},dance:{energy:.6,valence:.5},party:{energy:.6,valence:.6},celebration:{energy:.6,valence:.6},wedding:{energy:.5,valence:.7,intimacy:.4},laughter:{energy:.5,valence:.7},kids:{energy:.6,valence:.5},children:{energy:.5,valence:.5,nostalgia:.3},bright:{energy:.4,valence:.6},morning:{energy:.4,valence:.4,warmth:.3},quiet:{restraint:.6,energy:-.4,intimacy:.3},still:{restraint:.6,energy:-.4},calm:{restraint:.5,energy:-.3},alone:{restraint:.5,intimacy:.4,energy:-.3},bare:{restraint:.6},empty:{restraint:.6,valence:-.4},hush:{restraint:.6,intimacy:.3},silence:{restraint:.6,energy:-.4},mist:{restraint:.4,seasonal:.3},soft:{restraint:.3,warmth:.3},gentle:{restraint:.4,warmth:.3},joy:{valence:.7,energy:.3},bloom:{valence:.5,seasonal:.3},garden:{valence:.4,seasonal:.3,nostalgia:.3},roses:{valence:.4,intimacy:.3},loss:{valence:-.6,nostalgia:.5,restraint:.5},grief:{valence:-.7,restraint:.6,intimacy:.4},funeral:{valence:-.6,restraint:.7,nostalgia:.4},passed:{valence:-.5,nostalgia:.5,restraint:.4},cold:{valence:-.2,seasonal:.3,restraint:.2},september:{seasonal:.7,nostalgia:.4},october:{seasonal:.7,nostalgia:.4},autumn:{seasonal:.7,nostalgia:.4,warmth:.3},fall:{seasonal:.6,nostalgia:.3},winter:{seasonal:.6,restraint:.3},december:{seasonal:.7,nostalgia:.3},snow:{seasonal:.6,restraint:.3},spring:{seasonal:.6,valence:.5,energy:.3},summer:{seasonal:.6,valence:.4,energy:.3},leaves:{seasonal:.5,nostalgia:.3},harvest:{seasonal:.6,warmth:.3},cider:{seasonal:.6,warmth:.4,nostalgia:.3},holiday:{seasonal:.6,valence:.4,nostalgia:.4}};
+const NOUNS=['screen door','porch','doorway','door','coffee','cedar','kitchen','garden','rain','snow','fireplace','fire','hearth','table','chairs','chair','letters','lake','morning','evening','window','candle','bread','tea','field','road','ocean','mountain','forest','path','gate','mantel','bonfire','harvest','orchard','apple','cider','leaves','frost','deck','hallway','stairs'];
+const MONTHS=['january','february','march','april','may','june','july','august','september','october','november','december'];
+const MAXD=Math.sqrt(7);
+const clampV=(x)=>Math.max(.04,Math.min(.99,x));
+const cap=(s)=>s?s.split(' ').map(w=>w[0].toUpperCase()+w.slice(1)).join(' '):s;
+
+class Component extends DCLogic {
+  state={imageUrl:null,imageSeeds:null,fSize:'18" grapevine',memory:'',analyzed:false,result:null,catalog:null,toast:'',copiedPromptKey:null};
+
+  componentDidMount(){
+    try{const raw=localStorage.getItem('moodoor_catalog');this.setState({catalog:raw?JSON.parse(raw):[]});}
+    catch(e){this.setState({catalog:[]});}
+  }
+  persist(cat){try{localStorage.setItem('moodoor_catalog',JSON.stringify(cat));}catch(e){this.toast('Storage full — remove an item.');}}
+  toast(m){this.setState({toast:m});clearTimeout(this._t);this._t=setTimeout(()=>this.setState({toast:''}),2600);}
+
+  // ---- image handling ----
+  onFile=(e)=>{const f=e.target.files&&e.target.files[0];this.readFile(f);};
+  onDrop=(e)=>{e.preventDefault();const f=e.dataTransfer.files&&e.dataTransfer.files[0];this.readFile(f);};
+  onDragOver=(e)=>e.preventDefault();
+  clearImage=()=>this.setState({imageUrl:null,imageSeeds:null});
+  readFile(f){
+    if(!f||!/^image\//.test(f.type)){this.toast('Drop an image file.');return;}
+    const rd=new FileReader();
+    rd.onload=()=>{const img=new Image();img.onload=()=>{const thumb=this.downscale(img,320);const seeds=this.sample(img);this.setState({imageUrl:thumb,imageSeeds:seeds});};img.src=rd.result;};
+    rd.readAsDataURL(f);
+  }
+  downscale(img,max){const s=Math.min(1,max/Math.max(img.width,img.height));const w=Math.round(img.width*s),h=Math.round(img.height*s);const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);return c.toDataURL('image/jpeg',0.82);}
+  sample(img){
+    const N=64;const c=document.createElement('canvas');c.width=N;c.height=N;const ctx=c.getContext('2d');ctx.drawImage(img,0,0,N,N);
+    const d=ctx.getImageData(0,0,N,N).data;
+    let R=0,G=0,B=0,n=N*N;let topL=0,botL=0,tn=0,bn=0;
+    // background = average of 4 corners
+    const corner=(x,y)=>{const i=(y*N+x)*4;return[d[i],d[i+1],d[i+2]];};
+    const cs=[corner(0,0),corner(N-1,0),corner(0,N-1),corner(N-1,N-1)];
+    const bg=[0,1,2].map(k=>(cs[0][k]+cs[1][k]+cs[2][k]+cs[3][k])/4);
+    let covered=0;
+    for(let y=0;y<N;y++)for(let x=0;x<N;x++){
+      const i=(y*N+x)*4;const r=d[i],g=d[i+1],b=d[i+2];
+      R+=r;G+=g;B+=b;
+      const lum=0.299*r+0.587*g+0.114*b;
+      if(y<N/2){topL+=lum;tn++;}else{botL+=lum;bn++;}
+      const dist=Math.abs(r-bg[0])+Math.abs(g-bg[1])+Math.abs(b-bg[2]);
+      if(dist>60)covered++;
+    }
+    R/=n;G/=n;B/=n;
+    const topAvg=topL/tn, botAvg=botL/bn;
+    const warmth=clampV(0.5+(R-B)/200);              // red vs blue
+    const lift=clampV(0.5+(topAvg-botAvg)/160);       // brighter top = lifted
+    const coverage=covered/n;                          // 0..1
+    const restraint=clampV(0.9-coverage*0.9);          // more bare = more restraint
+    const sat=(Math.max(R,G,B)-Math.min(R,G,B))/255;
+    const valence=clampV(0.35+sat*0.9);
+    return {warmth,energy:lift,restraint,valence,coverage,avg:[Math.round(R),Math.round(G),Math.round(B)]};
+  }
+
+  // ---- EVS ----
+  interpret(text){
+    const t=' '+text.toLowerCase()+' ';
+    const base={warmth:.35,energy:.32,nostalgia:.35,valence:.45,intimacy:.35,restraint:.30,seasonal:.30};
+    const raw={warmth:0,energy:0,nostalgia:0,valence:0,intimacy:0,restraint:0,seasonal:0};
+    for(const kw in LEX){if(t.includes(kw)){const w=LEX[kw];for(const d in w)raw[d]+=w[d];}}
+    const v={};for(const d in base){const r=raw[d];v[d]=r>=0?clampV(base[d]+(0.99-base[d])*(1-Math.exp(-0.7*r))):clampV(base[d]*Math.exp(0.7*r));}
+    return v;
+  }
+  classify(v){return TERR.map(t=>{let s=0;KEYS.forEach(k=>{const d=v[k]-t.c[k];s+=d*d;});const dist=Math.sqrt(s);return{...t,dist,conf:Math.max(0,1-dist/MAXD)};}).sort((a,b)=>a.dist-b.dist);}
+
+  palette(v){
+    const warm=v.warmth>0.7,seasonalHi=v.seasonal>0.65,solemn=v.valence<0.42;
+    const dom=seasonalHi&&warm?['toffee','#A8752A']:(warm?['warm cream','#EFE6D3']:(solemn?['aged ivory','#F2EDE3']:['dusty sage','#9AA88C']));
+    const acc=warm?['amber','#C4922A']:(solemn?['grey lichen','#9AA68C']:['cedar green','#4A6741']);
+    const focal=solemn?'preserved white rosebud':(seasonalHi&&warm?'amber dahlia':(warm?'golden dahlia':'silver eucalyptus'));
+    return {domName:dom[0],domHex:dom[1],accName:acc[0],accHex:acc[1],focal};
+  }
+  blueprint(v,terr,size,pal){
+    const dia=parseInt(size,10)||18;
+    const formula=terr.id===5?'Balanced Pair':(terr.id===3||v.restraint>0.85?'Minimal Point':(terr.id===4?'Cascade':(v.energy>0.66?'Asymmetric Spray':'Crescent')));
+    const silSpan=Math.round(45+v.restraint*70);
+    const silStart=Math.round(90+ (1-v.energy)*40);
+    const seed=Math.round((v.warmth*7+v.nostalgia*13+v.seasonal*17+v.energy*23)*131)%9000+1000;
+    const clampM=(x)=>Math.max(4,Math.min(20,Math.round(x)));
+    const score=clampM(12+v.intimacy*8)+clampM(9+v.energy*11)+clampM(5+v.restraint*15)+clampM(10+v.seasonal*9)+clampM(11+v.warmth*8)+clampM(13);
+    return {id:'EC_WR_V2_'+seed,formula,silence:silStart+'°–'+(silStart+silSpan)+'° · bare',focal:pal.focal,palette:pal.domName+' · '+pal.accName,score:score+' / 120'};
+  }
+
+  // ---- story ----
+  extractNouns(mem){const t=mem.toLowerCase();const out=[];NOUNS.forEach(n=>{if(t.includes(n)&&!out.some(o=>o.includes(n)||n.includes(o)))out.push(n);});return out;}
+  firstClause(mem){let s=mem.trim().replace(/\s+/g,' ');const cut=s.split(/[—.,;:]/)[0].trim();return (cut||s).slice(0,90);}
+  buildStory(mem,v,terr,pal){
+    const nouns=this.extractNouns(mem);
+    const month=MONTHS.find(m=>mem.toLowerCase().includes(m));
+    let title;
+    if(month&&nouns[0])title=cap(month)+' '+cap(nouns[0]);
+    else if(nouns[0]&&nouns[1])title=cap(nouns[0])+' & '+cap(nouns[1]);
+    else if(nouns[0])title='The '+cap(nouns[0]);
+    else title='A '+terr.word;
+    const rk=DIMS.map(d=>({l:d.label.toLowerCase(),val:v[d.key]})).sort((a,b)=>b.val-a.val);
+    const feel=rk[0].l, feel2=rk[1].l;
+    const anchor=this.firstClause(mem);
+    const nounPhrase=nouns.length?nouns.slice(0,3).join(', '):'the shape of a feeling';
+    const weight=v.energy>0.55?'lifted, reaching toward the light':(v.restraint>0.72?'held low, with more than half the vine left bare on purpose':'kept low and settled, the way a warm room sits');
+    const p1=`It begins where the memory does — ${anchor.charAt(0).toLowerCase()+anchor.slice(1)}. ${nounPhrase.charAt(0).toUpperCase()+nounPhrase.slice(1)}: the small, exact things that don't fade.`;
+    const p2=`What it carries is ${feel}, and beneath it ${feel2} — ${terr.flavor}. Scored on the Emotional Vector System, it settled into ${terr.name}, and the design answered in kind.`;
+    const p3=`We built it in ${pal.domName} and ${pal.accName}, ${weight}. The empty stretch of grapevine is not a gap; it is the part of the memory words never reach.`;
+    return {title,paras:[p1,p2,p3]};
+  }
+
+  // ---- lifestyle prompts ----
+  buildLifestylePrompts(v,pal,terr,memory){
+    const warm=v.warmth>0.7, seasonalHi=v.seasonal>0.65, solemn=v.valence<0.42, cool=!warm&&!solemn;
+    const paletteTone=warm?(seasonalHi?'warm toffee, amber and cedar':'warm golden and cream'):(solemn?'hushed white, bone and grey-green':(cool?'cool silver, blue and eucalyptus':'soft neutral'));
+    const doorTone=warm?'a warm-stained oak door':(solemn?'a chalk-white door':'a sage-green door');
+    const season=v.seasonal>0.6?(warm?'autumn':'winter'):(v.energy>0.55?'spring':'a temperate season');
+    const anchorRaw=(memory||'').trim().split(/[—.,;:]/)[0].trim().slice(0,70)||terr.flavor;
+    const anchor=anchorRaw.charAt(0).toLowerCase()+anchorRaw.slice(1);
+    const door=`Photorealistic editorial product photograph: a luxury faux botanical wreath hangs on ${doorTone}, ${paletteTone} palette anchored by ${pal.focal}. Entryway framing, ${season} light, soft directional shadow. editorial product photography, 85mm f/2.8, side-lit. --ar 4:5 --style raw --s 150`;
+    const interior=`Interior lifestyle editorial scene evoking ${anchor} — the room, the objects, the feeling, no wreath visible. ${paletteTone} tones, soft natural window light, ${season} atmosphere. --ar 5:4 --style raw --s 150`;
+    const detail=`Macro botanical close-up of ${pal.focal}, faux silk indistinguishable from real bloom, structured petal memory, matte surface, visible microfibers. Side-lit natural daylight 12–2pm, shallow depth of field, premium editorial styling. --ar 1:1 --style raw --s 150`;
+    const mood=`Wide atmospheric editorial shot — ${terr.flavor}, rendered as a scene, ${season} light, ${paletteTone} palette. Outdoors or threshold framing, film grain, muted color grading, no text. --ar 16:9 --style raw --s 150`;
+    return [
+      {key:'door',label:'Door hero',ar:'4:5',text:door},
+      {key:'interior',label:'Interior lifestyle',ar:'5:4',text:interior},
+      {key:'detail',label:'Material close-up',ar:'1:1',text:detail},
+      {key:'mood',label:'Atmospheric mood',ar:'16:9',text:mood},
+    ];
+  }
+  copyPromptItem=(key,text)=>{
+    try{navigator.clipboard&&navigator.clipboard.writeText(text);}catch(e){}
+    this.setState({copiedPromptKey:key});
+    clearTimeout(this._cpt);this._cpt=setTimeout(()=>this.setState({copiedPromptKey:null}),1800);
+  };
+
+  // ---- actions ----
+  onMemory=(e)=>this.setState({memory:e.target.value});
+  onSize=(e)=>this.setState({fSize:e.target.value});
+  useSample=()=>this.setState({memory:"My grandmother's porch in late September — cedar, cold coffee, and the screen door that never quite closed."});
+
+  runPipeline=()=>{
+    const s=this.state;
+    if(!s.memory.trim()&&!s.imageSeeds){this.toast('Add a memory or upload a render.');return;}
+    let v = s.memory.trim()?this.interpret(s.memory):{warmth:.5,energy:.4,nostalgia:.5,valence:.5,intimacy:.5,restraint:.5,seasonal:.5};
+    // blend image-measured signals into the vector
+    let source='memory only';
+    if(s.imageSeeds){
+      const im=s.imageSeeds;const bl=(a,b)=>clampV(a*0.55+b*0.45);
+      v={...v,warmth:bl(v.warmth,im.warmth),energy:bl(v.energy,im.energy),restraint:bl(v.restraint,im.restraint),valence:bl(v.valence,im.valence)};
+      source=s.memory.trim()?'render + memory':'render only';
+    }
+    const terr=this.classify(v)[0];
+    const pal=this.palette(v);
+    const bp=this.blueprint(v,terr,s.fSize,pal);
+    const story=this.buildStory(s.memory.trim()||'the shape of a feeling',v,terr,pal);
+    const lifestyle=this.buildLifestylePrompts(v,pal,terr,s.memory.trim());
+    this.setState({analyzed:true,result:{v,terr,pal,bp,story,source,lifestyle}});
+  };
+
+  save=()=>{
+    const s=this.state;if(!s.result)return;
+    const r=s.result;
+    const item={
+      id:'W'+Date.now().toString(36),
+      name:r.story.title,
+      memory:s.memory.trim(),
+      story:r.story,
+      territoryId:r.terr.id,territoryName:r.terr.name,
+      vector:r.v,palette:r.pal,blueprint:r.bp,
+      size:s.fSize,image:s.imageUrl||'',
+      createdAt:new Date().toISOString()
+    };
+    const cat=[item,...(s.catalog||[])];
+    this.persist(cat);
+    this.setState({catalog:cat});
+    this.toast(`"${item.name}" saved to catalog`);
+  };
+  del(id){const cat=(this.state.catalog||[]).filter(c=>c.id!==id);this.persist(cat);this.setState({catalog:cat});}
+
+  renderVals(){
+    const s=this.state;const r=s.result;
+    let vbars=[],terrName='',terrRoman='',terrConf='',story={title:'',paras:[]},bp={},rd={},lifestylePrompts=[];
+    if(s.analyzed&&r){
+      vbars=DIMS.map(d=>{const pct=Math.round(r.v[d.key]*100);return{label:d.label,valText:'.'+String(pct).padStart(2,'0'),fillStyle:`width:${pct}%;background:${d.color}`};});
+      terrName=r.terr.name;terrRoman=r.terr.roman;terrConf=Math.round(Math.pow(r.terr.conf,2)*100)+'%';
+      story=r.story;bp=r.bp;
+      const im=s.imageSeeds;
+      rd={
+        avgSwatch:im?`background:rgb(${im.avg[0]},${im.avg[1]},${im.avg[2]})`:'background:#ccc',
+        temp:im?(im.warmth>0.58?'Warm':(im.warmth<0.44?'Cool':'Neutral')):'—',
+        tempNote:im?`R${im.avg[0]} G${im.avg[1]} B${im.avg[2]}`:'no render',
+        weight:im?(im.energy>0.56?'Top-lifted':(im.energy<0.44?'Bottom-settled':'Even')):'—',
+        weightNote:im?'luminance top vs bottom':'no render',
+        coverage:im?Math.round(im.coverage*100)+'%':'—',
+        coverageNote:im?(im.coverage<0.5?'sparse — bare vine reads':'full'):'no render',
+        source:r.source,sourceNote:'inputs blended'
+      };
+      lifestylePrompts=(r.lifestyle||[]).map(lp=>({
+        key:lp.key,label:lp.label,ar:lp.ar,text:lp.text,
+        copiedClass:s.copiedPromptKey===lp.key?'copied':'',
+        copyText:s.copiedPromptKey===lp.key?'✓ Copied':'Copy',
+        copy:()=>this.copyPromptItem(lp.key,lp.text),
+      }));
+    }
+    const cat=s.catalog||[];
+    const catalog=cat.map(c=>({image:c.image||'',name:c.name,meta:`${c.territoryName} · ${new Date(c.createdAt).toLocaleDateString('en-US',{month:'short',day:'numeric'})}`,href:'Moodoor%20Lifestyle%20Story.dc.html?id='+encodeURIComponent(c.id),del:()=>this.del(c.id)}));
+    return {
+      hasImage:!!s.imageUrl,noImage:!s.imageUrl,imageUrl:s.imageUrl,
+      onFile:this.onFile,onDrop:this.onDrop,onDragOver:this.onDragOver,clearImage:this.clearImage,
+      fSize:s.fSize,onSize:this.onSize,memory:s.memory,onMemory:this.onMemory,useSample:this.useSample,
+      runPipeline:this.runPipeline,
+      analyzed:s.analyzed,notAnalyzed:!s.analyzed,
+      vbars,terrName,terrRoman,terrConf,story,bp,rd,lifestylePrompts,
+      catalog,catCount:cat.length,catEmpty:cat.length===0,
+      saveDisabled:s.analyzed?null:true,save:this.save,
+      hasToast:!!s.toast,toastText:s.toast
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <title>Moodoor Studio — Collection Intelligence Engine</title>
+  <meta name="description" content="Clusters the wreath library and saved catalog into coherent collections by Emotional Vector proximity — named, scored for cohesion, and priced as bundles.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root{--ec-white:#FFFFFF;--ec-off-white:#F9F7F4;--ec-paper:#F2EFE9;--ec-black:#1A1A1A;--ec-ink:#4A4A4A;--ec-green:#4A6741;--ec-green-light:#6B8F67;--ec-green-pale:#EEF2ED;--ec-green-dim:rgba(74,103,65,.12);--ec-gray-100:#F5F5F5;--ec-gray-200:#E8E8E8;--ec-gray-300:#D0D0D0;--ec-gray-400:#A8A8A8;--ec-gray-500:#787878;--ec-warning:#C4922A;--ec-border:#E8E8E8;--serif:'Cormorant Garamond',Georgia,serif;--sans:'Inter',system-ui,sans-serif;--mono:'DM Mono',monospace;--r-sm:6px;--r-md:10px;--r-lg:14px;--r-full:9999px;--tr:180ms ease}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{font-family:var(--sans);font-size:14px;color:var(--ec-black);background:var(--ec-off-white);-webkit-font-smoothing:antialiased;overflow:hidden}
+    ::selection{background:var(--ec-green-dim);color:var(--ec-green)}
+    button{font-family:inherit;cursor:pointer}
+    input,select{font-family:inherit}
+    .app{display:flex;flex-direction:column;height:100vh}
+
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:0 24px;height:58px;background:var(--ec-white);border-bottom:1px solid var(--ec-border);flex-shrink:0;z-index:20}
+    .brand{display:flex;align-items:center;gap:12px}
+    .brand .wm{font-family:var(--serif);font-size:22px;font-weight:600}
+    .brand .wm span{color:var(--ec-green)}
+    .brand .badge{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ec-green);background:var(--ec-green-pale);border:1px solid rgba(107,143,103,.3);padding:4px 9px;border-radius:var(--r-full)}
+    .topbar-mid{font-family:var(--mono);font-size:11px;color:var(--ec-gray-400)}
+    .topbar-right{display:flex;align-items:center;gap:16px}
+    .link-back{font-size:12.5px;color:var(--ec-gray-500);text-decoration:none;transition:color var(--tr)}
+    .link-back:hover{color:var(--ec-green)}
+
+    .workspace{flex:1;display:grid;grid-template-columns:300px 1fr;min-height:0}
+    @media(max-width:1000px){.workspace{grid-template-columns:260px 1fr}}
+
+    .controls{background:var(--ec-white);border-right:1px solid var(--ec-border);overflow-y:auto;min-height:0}
+    .controls-inner{padding:24px 22px 40px}
+    .controls h2{font-family:var(--serif);font-size:24px;font-weight:500;line-height:1.15}
+    .controls p{font-size:12.5px;color:var(--ec-ink);margin-top:8px;line-height:1.55}
+    .src-stat{margin-top:20px;display:flex;gap:10px}
+    .src-box{flex:1;background:var(--ec-off-white);border:1px solid var(--ec-border);border-radius:var(--r-md);padding:12px 14px}
+    .src-box .n{font-family:var(--serif);font-size:26px;color:var(--ec-green);line-height:1}
+    .src-box .l{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.05em;color:var(--ec-gray-400);margin-top:4px}
+    .ctrl{margin-top:22px}
+    .ctrl label{display:block;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ec-gray-500);margin-bottom:9px}
+    .ctrl select{width:100%;padding:10px 12px;border:1px solid var(--ec-border);border-radius:var(--r-sm);font-size:13px}
+    .krow{display:flex;align-items:center;gap:12px}
+    .krow input[type=range]{flex:1;-webkit-appearance:none;height:4px;border-radius:var(--r-full);background:var(--ec-gray-200);outline:none}
+    .krow input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;border-radius:50%;background:var(--ec-green);border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+    .krow .kv{font-family:var(--mono);font-size:14px;color:var(--ec-green);min-width:20px;text-align:center}
+    .btn-run{width:100%;margin-top:24px;background:var(--ec-green);color:#fff;font-weight:600;font-size:12px;letter-spacing:.05em;text-transform:uppercase;padding:14px;border-radius:var(--r-full);border:none;display:flex;align-items:center;justify-content:center;gap:9px;transition:transform var(--tr),background var(--tr)}
+    .btn-run:hover{background:var(--ec-green-light);transform:scale(1.01)}
+    .btn-save{width:100%;margin-top:10px;background:transparent;color:var(--ec-green);border:1.5px solid var(--ec-green-light);font-weight:600;font-size:12.5px;padding:12px;border-radius:var(--r-full);transition:all var(--tr)}
+    .btn-save:hover{background:var(--ec-green-pale)}
+    .btn-save:disabled{opacity:.4;cursor:default}
+
+    .board{background:var(--ec-paper);overflow-y:auto;min-height:0;padding:26px 30px 50px}
+    .board-empty{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:var(--ec-gray-400)}
+    .board-empty svg{margin-bottom:14px}
+    .board-empty p{font-family:var(--serif);font-style:italic;font-size:18px}
+    .board-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+    .board-head h3{font-family:var(--serif);font-size:22px}
+    .board-head .meta{font-family:var(--mono);font-size:11px;color:var(--ec-gray-500)}
+
+    .coll-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:18px}
+    .coll{background:var(--ec-white);border:1px solid var(--ec-border);border-radius:var(--r-lg);padding:22px;position:relative;overflow:hidden}
+    .coll::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--cbar,var(--ec-green))}
+    .coll-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+    .coll-terr{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ec-green)}
+    .coll h4{font-family:var(--serif);font-size:25px;line-height:1.1;margin-top:3px}
+    .coll-tag{font-family:var(--serif);font-style:italic;font-size:15px;color:var(--ec-ink);margin-top:8px;line-height:1.4}
+    .cohesion{text-align:center;flex-shrink:0}
+    .cohesion .cn{font-family:var(--serif);font-size:28px;color:var(--ec-green);line-height:1}
+    .cohesion .cl{font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:.05em;color:var(--ec-gray-400)}
+    .members{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px}
+    .mem{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ec-ink);background:var(--ec-off-white);border:1px solid var(--ec-border);padding:5px 10px 5px 6px;border-radius:var(--r-full)}
+    .mem .dot{width:9px;height:9px;border-radius:50%;background:var(--md,#C4922A)}
+    .sig{margin-top:16px;display:grid;gap:6px}
+    .sig-row{display:grid;grid-template-columns:64px 1fr 30px;gap:8px;align-items:center}
+    .sig-row .sl{font-size:11px;color:var(--ec-ink)}
+    .sig-row .st{height:4px;background:var(--ec-gray-100);border-radius:var(--r-full);overflow:hidden}
+    .sig-row .sf{height:100%;border-radius:var(--r-full)}
+    .sig-row .sv{font-family:var(--mono);font-size:9.5px;color:var(--ec-gray-500);text-align:right}
+    .coll-foot{display:flex;align-items:baseline;justify-content:space-between;margin-top:18px;padding-top:14px;border-top:1px solid var(--ec-gray-100)}
+    .coll-price{font-family:var(--serif);font-size:24px;color:var(--ec-green)}
+    .coll-price small{font-family:var(--sans);font-size:11px;color:var(--ec-gray-400);margin-left:6px}
+    .coll-save{font-family:var(--mono);font-size:10px;color:var(--ec-warning);background:rgba(196,146,42,.1);border:1px solid rgba(196,146,42,.3);padding:4px 9px;border-radius:var(--r-full)}
+
+    .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);z-index:80;background:var(--ec-black);color:#fff;font-size:13px;padding:12px 22px;border-radius:var(--r-full);box-shadow:0 12px 32px rgba(0,0,0,.2);display:flex;align-items:center;gap:9px;opacity:0;animation:tin .3s ease forwards}
+    @keyframes tin{to{transform:translateX(-50%) translateY(0);opacity:1}}
+    .toast b{color:var(--ec-green-light);font-weight:600}
+  </style>
+</helmet>
+
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <span class="wm">Mood<span>oor</span></span>
+      <span class="badge">Studio · Collection Intelligence</span>
+    </div>
+    <div class="topbar-mid">library + catalog → EVS clustering → named collections</div>
+    <div class="topbar-right">
+      <a class="link-back" href="Moodoor.dc.html#bundles">Storefront bundles →</a>
+    </div>
+  </header>
+
+  <div class="workspace">
+    <aside class="controls">
+      <div class="controls-inner">
+        <h2>Compose collections</h2>
+        <p>Group scored wreaths into sets that hang together emotionally — not by colour or season alone, but by proximity on the Emotional Vector System.</p>
+        <div class="src-stat">
+          <div class="src-box"><div class="n">{{ libCount }}</div><div class="l">library</div></div>
+          <div class="src-box"><div class="n">{{ catCount }}</div><div class="l">saved catalog</div></div>
+        </div>
+        <div class="ctrl">
+          <label>Grouping strategy</label>
+          <select value="{{ strategy }}" onChange="{{ onStrategy }}">
+            <option value="evs">EVS proximity (k-means)</option>
+            <option value="territory">By territory</option>
+            <option value="season">By season</option>
+          </select>
+        </div>
+        <div class="ctrl">
+          <label>Number of collections</label>
+          <div class="krow">
+            <input type="range" min="2" max="6" value="{{ k }}" onInput="{{ onK }}">
+            <span class="kv">{{ k }}</span>
+          </div>
+        </div>
+        <button class="btn-run" onClick="{{ compose }}">
+          Compose collections
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
+        <button class="btn-save" disabled="{{ saveDisabled }}" onClick="{{ save }}">Save collections to storefront</button>
+      </div>
+    </aside>
+
+    <main class="board">
+      <sc-if value="{{ hasColls }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div class="board-head">
+            <h3>{{ collCount }} collections composed</h3>
+            <span class="meta">{{ strategyLabel }} · {{ totalItems }} designs clustered · avg cohesion {{ avgCohesion }}</span>
+          </div>
+          <div class="coll-grid">
+            <sc-for list="{{ collections }}" as="c" hint-placeholder-count="3">
+              <div class="coll" style="{{ c.barStyle }}">
+                <div class="coll-top">
+                  <div>
+                    <div class="coll-terr">{{ c.terr }}</div>
+                    <h4>{{ c.name }}</h4>
+                    <p class="coll-tag">{{ c.tagline }}</p>
+                  </div>
+                  <div class="cohesion"><div class="cn">{{ c.cohesion }}</div><div class="cl">cohesion</div></div>
+                </div>
+                <div class="members">
+                  <sc-for list="{{ c.members }}" as="m" hint-placeholder-count="3">
+                    <span class="mem" style="{{ m.dotStyle }}"><span class="dot"></span>{{ m.name }}</span>
+                  </sc-for>
+                </div>
+                <div class="sig">
+                  <sc-for list="{{ c.signature }}" as="s" hint-placeholder-count="3">
+                    <div class="sig-row"><span class="sl">{{ s.label }}</span><div class="st"><div class="sf" style="{{ s.fillStyle }}"></div></div><span class="sv">{{ s.valText }}</span></div>
+                  </sc-for>
+                </div>
+                <div class="coll-foot">
+                  <span class="coll-price">{{ c.priceText }}<small>{{ c.priceNote }}</small></span>
+                  <span class="coll-save">{{ c.saveText }}</span>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ noColls }}" hint-placeholder-val="{{ true }}">
+        <div class="board-empty">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#C9C4BA" stroke-width="1.3"><circle cx="7" cy="7" r="3"/><circle cx="17" cy="7" r="3"/><circle cx="7" cy="17" r="3"/><circle cx="17" cy="17" r="3"/></svg>
+          <p>Set a strategy and compose collections</p>
+        </div>
+      </sc-if>
+    </main>
+  </div>
+</div>
+
+<sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+  <div class="toast"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6B8F67" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>{{ toastText }}</div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;100%&quot;,&quot;height&quot;:&quot;100%&quot;}}">
+const KEYS=['warmth','energy','nostalgia','valence','intimacy','restraint','seasonal'];
+const DIMS=[{key:'warmth',label:'Warmth',color:'#C4922A'},{key:'energy',label:'Energy',color:'#B4652A'},{key:'nostalgia',label:'Nostalgia',color:'#4A6741'},{key:'valence',label:'Valence',color:'#6B8F67'},{key:'intimacy',label:'Intimacy',color:'#4A6785'},{key:'restraint',label:'Restraint',color:'#8A7458'},{key:'seasonal',label:'Seasonal',color:'#6E7A4E'}];
+const TERR_NAME={1:'Comfort',2:'Celebration',3:'Remembrance',4:'Renewal',5:'Connection',6:'Seasonal Nostalgia'};
+const TERR_ACCENT={1:'#C9BCA6',2:'#C4922A',3:'#9AA68C',4:'#6B8F67',5:'#6E7A4E',6:'#A8752A'};
+const FEEL={warmth:'warm',energy:'lively',nostalgia:'nostalgic',valence:'bright',intimacy:'intimate',restraint:'quiet',seasonal:'seasonal'};
+const PHRASE={warm:'settle a room like a familiar hour',lively:'lift a threshold with movement',nostalgic:'hold a season you can almost smell',bright:'arrive smiling',intimate:'speak to the people a home holds',quiet:'honor by leaving space',seasonal:'move a whole month through a house'};
+const WREATHS=[
+  {id:'BP-EC-0417',name:'September Porch',tId:6,accent:'#A8752A',price:39,v:[.82,.35,.91,.58,.78,.64,.95]},
+  {id:'BP-EC-0422',name:'Cider House',tId:6,accent:'#C4922A',price:42,v:[.88,.42,.87,.65,.72,.52,.92]},
+  {id:'BP-EC-0431',name:'Kept Letters',tId:6,accent:'#B7A98C',price:35,v:[.71,.22,.93,.48,.84,.78,.81]},
+  {id:'BP-EC-0438',name:'Last Bonfire',tId:6,accent:'#B4652A',price:45,v:[.76,.38,.89,.45,.75,.62,.96]},
+  {id:'BP-EC-0402',name:'Linen & Cedar',tId:1,accent:'#C9BCA6',price:35,v:[.84,.20,.76,.70,.82,.78,.45]},
+  {id:'BP-EC-0405',name:'Quiet Hearth',tId:1,accent:'#7C8A8F',price:32,v:[.89,.18,.72,.68,.86,.82,.52]},
+  {id:'BP-EC-0409',name:'Sunday Bread',tId:1,accent:'#C9A24B',price:29,v:[.86,.28,.79,.74,.80,.68,.48]},
+  {id:'BP-EC-0412',name:'First Light',tId:2,accent:'#C4922A',price:38,v:[.75,.82,.42,.88,.58,.44,.35]},
+  {id:'BP-EC-0415',name:'Gathered Grace',tId:2,accent:'#C4922A',price:44,v:[.82,.89,.65,.91,.68,.38,.76]},
+  {id:'BP-EC-0419',name:'Legacy Garden',tId:3,accent:'#8DA283',price:49,v:[.78,.14,.94,.35,.90,.88,.55]},
+  {id:'BP-EC-0424',name:'White Hour',tId:3,accent:'#9AA68C',price:41,v:[.65,.10,.88,.30,.92,.94,.40]},
+  {id:'BP-EC-0427',name:'The Long Table',tId:5,accent:'#6E7A4E',price:39,v:[.80,.32,.70,.78,.89,.65,.32]},
+  {id:'BP-EC-0429',name:'Green Morning',tId:4,accent:'#6B8F67',price:31,v:[.72,.68,.35,.82,.62,.55,.65]}
+];
+const dist=(a,b)=>{let s=0;for(let i=0;i<7;i++){const d=a[i]-b[i];s+=d*d;}return Math.sqrt(s);};
+const MAXD=Math.sqrt(7);
+const cap=(s)=>s?s[0].toUpperCase()+s.slice(1):s;
+
+class Component extends DCLogic {
+  state={strategy:'evs',k:3,collections:null,cat:[],toast:''};
+  componentDidMount(){
+    let cat=[];
+    try{const raw=localStorage.getItem('moodoor_catalog');if(raw){cat=JSON.parse(raw).filter(c=>c.vector).map(c=>({id:c.id,name:(c.story&&c.story.title)||c.name,tId:c.territoryId||1,accent:TERR_ACCENT[c.territoryId||1],price:39,v:KEYS.map(k=>c.vector[k]??.5)}));}}catch(e){}
+    this.setState({cat});
+  }
+  persist(colls){try{localStorage.setItem('moodoor_collections',JSON.stringify(colls));}catch(e){}}
+  toast(m){this.setState({toast:m});clearTimeout(this._t);this._t=setTimeout(()=>this.setState({toast:''}),2600);}
+  onStrategy=(e)=>this.setState({strategy:e.target.value});
+  onK=(e)=>this.setState({k:parseInt(e.target.value,10)});
+
+  kmeans(points,k){
+    if(points.length<=k)return points.map((p,i)=>[i]);
+    let cents=[points[0].v.slice()];
+    while(cents.length<k){let best=null,bd=-1;points.forEach(p=>{const d=Math.min(...cents.map(c=>dist(p.v,c)));if(d>bd){bd=d;best=p.v;}});cents.push(best.slice());}
+    let assign=points.map(()=>0);
+    for(let it=0;it<14;it++){
+      assign=points.map(p=>{let bi=0,bd=1e9;cents.forEach((c,i)=>{const d=dist(p.v,c);if(d<bd){bd=d;bi=i;}});return bi;});
+      for(let i=0;i<k;i++){const grp=points.filter((p,j)=>assign[j]===i);if(grp.length){for(let d=0;d<7;d++)cents[i][d]=grp.reduce((a,p)=>a+p.v[d],0)/grp.length;}}
+    }
+    const groups=Array.from({length:k},()=>[]);
+    assign.forEach((a,i)=>groups[a].push(i));
+    return groups.filter(g=>g.length);
+  }
+
+  group(points,strategy,k){
+    if(strategy==='territory'){
+      const m={};points.forEach((p,i)=>{(m[p.tId]=m[p.tId]||[]).push(i);});
+      return Object.values(m);
+    }
+    if(strategy==='season'){
+      const bands=[[],[],[]]; // low/mid/high seasonal
+      points.forEach((p,i)=>{const s=p.v[6];bands[s<0.5?0:(s<0.75?1:2)].push(i);});
+      return bands.filter(b=>b.length);
+    }
+    return this.kmeans(points,k);
+  }
+
+  build(points,idxs){
+    const mem=idxs.map(i=>points[i]);
+    // centroid
+    const cen=KEYS.map((_,d)=>mem.reduce((a,p)=>a+p.v[d],0)/mem.length);
+    // cohesion = 1 - avg dist to centroid / maxd
+    const avgD=mem.reduce((a,p)=>a+dist(p.v,cen),0)/mem.length;
+    const cohesion=Math.max(0,Math.round((1-avgD/MAXD*1.4)*100));
+    // signature: top 3 dims of centroid
+    const ranked=DIMS.map((d,i)=>({label:d.label,color:d.color,key:d.key,val:cen[i]})).sort((a,b)=>b.val-a.val);
+    const sig=ranked.slice(0,3).map(r=>({label:r.label,valText:'.'+String(Math.round(r.val*100)).padStart(2,'0'),fillStyle:`width:${Math.round(r.val*100)}%;background:${r.color}`}));
+    // dominant territory
+    const tc={};mem.forEach(p=>tc[p.tId]=(tc[p.tId]||0)+1);
+    const domT=+Object.keys(tc).sort((a,b)=>tc[b]-tc[a])[0];
+    const domFrac=tc[domT]/mem.length;
+    // name + tagline from top feels
+    const topFeel=FEEL[ranked[0].key], feel2=FEEL[ranked[1].key];
+    const name = domFrac>0.6 ? `${TERR_NAME[domT]} Collection` : `The ${cap(topFeel)} ${cap(feel2)} Set`;
+    const tagline = `${cap(topFeel)} and ${feel2} — designs that ${PHRASE[topFeel]||'belong together'}.`;
+    // price
+    const sum=mem.reduce((a,p)=>a+p.price,0);
+    const bundle=Math.round(sum*0.82);
+    return {
+      name,tagline,terr:domFrac>0.6?TERR_NAME[domT]:'Cross-territory',
+      cohesion,signature:sig,
+      members:mem.map(p=>({name:p.name,dotStyle:`--md:${p.accent}`})),
+      memberIds:mem.map(p=>p.id),
+      barStyle:`--cbar:${TERR_ACCENT[domT]}`,
+      priceText:'$'+bundle,priceNote:` · ${mem.length} blueprints`,
+      saveText:`Save $${sum-bundle}`,
+      _domT:domT
+    };
+  }
+
+  compose=()=>{
+    const points=[...WREATHS,...this.state.cat];
+    const groups=this.group(points,this.state.strategy,this.state.k).filter(g=>g.length>=1);
+    const collections=groups.map(g=>this.build(points,g)).sort((a,b)=>b.cohesion-a.cohesion);
+    this.setState({collections});
+    this.toast(`${collections.length} collections composed`);
+  };
+  save=()=>{
+    if(!this.state.collections)return;
+    const out=this.state.collections.map(c=>({name:c.name,tagline:c.tagline,territory:c.terr,cohesion:c.cohesion,memberIds:c.memberIds,members:c.members.map(m=>m.name),price:c.priceText}));
+    this.persist(out);
+    this.toast(`Saved ${out.length} collections to storefront`);
+  };
+
+  renderVals(){
+    const s=this.state;
+    const colls=s.collections;
+    const stratLabel={evs:'EVS proximity',territory:'By territory',season:'By season'}[s.strategy];
+    let avgCoh='—',totalItems=0;
+    if(colls){avgCoh=Math.round(colls.reduce((a,c)=>a+c.cohesion,0)/colls.length)+'%';totalItems=colls.reduce((a,c)=>a+c.members.length,0);}
+    return {
+      libCount:WREATHS.length,catCount:s.cat.length,
+      strategy:s.strategy,onStrategy:this.onStrategy,k:s.k,onK:this.onK,
+      compose:this.compose,save:this.save,saveDisabled:colls?null:true,
+      hasColls:!!colls,noColls:!colls,collections:colls||[],collCount:colls?colls.length:0,
+      strategyLabel:stratLabel,avgCohesion:avgCoh,totalItems,
+      hasToast:!!s.toast,toastText:s.toast
+    };
+  }
+}
+</script>
+</body>
+</html>
